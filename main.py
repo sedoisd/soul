@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 from constants import *
 from gui import GuiManager
+from characters import Knight
 
 
 def main():
@@ -10,6 +11,14 @@ def main():
     clock = pygame.time.Clock()
 
     fps = 60
+
+    spr = pygame.sprite.Sprite()
+    spr.image = pygame.transform.rotozoom(Knight.frames_forward[0], 0, 2)
+    spr.rect = spr.image.get_rect()
+    spr.rect.y = 30
+    spr.rect.x = 30
+    k = pygame.sprite.Group()
+    k.add(spr)
 
     running = True
     my_manager = GuiManager()
@@ -23,8 +32,11 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONUP:
                 print(event.pos)
+
             my_manager.manager.process_events(event)
         screen.fill((0, 0, 0))
+        k.draw(screen)
+
         my_manager.manager.update(time_delta)
         my_manager.manager.draw_ui(screen)
         pygame.display.flip()
