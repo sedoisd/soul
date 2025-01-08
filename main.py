@@ -12,13 +12,7 @@ def main():
 
     fps = 60
 
-    spr = pygame.sprite.Sprite()
-    spr.image = pygame.transform.rotozoom(Knight.frames_forward[0], 0, 2)
-    spr.rect = spr.image.get_rect()
-    spr.rect.y = 30
-    spr.rect.x = 30
-    k = pygame.sprite.Group()
-    k.add(spr)
+
 
     running = True
     my_manager = GuiManager()
@@ -35,7 +29,6 @@ def main():
 
             my_manager.manager.process_events(event)
         screen.fill((0, 0, 0))
-        k.draw(screen)
 
         my_manager.manager.update(time_delta)
         my_manager.manager.draw_ui(screen)
