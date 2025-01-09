@@ -5,6 +5,7 @@ from pygame_gui.elements import *
 from constants import SIZE
 from other_functions import load_image
 from characters import get_front_frame_current_characters
+from weapons import get_frame_current_weapon
 
 
 
@@ -51,7 +52,7 @@ class GuiManager:
 
         # Weapon menu
         self.label_image_weapon = UILabel(Rect((350, 60, 150, 100)), text='')
-        self.image_weapon = pygame.image.load('image/weapons/weapon.png')
+        self.image_weapon = get_frame_current_weapon()
         self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((410, 315, 60, 30)), text='Меч')
 

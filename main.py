@@ -3,6 +3,7 @@ import pygame_gui
 from constants import *
 from gui import GuiManager
 from characters import Knight
+# from weapons import
 
 
 def main():
