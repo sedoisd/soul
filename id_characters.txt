@@ -1,2 +1,0 @@
-id,name_characters
-0,knight

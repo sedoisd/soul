@@ -3,8 +3,11 @@ import os
 import pygame
 from constants import SIZE
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('image', name)
+
+def load_image(name, path=None):
+    fullname = fullname = os.path.join('image', name)
+    if path is not None:
+        fullname = os.path.join('image', path, name)
     # если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
@@ -18,5 +21,3 @@ def load_image(name, colorkey=None):
     # else:
     #     image = image.convert_alpha()
     return image
-
-

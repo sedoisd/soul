@@ -4,7 +4,7 @@ import pygame_gui
 from pygame_gui.elements import *
 from constants import SIZE
 from other_functions import load_image
-from characters import get_frame_font_current_characters
+from characters import get_front_frame_current_characters
 
 
 
@@ -44,14 +44,14 @@ class GuiManager:
 
         # Character menu
         self.label_image_character = UILabel(Rect((620, 50, 150, 400)), text='')
-        self.image_character = get_frame_font_current_characters()
+        self.image_character = get_front_frame_current_characters()
         # self.image_character = pygame.transform.rotozoom(self.image_character, 0, 0.2)
         self.label_image_character.set_image(self.image_character)
         self.label_name_character = UILabel(Rect((690, 310, 100, 30)), text='Рыцарь')
 
         # Weapon menu
         self.label_image_weapon = UILabel(Rect((350, 60, 150, 100)), text='')
-        self.image_weapon = pygame.image.load('image/weapon.png')
+        self.image_weapon = pygame.image.load('image/weapons/weapon.png')
         self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((410, 315, 60, 30)), text='Меч')
 
