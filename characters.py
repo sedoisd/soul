@@ -3,7 +3,6 @@ from other_functions import load_image
 from constants import ID_CHARACTER
 
 
-
 def get_front_frame_current_characters():
     atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
     atlas_width = atlas.get_width()

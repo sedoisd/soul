@@ -36,10 +36,10 @@ class GuiManager:
                                      text='Старт', manager=self.manager, command=start)
         self.button_shop = UIButton(relative_rect=Rect((30, 270, *size_button)),
                                     text='Магазин', manager=self.manager,
-                                    command=lambda: redirection(self.load_shop))
+                                    command=lambda: redirection(self._load_shop))
         self.button_setting = UIButton(relative_rect=Rect((30, 360, *size_button)),
                                        text='Настройки', manager=self.manager,
-                                       command=lambda: redirection(self.load_setting))
+                                       command=lambda: redirection(self._load_setting))
         self.button_exit = UIButton(relative_rect=Rect((30, 450, *size_button)),
                                     text='Выход', manager=self.manager)
 
@@ -56,7 +56,7 @@ class GuiManager:
         self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((410, 315, 60, 30)), text='Меч')
 
-    def load_setting(self):
+    def _load_setting(self):
         def back():
             self.button_back.kill()
             self.load_start_menu()
@@ -66,10 +66,18 @@ class GuiManager:
         # image_button_back = pygame.image.load('image/back.png')
         # self.button_back._set_image(image_button_back)
 
-    def load_shop(self):
+    def _load_shop(self):
         def back():
             self.button_back.kill()
             self.load_start_menu()
 
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 40, 40), text='back',
                                     manager=self.manager, command=back)
+
+
+class GameManager:
+    def __init__(self):
+        pass
+
+    def update(self):
+        pass
