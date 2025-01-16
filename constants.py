@@ -2,5 +2,11 @@
 WIDTH = 900
 HEIGHT = 700
 SIZE = WIDTH, HEIGHT
-ID_CHARACTER = 0
+FILENAME_DATABASE = 'database.sqlite'
+
+# Characters
+ID_CHARACTER = 4
+FRAME_TIME = 0.08
+
+# Weapons
 ID_WEAPON = 0

@@ -1,10 +1,10 @@
 import sys
 import os
 import pygame
-from constants import SIZE
+from constants import ID_CHARACTER, ID_WEAPON
 
 
-def load_image(name, path=None):
+def load_image(name, path=None) -> pygame.Surface:
     fullname = fullname = os.path.join('image', name)
     if path is not None:
         fullname = os.path.join('image', path, name)
@@ -21,3 +21,23 @@ def load_image(name, path=None):
     # else:
     #     image = image.convert_alpha()
     return image
+
+
+def get_front_frame_current_characters() -> pygame.surface:
+    atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
+    atlas_width = atlas.get_width()
+    atlas_height = atlas.get_height()
+    image_width = atlas_width / 3
+    image_height = atlas_height / 4
+    return atlas.subsurface(image_width, 0, image_width, image_height)
+
+
+def get_frame_current_weapon() -> pygame.surface:
+    image = load_image(f'weapon_{ID_WEAPON}.png', 'weapons')
+    # atlas_width = atlas.get_width()
+    # atlas_height = atlas.get_height()
+    # image_width = atlas_width / 3
+    # image_height = atlas_height / 4
+    return image
+
+
