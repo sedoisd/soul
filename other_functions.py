@@ -5,7 +5,7 @@ from constants import ID_CHARACTER, ID_WEAPON
 
 
 def load_image(name, path=None) -> pygame.Surface:
-    fullname = fullname = os.path.join('image', name)
+    fullname = os.path.join('image', name)
     if path is not None:
         fullname = os.path.join('image', path, name)
     # если файл не существует, то выходим
@@ -39,5 +39,3 @@ def get_frame_current_weapon() -> pygame.surface:
     # image_width = atlas_width / 3
     # image_height = atlas_height / 4
     return image
-
-

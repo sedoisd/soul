@@ -31,18 +31,18 @@ class Character(sprite.Sprite):
         frame_height = atlas_height / 4
         self.rect = Rect(0, 0, frame_width, frame_height)
         scale = 0.5
-        self.front_frames = [
-            pygame.transform.rotozoom(atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height),
-                                      0, scale) for i in range(0, 3)]
-        self.back_frames = [
-            pygame.transform.rotozoom(atlas.subsurface(frame_width * i, 0, frame_width, frame_height),
-                                      0, scale) for i in range(0, 3)]
-        self.left_frames = [
-            pygame.transform.rotozoom(atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height),
-                                      0, scale) for i in range(0, 3)]
-        self.right_frames = [
-            pygame.transform.rotozoom(atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height),
-                                      0, scale) for i in range(0, 3)]
+        self.front_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, scale)
+            for i in range(0, 3)]
+        self.back_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, scale)
+            for i in range(0, 3)]
+        self.left_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height), 0, scale)
+            for i in range(0, 3)]
+        self.right_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height), 0, scale)
+            for i in range(0, 3)]
 
     def update(self, event=None, timedelta=None, mode: str = None) -> None:
         if mode == 'update':
