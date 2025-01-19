@@ -23,8 +23,9 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.player_group = pygame.sprite.Group()
         self.all_tiles = pygame.sprite.Group()
-        self.fps = 30
-        self.scale_map = 2
+        self.walls_sprites = pygame.sprite.Group()
+        self.fps = 60
+        self.scale_map = 1.5
         self.running = True
         self.flag_going_game = False
         self.player = None
@@ -62,8 +63,8 @@ class Game:
 
     def update(self):
         if self.flag_going_game:
-            self.player.update(timedelta=self.time_delta, mode='update')
-            self.camera.update(self.player, self.map)
+            self.player.update(timedelta=self.time_delta, mode='update', group_walls=self.walls_sprites)
+            self.camera.update(self.player)
             for sprite in self.all_sprites.sprites():
                 self.camera.apply(sprite)
         self.gui_manager.manager.update(self.time_delta)
@@ -78,27 +79,27 @@ class Game:
     def start_level(self):
         self.flag_going_game = True
         layers = [[0, self.all_sprites, self.all_tiles], [1, self.all_sprites, self.all_tiles],
-                  [2, self.all_sprites, self.all_tiles]]
+                  [2, self.all_sprites, self.all_tiles, self.walls_sprites]]
         for i in layers:
             self.init_layer_level(*i)
-
-        self.player = Character((1 * self.map.tilewidth * self.scale_map, 2 * self.map.tilewidth * self.scale_map))
+        x_pers, y_pers = 11, 11
+        self.player = Character((x_pers * self.map.tilewidth * self.scale_map,
+                                 y_pers * self.map.tilewidth * self.scale_map))
         self.player_group.add(self.player)
         self.all_sprites.add(self.player)
 
-
     def init_layer_level(self, number_layer, *groups):
-        self.map = pytmx.load_pygame('tmx/map.tmx')
+        self.map = pytmx.load_pygame('tmx/test_map.tmx')
         for y in range(self.map.height):
             for x in range(self.map.width):
                 image = self.map.get_tile_image(x, y, number_layer)
                 if image:
                     tile_sprite = pygame.sprite.Sprite(*groups)
-                    tile_sprite.image = pygame.transform.rotozoom(image, 0 ,self.scale_map)
+                    tile_sprite.image = pygame.transform.rotozoom(image, 0, self.scale_map)
                     tile_sprite.rect = tile_sprite.image.get_rect()
                     tile_sprite.rect.x, tile_sprite.rect.y = (
                         x * self.map.tilewidth * self.scale_map, y * self.map.tilewidth * self.scale_map)
-
+                    tile_sprite.mask = pygame.mask.from_surface(tile_sprite.image)
 
 
 if __name__ == '__main__':
