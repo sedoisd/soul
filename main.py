@@ -1,8 +1,9 @@
 import pygame
 import pygame_gui
+import pytmx
 from constants import *
 from managers import GuiManager
-from initialization_classes import Character
+from classes import Character, Camera
 
 
 # import sys
@@ -16,12 +17,15 @@ class Game:
         # init classes
         self.gui_manager = GuiManager()
         self.clock = pygame.time.Clock()
+        self.camera = Camera()
 
         # init variables
         self.all_sprites = pygame.sprite.Group()
         self.player_group = pygame.sprite.Group()
-        self.running = True
+        self.all_tiles = pygame.sprite.Group()
         self.fps = 30
+        self.scale_map = 2
+        self.running = True
         self.flag_going_game = False
         self.player = None
         self.time_delta = None
@@ -52,25 +56,48 @@ class Game:
             if event.ui_element == self.gui_manager.button_start:
                 self.gui_manager.kill_start_menu()
                 print(111)
-                self.start_game()
+                self.start_level()
         # if self.flag_going_game:
         #     self.player.update(event=event, timedelta=self.time_delta, mode='event')
 
     def update(self):
         if self.flag_going_game:
             self.player.update(timedelta=self.time_delta, mode='update')
+            self.camera.update(self.player, self.map)
+            for sprite in self.all_sprites.sprites():
+                self.camera.apply(sprite)
         self.gui_manager.manager.update(self.time_delta)
 
     def render(self):
         self.screen.fill((0, 0, 0))
         if self.flag_going_game:
+            self.all_tiles.draw(self.screen)
             self.player_group.draw(self.screen)
         self.gui_manager.manager.draw_ui(self.screen)
 
-    def start_game(self):
+    def start_level(self):
         self.flag_going_game = True
-        self.player = Character()
+        layers = [[0, self.all_sprites, self.all_tiles], [1, self.all_sprites, self.all_tiles],
+                  [2, self.all_sprites, self.all_tiles]]
+        for i in layers:
+            self.init_layer_level(*i)
+
+        self.player = Character((1 * self.map.tilewidth * self.scale_map, 2 * self.map.tilewidth * self.scale_map))
         self.player_group.add(self.player)
+
+
+    def init_layer_level(self, number_layer, *groups):
+        self.map = pytmx.load_pygame('tmx/map.tmx')
+        for y in range(self.map.height):
+            for x in range(self.map.width):
+                image = self.map.get_tile_image(x, y, number_layer)
+                if image:
+                    tile_sprite = pygame.sprite.Sprite(*groups)
+                    tile_sprite.image = pygame.transform.rotozoom(image, 0 ,self.scale_map)
+                    tile_sprite.rect = tile_sprite.image.get_rect()
+                    tile_sprite.rect.x, tile_sprite.rect.y = (
+                        x * self.map.tilewidth * self.scale_map, y * self.map.tilewidth * self.scale_map)
+
 
 
 if __name__ == '__main__':
