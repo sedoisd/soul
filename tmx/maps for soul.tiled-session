@@ -1,0 +1,38 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "test_map.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "test_map.tmx": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 388,
+                "y": 676.25
+            }
+        },
+        "tileset_1.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        }
+    },
+    "last.imagePath": "C:/YL/PycharmProjects/soul/tmx",
+    "map.height": 100,
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "3",
+    "map.width": 100,
+    "openFiles": [
+        "test_map.tmx",
+        "tileset_1.tsx"
+    ],
+    "project": "maps for soul.tiled-project",
+    "recentFiles": [
+        "tileset_1.tsx",
+        "test_map.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}
