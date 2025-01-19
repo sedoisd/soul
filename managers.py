@@ -81,7 +81,7 @@ class DatabaseManager:
     def _connection_to_database(cls):
         with sqlite3.connect(FILENAME_DATABASE) as con:
             cur = con.cursor()
-            print(type(con), type(cur))
+            # print(type(con), type(cur))
             return con, cur
 
     @classmethod
