@@ -84,6 +84,7 @@ class Game:
 
         self.player = Character((1 * self.map.tilewidth * self.scale_map, 2 * self.map.tilewidth * self.scale_map))
         self.player_group.add(self.player)
+        self.all_sprites.add(self.player)
 
 
     def init_layer_level(self, number_layer, *groups):
