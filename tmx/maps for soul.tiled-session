@@ -8,11 +8,11 @@
     ],
     "fileStates": {
         "test_map.tmx": {
-            "scale": 2,
+            "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 388,
-                "y": 676.25
+                "x": 998.4848484848486,
+                "y": 1006.0606060606062
             }
         },
         "tileset_1.tsx": {
@@ -31,8 +31,8 @@
     ],
     "project": "maps for soul.tiled-project",
     "recentFiles": [
-        "tileset_1.tsx",
-        "test_map.tmx"
+        "test_map.tmx",
+        "tileset_1.tsx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }
