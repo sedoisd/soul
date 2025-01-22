@@ -21,8 +21,9 @@ class Game:
 
         # init variables
         self.all_sprites = pygame.sprite.Group()
-        self.player_group = pygame.sprite.Group()
         self.all_tiles = pygame.sprite.Group()
+        self.player_group = pygame.sprite.Group()
+        self.enemies_group = pygame.sprite.Group()
         self.walls_sprites = pygame.sprite.Group()
         self.fps = 60
         self.scale_map = 1.5
@@ -84,9 +85,10 @@ class Game:
             self.init_layer_level(*i)
         x_pers, y_pers = 11, 11
         self.player = Character((x_pers * self.map.tilewidth * self.scale_map,
-                                 y_pers * self.map.tilewidth * self.scale_map))
-        self.player_group.add(self.player)
-        self.all_sprites.add(self.player)
+                                 y_pers * self.map.tilewidth * self.scale_map),
+                                [self.player_group, self.all_sprites])
+        # self.player_group.add(self.player)
+        # self.all_sprites.add(self.player)
 
     def init_layer_level(self, number_layer, *groups):
         self.map = pytmx.load_pygame('tmx/test_map.tmx')

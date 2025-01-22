@@ -3,7 +3,6 @@ import pygame
 import pygame_gui
 from pygame_gui.elements import *
 from constants import SIZE, FILENAME_DATABASE, ID_CHARACTER
-# from initialization_classes import
 from other_functions import get_frame_current_weapon, get_front_frame_current_characters
 import sqlite3
 
@@ -89,6 +88,15 @@ class DatabaseManager:
         con, cur = cls._connection_to_database()
         result = cur.execute('SELECT name, health, damage, speed FROM characters '
                              'WHERE id=?', (ID_CHARACTER,)).fetchone()
+        # print(result)
+        con.close()
+        return result
+
+    @classmethod
+    def get_characteristics_enemy_by_id(cls, enemy_id: int = None) -> tuple[str, int, int, int]:
+        con, cur = cls._connection_to_database()
+        result = cur.execute('SELECT name, health, damage, speed FROM enemy'
+                             'WHERE id=?', (enemy_id,)).fetchone()
         # print(result)
         con.close()
         return result

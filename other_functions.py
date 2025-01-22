@@ -23,7 +23,7 @@ def load_image(name, path=None) -> pygame.Surface:
     return image
 
 
-def get_front_frame_current_characters() -> pygame.surface:
+def get_front_frame_current_characters() -> pygame.surface: # for gui
     atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
     atlas_width = atlas.get_width()
     atlas_height = atlas.get_height()
@@ -32,7 +32,7 @@ def get_front_frame_current_characters() -> pygame.surface:
     return atlas.subsurface(image_width, 0, image_width, image_height)
 
 
-def get_frame_current_weapon() -> pygame.surface:
+def get_frame_current_weapon() -> pygame.surface: # for gui
     image = load_image(f'weapon_{ID_WEAPON}.png', 'weapons')
     # atlas_width = atlas.get_width()
     # atlas_height = atlas.get_height()
