@@ -94,19 +94,25 @@ class Enemy(sprite.Sprite):
         self.frame_time = FRAME_TIME
 
         self._create_frames()
-        self._setup_character_characteristic()
+        self._setup_enemy_characteristic()
 
-    def _setup_character_characteristic(self) -> None:
-        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
+    def _setup_enemy_characteristic(self) -> None:
+        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id)
         print(self.name, self.health, self.damage, self.speed)
 
     def _create_frames(self):
+        quan_walking, quan_attack, quan_death, quan_kinds = (
+            DatabaseManager.get_quantities_frames_enemy_by_id(self.enemy_id))
+        atlas = load_image(f'enemy_{self.enemy_id}.png', 'enemies')
+        atlas_width = atlas.get_width()
+        atlas_height = atlas.get_height()
         self.walking_frames = []
         self.attack_frames = []
         self.death_frames = []
 
     def update(self, *args, **kwargs):
         pass
+
 
 class Camera:
     # зададим начальный сдвиг камеры
