@@ -6,8 +6,8 @@ from constants import ID_CHARACTER, FRAME_TIME, SIZE
 
 
 class Character(sprite.Sprite):
-    def __init__(self, position):
-        super().__init__()
+    def __init__(self, position: (int, int), groups=None):
+        super().__init__(groups)
         self.character_id = ID_CHARACTER
         self.frame_time = FRAME_TIME
 
@@ -86,6 +86,27 @@ class Weapon(sprite.Sprite):
     def update(self, *args, **kwargs):
         pass
 
+
+class Enemy(sprite.Sprite):
+    def __init__(self, enemy_id):
+        super().__init__()
+        self.enemy_id = enemy_id
+        self.frame_time = FRAME_TIME
+
+        self._create_frames()
+        self._setup_character_characteristic()
+
+    def _setup_character_characteristic(self) -> None:
+        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
+        print(self.name, self.health, self.damage, self.speed)
+
+    def _create_frames(self):
+        self.walking_frames = []
+        self.attack_frames = []
+        self.death_frames = []
+
+    def update(self, *args, **kwargs):
+        pass
 
 class Camera:
     # зададим начальный сдвиг камеры
