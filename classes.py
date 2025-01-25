@@ -97,6 +97,7 @@ class Enemy(sprite.Sprite):
         self._setup_enemy_characteristic()
 
     def _setup_enemy_characteristic(self) -> None:
+        self.scale = 1.0
         self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id)
         print(self.name, self.health, self.damage, self.speed)
 
@@ -106,9 +107,26 @@ class Enemy(sprite.Sprite):
         atlas = load_image(f'enemy_{self.enemy_id}.png', 'enemies')
         atlas_width = atlas.get_width()
         atlas_height = atlas.get_height()
-        self.walking_frames = []
+        frame_width = atlas_width / max(quan_walking, quan_attack, quan_death)
+        frame_height = atlas_height / quan_kinds
+        self.walking_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
         self.attack_frames = []
         self.death_frames = []
+        # self.rect = Rect(0, 0, frame_width, frame_height)
+        # self.front_frames = [pygame.transform.rotozoom(
+        #     atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
+        #     for i in range(0, 3)]
+        # self.back_frames = [pygame.transform.rotozoom(
+        #     atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, self.scale)
+        #     for i in range(0, 3)]
+        # self.left_frames = [pygame.transform.rotozoom(
+        #     atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height), 0, self.scale)
+        #     for i in range(0, 3)]
+        # self.right_frames = [pygame.transform.rotozoom(
+        #     atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height), 0, self.scale)
+        #     for i in range(0, 3)]
 
     def update(self, *args, **kwargs):
         pass

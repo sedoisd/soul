@@ -5,14 +5,15 @@
     },
     "activeFile": "test_map.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "test_map.tmx": {
-            "scale": 0.33,
+            "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 998.4848484848486,
-                "y": 1006.0606060606062
+                "x": 1247.3333333333335,
+                "y": 690.6666666666667
             }
         },
         "tileset_1.tsx": {
@@ -26,13 +27,13 @@
     "map.layerDataFormat": "3",
     "map.width": 100,
     "openFiles": [
-        "test_map.tmx",
-        "tileset_1.tsx"
+        "tileset_1.tsx",
+        "test_map.tmx"
     ],
     "project": "maps for soul.tiled-project",
     "recentFiles": [
-        "test_map.tmx",
-        "tileset_1.tsx"
+        "tileset_1.tsx",
+        "test_map.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }
