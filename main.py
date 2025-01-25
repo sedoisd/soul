@@ -51,8 +51,8 @@ class Game:
             self.running = False
         if event.type == pygame.MOUSEBUTTONUP:
             print(event.pos)
-            if self.flag_going_game:
-                self.player.rect.x, self.player.rect.y = event.pos
+            # if self.flag_going_game:
+            #     self.player.rect.x, self.player.rect.y = event.pos
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
             print(222)
             if event.ui_element == self.gui_manager.button_start:
@@ -82,15 +82,19 @@ class Game:
         layers = [[0, self.all_sprites, self.all_tiles], [1, self.all_sprites, self.all_tiles],
                   [2, self.all_sprites, self.all_tiles, self.walls_sprites]]
         for i in layers:
-            self.init_layer_level(*i)
-        x_pers, y_pers = 11, 11
-        self.player = Character((x_pers * self.map.tilewidth * self.scale_map,
-                                 y_pers * self.map.tilewidth * self.scale_map),
+            self._init_layer_level(*i)
+        # x_pers, y_pers = 11, 11
+        player_object = self.map.get_object_by_name('Player')
+        x_player, y_player = player_object.x * self.scale_map, player_object.y * self.scale_map
+        print(x_player, y_player)
+        self.player = Character((x_player, y_player),
                                 [self.player_group, self.all_sprites])
+        # print(self.map, self.map.get_object_by_name('Player').)
         # self.player_group.add(self.player)
-        # self.all_sprites.add(self.player)
+        # self.all_sprites.add(self.player)        # tyt player init
+        # self.map
 
-    def init_layer_level(self, number_layer, *groups):
+    def _init_layer_level(self, number_layer, *groups):
         self.map = pytmx.load_pygame('tmx/test_map.tmx')
         for y in range(self.map.height):
             for x in range(self.map.width):
