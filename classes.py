@@ -6,8 +6,8 @@ from constants import ID_CHARACTER, FRAME_TIME, SIZE
 
 
 class Character(sprite.Sprite):
-    def __init__(self, position: (int, int), groups=None):
-        super().__init__(groups)
+    def __init__(self, position: (int, int), sprite_groups=None):
+        super().__init__(sprite_groups)
         self.character_id = ID_CHARACTER
         self.frame_time = FRAME_TIME
 
@@ -25,7 +25,7 @@ class Character(sprite.Sprite):
 
     def _setup_character_characteristic(self) -> None:
         self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
-        print(self.name, self.health, self.damage, self.speed)
+        # print(self.name, self.health, self.damage, self.speed)
 
     def _create_frames(self) -> None:
         atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
@@ -88,45 +88,44 @@ class Weapon(sprite.Sprite):
 
 
 class Enemy(sprite.Sprite):
-    def __init__(self, enemy_id):
-        super().__init__()
+    def __init__(self, enemy_id: int, position: (int, int), sprite_groups = None):
+        super().__init__(sprite_groups)
         self.enemy_id = enemy_id
         self.frame_time = FRAME_TIME
 
-        self._create_frames()
         self._setup_enemy_characteristic()
+        self._create_frames()
+        self.image = self.stand_frames[0]
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.x, self.rect.y = position
 
     def _setup_enemy_characteristic(self) -> None:
-        self.scale = 1.0
+        self.scale = 2
         self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id)
-        print(self.name, self.health, self.damage, self.speed)
+        # print(self.name, self.health, self.damage, self.speed)
 
     def _create_frames(self):
-        quan_walking, quan_attack, quan_death, quan_kinds = (
+        quan_walking, quan_attack, quan_death, quan_stand, quan_kinds = (
             DatabaseManager.get_quantities_frames_enemy_by_id(self.enemy_id))
         atlas = load_image(f'enemy_{self.enemy_id}.png', 'enemies')
         atlas_width = atlas.get_width()
         atlas_height = atlas.get_height()
         frame_width = atlas_width / max(quan_walking, quan_attack, quan_death)
         frame_height = atlas_height / quan_kinds
+        self.rect = Rect(0, 0, frame_width, frame_height)
+        self.stand_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 0, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
         self.walking_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 1, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
+        self.attack_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
+        self.death_frames = [pygame.transform.rotozoom(
             atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
             for i in range(0, 3)]
-        self.attack_frames = []
-        self.death_frames = []
-        # self.rect = Rect(0, 0, frame_width, frame_height)
-        # self.front_frames = [pygame.transform.rotozoom(
-        #     atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
-        #     for i in range(0, 3)]
-        # self.back_frames = [pygame.transform.rotozoom(
-        #     atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, self.scale)
-        #     for i in range(0, 3)]
-        # self.left_frames = [pygame.transform.rotozoom(
-        #     atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height), 0, self.scale)
-        #     for i in range(0, 3)]
-        # self.right_frames = [pygame.transform.rotozoom(
-        #     atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height), 0, self.scale)
-        #     for i in range(0, 3)]
 
     def update(self, *args, **kwargs):
         pass

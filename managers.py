@@ -86,8 +86,8 @@ class DatabaseManager:
     @classmethod
     def get_characteristics_character(cls) -> tuple[str, int, int, int]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('SELECT name, health, damage, speed FROM characters '
-                             'WHERE id=?', (ID_CHARACTER,)).fetchone()
+        result = cur.execute('''SELECT name, health, damage, speed FROM characters
+                             WHERE id=?''', (ID_CHARACTER,)).fetchone()
         # print(result)
         con.close()
         return result
@@ -95,18 +95,18 @@ class DatabaseManager:
     @classmethod
     def get_characteristics_enemy_by_id(cls, enemy_id: int = None) -> tuple[str, int, int, int]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('SELECT name, health, damage, speed FROM enemies'
-                             'WHERE id=?', (enemy_id,)).fetchone()
+        result = cur.execute('''SELECT name, health, damage, speed FROM enemies
+                             WHERE id=?''', (enemy_id,)).fetchone()
         # print(result)
         con.close()
         return result
 
     @classmethod
-    def get_quantities_frames_enemy_by_id(cls, enemy_id: int = None) -> tuple[int, int, int, int]:
+    def get_quantities_frames_enemy_by_id(cls, enemy_id: int = None) -> tuple[int, int, int, int, int]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('SELECT quan_walking_frames, quan_attack_frames, '
-                             'quan_death_frames, quan_kinds_frames FROM enemies'
-                             'WHERE id=?', (enemy_id,)).fetchone()
+        result = cur.execute('''SELECT quan_walking_frames, quan_attack_frames, 
+                             quan_death_frames, quan_stand_frame, quan_kinds_frames FROM enemies
+                             WHERE ID=?''', (enemy_id,)).fetchone()
         # print(result)
         con.close()
         return result
