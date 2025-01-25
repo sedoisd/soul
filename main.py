@@ -3,7 +3,7 @@ import pygame_gui
 import pytmx
 from constants import *
 from managers import GuiManager
-from classes import Character, Camera
+from classes import Character, Camera, Enemy
 
 
 # import sys
@@ -26,7 +26,7 @@ class Game:
         self.enemies_group = pygame.sprite.Group()
         self.walls_sprites = pygame.sprite.Group()
         self.fps = 60
-        self.scale_map = 1.5
+        self.scale_map = SCALE_MAP
         self.running = True
         self.flag_going_game = False
         self.player = None
@@ -75,27 +75,32 @@ class Game:
         if self.flag_going_game:
             self.all_tiles.draw(self.screen)
             self.player_group.draw(self.screen)
+            self.enemies_group.draw(self.screen)
         self.gui_manager.manager.draw_ui(self.screen)
 
     def start_level(self):
         self.flag_going_game = True
+        self.map = pytmx.load_pygame('tmx/test_map.tmx')
+        self.tile_size = self.map.tilewidth * self.scale_map
         layers = [[0, self.all_sprites, self.all_tiles], [1, self.all_sprites, self.all_tiles],
                   [2, self.all_sprites, self.all_tiles, self.walls_sprites]]
         for i in layers:
             self._init_layer_level(*i)
-        # x_pers, y_pers = 11, 11
-        player_object = self.map.get_object_by_name('Player')
-        x_player, y_player = player_object.x * self.scale_map, player_object.y * self.scale_map
-        print(x_player, y_player)
-        self.player = Character((x_player, y_player),
-                                [self.player_group, self.all_sprites])
-        # print(self.map, self.map.get_object_by_name('Player').)
-        # self.player_group.add(self.player)
-        # self.all_sprites.add(self.player)        # tyt player init
-        # self.map
+
+        for object in self.map.objects:
+            print(object.name)
+            x_object, y_object = object.x * self.scale_map, object.y * self.scale_map
+            sprite_groups = [self.all_sprites]
+            if object.name == 'Player':
+                sprite_groups += [self.player_group]
+                self.player = Character((x_object, y_object), sprite_groups)
+            elif object.name == 'Enemy':
+                enemy_id = int(object.properties['enemy_id'])
+                sprite_groups += [self.enemies_group]
+                enemy = Enemy(enemy_id, (x_object, y_object),
+                              sprite_groups=sprite_groups)
 
     def _init_layer_level(self, number_layer, *groups):
-        self.map = pytmx.load_pygame('tmx/test_map.tmx')
         for y in range(self.map.height):
             for x in range(self.map.width):
                 image = self.map.get_tile_image(x, y, number_layer)
@@ -104,7 +109,7 @@ class Game:
                     tile_sprite.image = pygame.transform.rotozoom(image, 0, self.scale_map)
                     tile_sprite.rect = tile_sprite.image.get_rect()
                     tile_sprite.rect.x, tile_sprite.rect.y = (
-                        x * self.map.tilewidth * self.scale_map, y * self.map.tilewidth * self.scale_map)
+                        x * self.tile_size, y * self.tile_size)
                     tile_sprite.mask = pygame.mask.from_surface(tile_sprite.image)
 
 

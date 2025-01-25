@@ -10,3 +10,6 @@ FRAME_TIME = 0.08
 
 # Weapons
 ID_WEAPON = 0
+
+# Map
+SCALE_MAP = 1.5
