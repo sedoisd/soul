@@ -10,6 +10,7 @@ class Character(sprite.Sprite):
         super().__init__(sprite_groups)
         self.character_id = ID_CHARACTER
         self.frame_time = FRAME_TIME
+        self.is_detected = False
 
         self.scale = 0.3
         self._create_frames()
@@ -25,7 +26,7 @@ class Character(sprite.Sprite):
 
     def _setup_character_characteristic(self) -> None:
         self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
-        # print(self.name, self.health, self.damage, self.speed)
+        # print(self.name, self.health, self.damage, self.speed) # log
 
     def _create_frames(self) -> None:
         atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
@@ -92,6 +93,7 @@ class Enemy(sprite.Sprite):
         super().__init__(sprite_groups)
         self.enemy_id = enemy_id
         self.frame_time = FRAME_TIME
+        self.is_attacking = False
 
         self._setup_enemy_characteristic()
         self._create_frames()
@@ -103,7 +105,7 @@ class Enemy(sprite.Sprite):
     def _setup_enemy_characteristic(self) -> None:
         self.scale = 2
         self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id)
-        # print(self.name, self.health, self.damage, self.speed)
+        # print(self.name, self.health, self.damage, self.speed) # log
 
     def _create_frames(self):
         quan_walking, quan_attack, quan_death, quan_stand, quan_kinds = (
@@ -127,9 +129,19 @@ class Enemy(sprite.Sprite):
             atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
             for i in range(0, 3)]
 
-    def update(self, *args, **kwargs):
-        pass
-
+    def update(self, player):
+        # print(player)
+        if not self.is_attacking and (self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2 < 100:
+            self.is_attacking = True
+        if self.is_attacking:
+            if self.rect.x > player.rect.x:
+                self.rect.x -= 1
+            else:
+                self.rect.x += 1
+            if self.rect.y > player.rect.y:
+                self.rect.y -= 1
+            else:
+                self.rect.y += 1
 
 class Camera:
     # зададим начальный сдвиг камеры

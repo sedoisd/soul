@@ -20,11 +20,12 @@ class Game:
         self.camera = Camera()
 
         # init variables
-        self.all_sprites = pygame.sprite.Group()
-        self.all_tiles = pygame.sprite.Group()
-        self.player_group = pygame.sprite.Group()
-        self.enemies_group = pygame.sprite.Group()
-        self.walls_sprites = pygame.sprite.Group()
+        self.group_all_sprites = pygame.sprite.Group()
+        self.group_all_tiles = pygame.sprite.Group()
+        self.group_player_group = pygame.sprite.Group()
+        self.group_enemies_group = pygame.sprite.Group()
+        self.group_walls_sprites = pygame.sprite.Group()
+        self.group_trap = pygame.sprite.Group()
         self.fps = 60
         self.scale_map = SCALE_MAP
         self.running = True
@@ -64,41 +65,45 @@ class Game:
 
     def update(self):
         if self.flag_going_game:
-            self.player.update(timedelta=self.time_delta, mode='update', group_walls=self.walls_sprites)
+            self.player.update(timedelta=self.time_delta, mode='update', group_walls=self.group_walls_sprites)
+            self.group_enemies_group.update(self.player)
             self.camera.update(self.player)
-            for sprite in self.all_sprites.sprites():
+            for sprite in self.group_all_sprites.sprites():
                 self.camera.apply(sprite)
         self.gui_manager.manager.update(self.time_delta)
 
     def render(self):
         self.screen.fill((0, 0, 0))
         if self.flag_going_game:
-            self.all_tiles.draw(self.screen)
-            self.player_group.draw(self.screen)
-            self.enemies_group.draw(self.screen)
+            self.group_all_tiles.draw(self.screen)
+            self.group_player_group.draw(self.screen)
+            self.group_enemies_group.draw(self.screen)
         self.gui_manager.manager.draw_ui(self.screen)
 
     def start_level(self):
         self.flag_going_game = True
         self.map = pytmx.load_pygame('tmx/test_map.tmx')
         self.tile_size = self.map.tilewidth * self.scale_map
-        layers = [[0, self.all_sprites, self.all_tiles], [1, self.all_sprites, self.all_tiles],
-                  [2, self.all_sprites, self.all_tiles, self.walls_sprites]]
+        print(self.tile_size)
+        layers = [[0, self.group_all_sprites, self.group_all_tiles], [1, self.group_all_sprites, self.group_all_tiles],
+                  [2, self.group_all_sprites, self.group_all_tiles, self.group_walls_sprites],
+                  [3, [self.group_all_sprites, self.group_all_tiles, self.group_trap]]]
         for i in layers:
             self._init_layer_level(*i)
 
         for object in self.map.objects:
-            print(object.name)
+            # print(object.name) # log
             x_object, y_object = object.x * self.scale_map, object.y * self.scale_map
-            sprite_groups = [self.all_sprites]
+            sprite_groups = [self.group_all_sprites]
             if object.name == 'Player':
-                sprite_groups += [self.player_group]
+                sprite_groups += [self.group_player_group]
                 self.player = Character((x_object, y_object), sprite_groups)
             elif object.name == 'Enemy':
                 enemy_id = int(object.properties['enemy_id'])
-                sprite_groups += [self.enemies_group]
+                sprite_groups += [self.group_enemies_group]
                 enemy = Enemy(enemy_id, (x_object, y_object),
                               sprite_groups=sprite_groups)
+
 
     def _init_layer_level(self, number_layer, *groups):
         for y in range(self.map.height):
