@@ -2,7 +2,7 @@ from pygame import Rect
 import pygame
 import pygame_gui
 from pygame_gui.elements import *
-from constants import SIZE, FILENAME_DATABASE, ID_CHARACTER
+from constants import SIZE, FILENAME_DATABASE
 from other_functions import get_frame_current_weapon, get_front_frame_current_characters
 import sqlite3
 
@@ -86,7 +86,7 @@ class DatabaseManager:
     def get_characteristics_character(cls) -> tuple[str, int, int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, speed FROM characters
-                             WHERE id=?''', (ID_CHARACTER,)).fetchone()
+                             WHERE id=?''', (DatabaseManager.get_current_character_id(),)).fetchone()
         # print(result)
         con.close()
         return result
