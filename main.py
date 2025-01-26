@@ -57,10 +57,10 @@ class Game:
         if event.type == pygame.MOUSEBUTTONUP:
             print(event.pos)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
-            print(222) # log
+            print(222)  # log
             if event.ui_element == self.gui_manager.button_start:
                 self.gui_manager.kill_start_menu()
-                print(111) # log
+                print(111)  # log
                 self._start_level()
 
     def _update(self):
@@ -91,7 +91,8 @@ class Game:
         self.map = pytmx.load_pygame('tmx/test_map.tmx')
         self.tile_size = self.map.tilewidth * self.scale_map
         # print(self.tile_size) # log
-        layers = [[0, self.group_all_game_spites, self.group_all_tiles], [1, self.group_all_game_spites, self.group_all_tiles],
+        layers = [[0, self.group_all_game_spites, self.group_all_tiles],
+                  [1, self.group_all_game_spites, self.group_all_tiles],
                   [2, self.group_all_game_spites, self.group_all_tiles, self.group_walls_sprites],
                   [3, [self.group_all_game_spites, self.group_all_tiles, self.group_trap]]]
         for i in layers:
