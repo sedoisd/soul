@@ -3,6 +3,7 @@ import pygame_gui
 from constants import *
 from managers import GuiManager
 from initialization_classes import Character
+from other_functions import get_frame_current_background
 
 
 # import sys
@@ -12,6 +13,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SIZE)
+        self.size = self.screen.get_size()
 
         # init classes
         self.gui_manager = GuiManager()
@@ -25,9 +27,10 @@ class Game:
         self.flag_going_game = False
         self.player = None
         self.time_delta = None
-
+        self.background_image = None
+        
         self.gui_manager.load_start_menu()
-
+        
     def run(self):
         while self.running:
             self.time_delta = self.clock.tick(self.fps) / 1000
@@ -56,16 +59,18 @@ class Game:
         # if self.flag_going_game:
         #     self.player.update(event=event, timedelta=self.time_delta, mode='event')
 
-    def update(self):
-        if self.flag_going_game:
-            self.player.update(timedelta=self.time_delta, mode='update')
-        self.gui_manager.manager.update(self.time_delta)
-
     def render(self):
         self.screen.fill((0, 0, 0))
+        fon = get_frame_current_background()
+        self.screen.blit(fon, (0, 0))
         if self.flag_going_game:
             self.player_group.draw(self.screen)
         self.gui_manager.manager.draw_ui(self.screen)
+
+    def update(self):
+        if self.flag_going_game:
+            self.player.update(timedelta=self.time_delta, mode='update')
+        self.gui_manager.manager.update(self.time_delta) 
 
     def start_game(self):
         self.flag_going_game = True
@@ -77,3 +82,5 @@ if __name__ == '__main__':
     game = Game()
     game.run()
     # main()
+
+

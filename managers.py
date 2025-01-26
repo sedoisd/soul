@@ -21,41 +21,41 @@ class GuiManager:
         self.button_setting.kill()
         self.button_exit.kill()
         self.image_character = None
-        self.label_image_character.kill()
-        self.label_name_character.kill()
+        # self.label_image_character.kill()
+        # self.label_name_character.kill()
         self.image_weapon = None
-        self.label_image_weapon.kill()
-        self.label_name_weapon.kill()
+        # self.label_image_weapon.kill()
+        # self.label_name_weapon.kill()
 
     def load_start_menu(self) -> None:
         def redirection(command_load=None) -> None:
             self.kill_start_menu()
             command_load()
 
-        size_button = (200, 70)
-        self.button_start = UIButton(relative_rect=Rect((30, 180, *size_button)),
-                                     text='Старт', manager=self.manager, )
-        self.button_shop = UIButton(relative_rect=Rect((30, 270, *size_button)),
+        # size_button = (200, 70)
+        self.button_start = UIButton(relative_rect=Rect((363, 430, 200, 70)),
+                                     text='Играть', manager=self.manager, )
+        self.button_shop = UIButton(relative_rect=Rect((170, 370, 100, 50)),
                                     text='Магазин', manager=self.manager,
                                     command=lambda: redirection(self._load_shop))
-        self.button_setting = UIButton(relative_rect=Rect((30, 360, *size_button)),
+        self.button_setting = UIButton(relative_rect=Rect((0, 600, 80, 30)),
                                        text='Настройки', manager=self.manager,
                                        command=lambda: redirection(self._load_setting))
-        self.button_exit = UIButton(relative_rect=Rect((30, 450, *size_button)),
+        self.button_exit = UIButton(relative_rect=Rect((775, 290, 100, 50)),
                                     text='Выход', manager=self.manager)
 
-        # Character menu
-        self.label_image_character = UILabel(Rect((620, 50, 150, 400)), text='')
-        self.image_character = get_front_frame_current_characters()
-        # self.image_character = ц(self.image_character, 0, 0.2)
-        self.label_image_character.set_image(self.image_character)
-        self.label_name_character = UILabel(Rect((690, 310, 100, 30)), text='Рыцарь')
+        # # Character menu
+        # self.label_image_character = UILabel(Rect((620, 290, 150, 400)), text='')
+        # self.image_character = get_front_frame_current_characters()
+        # # self.image_character = ц(self.image_character, 0, 0.2)
+        # self.label_image_character.set_image(self.image_character)
+        # self.label_name_character = UILabel(Rect((690, 520, 100, 30)), text='Рыцарь')
 
-        # Weapon menu
-        self.label_image_weapon = UILabel(Rect((350, 60, 150, 100)), text='')
-        self.image_weapon = get_frame_current_weapon()
-        self.label_image_weapon.set_image(self.image_weapon)
-        self.label_name_weapon = UILabel(Rect((410, 315, 60, 30)), text='Меч')
+        # # Weapon menu
+        # self.label_image_weapon = UILabel(Rect((300, 330, 150, 100)), text='')
+        # self.image_weapon = get_frame_current_weapon()
+        # self.label_image_weapon.set_image(self.image_weapon)
+        # self.label_name_weapon = UILabel(Rect((350, 520, 60, 30)), text='Меч')
 
     def _load_setting(self) -> None:
         def back():
