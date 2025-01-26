@@ -5,7 +5,6 @@ from managers import DatabaseManager
 from constants import FRAME_TIME, SIZE
 
 
-
 class Character(sprite.Sprite):
     def __init__(self, position: (int, int), sprite_groups=None):
         super().__init__(sprite_groups)
