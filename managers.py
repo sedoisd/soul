@@ -3,7 +3,7 @@ import pygame
 import pygame_gui
 from pygame_gui.elements import *
 from constants import SIZE, FILENAME_DATABASE
-from other_functions import get_frame_current_weapon, get_front_frame_current_characters
+from other_functions import get_frame_weapon_by_id, get_front_frame_characters_by_id
 import sqlite3
 
 
@@ -45,14 +45,14 @@ class GuiManager:
 
         # Character menu
         self.label_image_character = UILabel(Rect((620, 50, 150, 400)), text='')
-        self.image_character = get_front_frame_current_characters()
+        self.image_character = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
         # self.image_character = ц(self.image_character, 0, 0.2)
         self.label_image_character.set_image(self.image_character)
         self.label_name_character = UILabel(Rect((690, 310, 100, 30)), text='Рыцарь')
 
         # Weapon menu
         self.label_image_weapon = UILabel(Rect((350, 60, 150, 100)), text='')
-        self.image_weapon = get_frame_current_weapon()
+        self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_and_mod_ids()[0])
         self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((410, 315, 60, 30)), text='Меч')
 
@@ -113,8 +113,8 @@ class DatabaseManager:
     @classmethod
     def get_current_character_id(cls) -> int:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT current_character FROM user''').fetchone()
-        # print(result)
+        result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
+        print(result)
         con.close()
         return result
 

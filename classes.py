@@ -132,9 +132,9 @@ class Enemy(sprite.Sprite):
 
     def update(self, player):
         # print(player)
-        distance_visible = 600
-        if not self.is_attacking and (self.rect.x - player.rect.x) ** 2 + (
-                self.rect.y - player.rect.y) ** 2 < distance_visible:
+        distance_visible = 150
+        if not self.is_attacking and ((self.rect.x - player.rect.x) ** 2 + (
+                self.rect.y - player.rect.y) ** 2) ** 0.5 < distance_visible:
             self.is_attacking = True
         if self.is_attacking:
             if self.rect.x > player.rect.x:
