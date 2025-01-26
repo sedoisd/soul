@@ -57,10 +57,10 @@ class Game:
         if event.type == pygame.MOUSEBUTTONUP:
             print(event.pos)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
-            print(222)
+            print(222) # log
             if event.ui_element == self.gui_manager.button_start:
                 self.gui_manager.kill_start_menu()
-                print(111)
+                print(111) # log
                 self._start_level()
 
     def _update(self):
@@ -133,4 +133,3 @@ class Game:
 if __name__ == '__main__':
     game = Game()
     game.run()
-    # main()

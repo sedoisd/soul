@@ -87,7 +87,7 @@ class DatabaseManager:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, speed FROM characters
                              WHERE id=?''', (DatabaseManager.get_current_character_id(),)).fetchone()
-        # print(result)
+        # print(result) # log
         con.close()
         return result
 
@@ -96,7 +96,7 @@ class DatabaseManager:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, speed FROM enemies
                              WHERE id=?''', (enemy_id,)).fetchone()
-        # print(result)
+        # print(result) # log
         con.close()
         return result
 
@@ -106,7 +106,7 @@ class DatabaseManager:
         result = cur.execute('''SELECT quan_walking_frames, quan_attack_frames, 
                              quan_death_frames, quan_stand_frame, quan_kinds_frames FROM enemies
                              WHERE ID=?''', (enemy_id,)).fetchone()
-        # print(result)
+        # print(result) # log
         con.close()
         return result
 
@@ -114,7 +114,7 @@ class DatabaseManager:
     def get_current_character_id(cls) -> int:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
-        print(result)
+        # print(result) # log
         con.close()
         return result
 
@@ -122,6 +122,6 @@ class DatabaseManager:
     def get_current_weapon_and_mod_ids(cls) -> (int, int):
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT current_weapon, current_weapon_mod FROM user''').fetchone()
-        # print(result)
+        # print(result) # log
         con.close()
         return result
