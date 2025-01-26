@@ -1,15 +1,9 @@
 # GENERAL
-WIDTH = 900
-HEIGHT = 700
-SIZE = WIDTH, HEIGHT
+SIZE = WIDTH, HEIGHT = 900, 700
 FILENAME_DATABASE = 'database.sqlite'
 
 # Characters
-ID_CHARACTER = 4
 FRAME_TIME = 0.08
-
-# Weapons
-ID_WEAPON = 0
 
 # Map
 SCALE_MAP = 1.5

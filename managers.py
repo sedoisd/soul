@@ -80,7 +80,6 @@ class DatabaseManager:
     def _connection_to_database(cls):
         with sqlite3.connect(FILENAME_DATABASE) as con:
             cur = con.cursor()
-            # print(type(con), type(cur))
             return con, cur
 
     @classmethod
@@ -93,7 +92,7 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_characteristics_enemy_by_id(cls, enemy_id: int = None) -> tuple[str, int, int, int]:
+    def get_characteristics_enemy_by_id(cls, enemy_id: int) -> tuple[str, int, int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, speed FROM enemies
                              WHERE id=?''', (enemy_id,)).fetchone()
@@ -107,6 +106,22 @@ class DatabaseManager:
         result = cur.execute('''SELECT quan_walking_frames, quan_attack_frames, 
                              quan_death_frames, quan_stand_frame, quan_kinds_frames FROM enemies
                              WHERE ID=?''', (enemy_id,)).fetchone()
+        # print(result)
+        con.close()
+        return result
+
+    @classmethod
+    def get_current_character_id(cls) -> int:
+        con, cur = cls._connection_to_database()
+        result = cur.execute('''SELECT current_character FROM user''').fetchone()
+        # print(result)
+        con.close()
+        return result
+
+    @classmethod
+    def get_current_weapon_and_mod_ids(cls) -> (int, int):
+        con, cur = cls._connection_to_database()
+        result = cur.execute('''SELECT current_weapon, current_weapon_mod FROM user''').fetchone()
         # print(result)
         con.close()
         return result
