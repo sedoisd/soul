@@ -13,3 +13,4 @@ ID_WEAPON = 0
 
 # Map
 SCALE_MAP = 1.5
+TILE_SIZE = 48.0
