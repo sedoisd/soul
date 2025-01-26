@@ -1,8 +1,7 @@
 import sys
 import os
 import pygame
-from constants import ID_CHARACTER, ID_WEAPON
-
+from managers import DatabaseManager
 
 def load_image(name, path=None) -> pygame.Surface:
     fullname = os.path.join('image', name)
@@ -23,8 +22,8 @@ def load_image(name, path=None) -> pygame.Surface:
     return image
 
 
-def get_front_frame_current_characters() -> pygame.surface: # for gui
-    atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
+def get_front_frame_current_characters() -> pygame.surface:  # for gui
+    atlas = load_image(f'char_{DatabaseManager.get_current_character_id()}.png', 'characters')
     atlas_width = atlas.get_width()
     atlas_height = atlas.get_height()
     image_width = atlas_width / 3
@@ -32,8 +31,8 @@ def get_front_frame_current_characters() -> pygame.surface: # for gui
     return atlas.subsurface(image_width, 0, image_width, image_height)
 
 
-def get_frame_current_weapon() -> pygame.surface: # for gui
-    image = load_image(f'weapon_{ID_WEAPON}.png', 'weapons')
+def get_frame_current_weapon() -> pygame.surface:  # for gui
+    image = load_image(f'weapon_{DatabaseManager.get_current_weapon_and_mod_ids()[0]}.png', 'weapons')
     # atlas_width = atlas.get_width()
     # atlas_height = atlas.get_height()
     # image_width = atlas_width / 3

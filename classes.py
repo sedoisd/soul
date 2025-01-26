@@ -2,13 +2,14 @@ from pygame import sprite, Rect
 import pygame
 from other_functions import load_image
 from managers import DatabaseManager
-from constants import ID_CHARACTER, FRAME_TIME, SIZE
+from constants import FRAME_TIME, SIZE
+
 
 
 class Character(sprite.Sprite):
     def __init__(self, position: (int, int), sprite_groups=None):
         super().__init__(sprite_groups)
-        self.character_id = ID_CHARACTER
+        self.character_id = DatabaseManager.get_current_character_id()
         self.frame_time = FRAME_TIME
         self.is_detected = False
 
@@ -29,7 +30,7 @@ class Character(sprite.Sprite):
         # print(self.name, self.health, self.damage, self.speed) # log
 
     def _create_frames(self) -> None:
-        atlas = load_image(f'char_{ID_CHARACTER}.png', 'characters')
+        atlas = load_image(f'char_{self.character_id}.png', 'characters')
         atlas_width = atlas.get_width()
         atlas_height = atlas.get_height()
         frame_width = atlas_width / 3
@@ -89,7 +90,7 @@ class Weapon(sprite.Sprite):
 
 
 class Enemy(sprite.Sprite):
-    def __init__(self, enemy_id: int, position: (int, int), sprite_groups = None):
+    def __init__(self, enemy_id: int, position: (int, int), sprite_groups=None):
         super().__init__(sprite_groups)
         self.enemy_id = enemy_id
         self.frame_time = FRAME_TIME
@@ -131,7 +132,9 @@ class Enemy(sprite.Sprite):
 
     def update(self, player):
         # print(player)
-        if not self.is_attacking and (self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2 < 100:
+        distance_visible = 600
+        if not self.is_attacking and (self.rect.x - player.rect.x) ** 2 + (
+                self.rect.y - player.rect.y) ** 2 < distance_visible:
             self.is_attacking = True
         if self.is_attacking:
             if self.rect.x > player.rect.x:
@@ -142,6 +145,7 @@ class Enemy(sprite.Sprite):
                 self.rect.y -= 1
             else:
                 self.rect.y += 1
+
 
 class Camera:
     # зададим начальный сдвиг камеры
