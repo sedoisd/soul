@@ -8,12 +8,16 @@
         "."
     ],
     "fileStates": {
+        "TX Props.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
         "test_map.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 2,
+            "scale": 11,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 1247.3333333333335,
-                "y": 690.6666666666667
+                "x": 933.0454545454545,
+                "y": 457.81818181818187
             }
         },
         "tileset_1.tsx": {
@@ -27,12 +31,14 @@
     "map.layerDataFormat": "3",
     "map.width": 100,
     "openFiles": [
+        "test_map.tmx",
         "tileset_1.tsx",
-        "test_map.tmx"
+        "TX Props.tsx"
     ],
     "project": "maps for soul.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "TX Props.tsx",
         "tileset_1.tsx",
         "test_map.tmx"
     ],

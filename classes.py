@@ -6,8 +6,8 @@ from constants import FRAME_TIME, SIZE
 
 
 class Character(sprite.Sprite):
-    def __init__(self, position: (int, int), sprite_groups=None):
-        super().__init__(sprite_groups)
+    def __init__(self, position: (int, int)):
+        super().__init__()
         self.character_id = DatabaseManager.get_current_character_id()
         self.frame_time = FRAME_TIME
         self.is_detected = False
@@ -89,8 +89,8 @@ class Weapon(sprite.Sprite):
 
 
 class Enemy(sprite.Sprite):
-    def __init__(self, enemy_id: int, position: (int, int), sprite_groups=None):
-        super().__init__(sprite_groups)
+    def __init__(self, enemy_id: int, position: (int, int)):
+        super().__init__()
         self.enemy_id = enemy_id
         self.frame_time = FRAME_TIME
         self.is_attacking = False
