@@ -2,9 +2,8 @@ import pygame
 import pygame_gui
 import pytmx
 from constants import *
-from managers import GuiManager, DatabaseManager, SpriteGroupManager
+from managers import GuiManager, SpriteGroupManager
 from classes import Character, Camera, Enemy, Cursor
-from other_functions import load_image
 
 
 # import sys
@@ -24,14 +23,6 @@ class Game:
         self.sprite_group_manager.add_cursor_sprite(self.cursor)
 
         # init variables
-        # self.group_hud = pygame.sprite.Group()
-        # self.group_all_game_spites = pygame.sprite.Group()
-        # self.group_all_tiles = pygame.sprite.Group()
-        # self.group_player = pygame.sprite.Group()
-        # self.group_enemies = pygame.sprite.Group()
-        # self.group_walls_sprites = pygame.sprite.Group()
-        # self.group_trap = pygame.sprite.Group()
-        # self.group_cursor = pygame.sprite.Group()
         self.fps = 60
         self.scale_map = SCALE_MAP
         self.running = True
