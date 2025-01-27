@@ -143,7 +143,7 @@ class SpriteGroupManager:
     def update(self, is_going_game: bool, timedelta: float) -> None:
         if is_going_game:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
-            self.enemies.update(*self.player.sprites())
+            self.enemies.update(*self.player.sprites(), timedelta)
 
     def draw(self, screen, is_going_game: bool) -> None:
         if is_going_game:
