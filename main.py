@@ -57,7 +57,7 @@ class Game:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.is_going_game:
                 for enemy in self.sprite_group_manager.enemies.sprites():
-                    # print('iter')
+                    # print('iter') # [LOG]
                     if pygame.sprite.collide_mask(self.cursor, enemy):
                         enemy.take_damage(self.player)
                         # print(enemy.health) # [LOG]
@@ -79,6 +79,8 @@ class Game:
             for sprite in self.sprite_group_manager.get_all_gameplay_sprites():
                 self.camera.apply(sprite)
         self.gui_manager.manager.update(self.time_delta)
+        if self.is_going_game and all(map(lambda x: not x.is_alive, self.sprite_group_manager.enemies)):
+            self._completion_level()
 
     def _render(self):
         """Отображение программы-игры"""
@@ -86,6 +88,13 @@ class Game:
         if self.is_going_game:
             self.sprite_group_manager.draw(self.screen, self.is_going_game)
         self.gui_manager.manager.draw_ui(self.screen)
+
+    def _completion_level(self):
+        self.is_going_game = False
+        pygame.mouse.set_visible(True)
+        self.sprite_group_manager.kill_gameplay_sprite()
+
+        self.gui_manager.load_start_menu()
 
     def _start_level(self):
         """Создание уровня"""
