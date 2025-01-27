@@ -131,6 +131,7 @@ class SpriteGroupManager:
     def __init__(self):
 
         self.all_gameplay = pygame.sprite.Group()
+        self.movable_for_gameplay = pygame.sprite.Group()
         self.player = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
@@ -152,11 +153,11 @@ class SpriteGroupManager:
             self.enemies.draw(screen)
             self.cursor.draw(screen)
 
-    def get_all_gameplay_sprites(self) -> list:
-        return self.all_gameplay.sprites()
+    def get_movable_sprites(self) -> list:
+        return self.movable_for_gameplay.sprites()
 
     def add_tile_sprite_by_id_layer(self, sprite: pygame.sprite.Sprite, id_layer: int) -> None:
-        groups = [self.all_gameplay, self.all_tiles]
+        groups = [self.all_gameplay, self.movable_for_gameplay, self.all_tiles]
         # if id_layer in (0, 1):
         #     groups.extend(self.all_tiles)
         if id_layer == 2:
@@ -169,15 +170,17 @@ class SpriteGroupManager:
 
     def add_player_sprite(self, sprite: pygame.sprite.Sprite) -> None:
         self.all_gameplay.add(sprite)
+        self.movable_for_gameplay.add(sprite)
         self.player.add(sprite)
 
     def add_enemy_sprite(self, sprite: pygame.sprite.Sprite) -> None:
         self.all_gameplay.add(sprite)
+        self.movable_for_gameplay.add(sprite)
         self.enemies.add(sprite)
 
     def add_cursor_sprite(self, sprite: pygame.sprite.Sprite) -> None:
         self.cursor.add(sprite)
 
-    def kill_gameplay_sprite(self) -> None:
+    def kill_gameplay_sprites(self) -> None:
         for sprite in self.all_gameplay:
             sprite.kill()

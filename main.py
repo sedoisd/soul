@@ -76,7 +76,7 @@ class Game:
         self.sprite_group_manager.update(is_going_game=self.is_going_game, timedelta=self.time_delta)
         if self.is_going_game:
             self.camera.update(self.player)
-            for sprite in self.sprite_group_manager.get_all_gameplay_sprites():
+            for sprite in self.sprite_group_manager.get_movable_sprites():
                 self.camera.apply(sprite)
         self.gui_manager.manager.update(self.time_delta)
         if self.is_going_game and all(map(lambda x: not x.is_alive, self.sprite_group_manager.enemies)):
@@ -92,7 +92,7 @@ class Game:
     def _completion_level(self):
         self.is_going_game = False
         pygame.mouse.set_visible(True)
-        self.sprite_group_manager.kill_gameplay_sprite()
+        self.sprite_group_manager.kill_gameplay_sprites()
 
         self.gui_manager.load_start_menu()
 
