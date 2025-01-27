@@ -3,7 +3,7 @@ import pygame_gui
 import pytmx
 from constants import *
 from managers import GuiManager, DatabaseManager, SpriteGroupManager
-from classes import Character, Camera, Enemy
+from classes import Character, Camera, Enemy, Cursor
 from other_functions import load_image
 
 
@@ -17,9 +17,11 @@ class Game:
 
         # init classes
         self.gui_manager = GuiManager()
+        self.sprite_group_manager = SpriteGroupManager()
         self.clock = pygame.time.Clock()
         self.camera = Camera()
-        self.sprite_group_manager = SpriteGroupManager()
+        self.cursor = Cursor()
+        self.sprite_group_manager.add_cursor_sprite(self.cursor)
 
         # init variables
         # self.group_hud = pygame.sprite.Group()
@@ -59,17 +61,23 @@ class Game:
             self.running = False
         if event.type == pygame.MOUSEMOTION:
             if self.flag_create_game_cursor:
-                self.cursor.rect.x, self.cursor.rect.y = event.pos
-        if event.type == pygame.MOUSEBUTTONUP:
+                self.cursor.update(event.pos)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.is_going_game:
+                for enemy in self.sprite_group_manager.enemies.sprites():
+                    # print('iter')
+                    if pygame.sprite.collide_mask(self.cursor, enemy):
+                        enemy.take_damage(self.player)
+                        print(enemy.health)
+                        print(111)
+
             print(event.pos)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
             print(222)  # log
             if event.ui_element == self.gui_manager.button_start:
                 self.gui_manager.kill_start_menu()
                 print(111)  # log
-                self.create_cursor_image()
                 self._start_level()
-
 
     def _update(self):
         """Обновление"""
@@ -89,6 +97,10 @@ class Game:
 
     def _start_level(self):
         """Создание уровня"""
+
+        self.flag_create_game_cursor = True
+        pygame.mouse.set_visible(False)
+
         self.is_going_game = True
         # self._create_hud()
         self.map = pytmx.load_pygame('tmx/test_map.tmx')
@@ -129,12 +141,6 @@ class Game:
         # self.gen_hud.rect.x, self.gen_hud.rect.y = 150, 580
         pass
 
-    def create_cursor_image(self):
-        self.flag_create_game_cursor = True
-        self.cursor = pygame.sprite.Sprite()
-        self.cursor.image = load_image('cursor.png', 'hud')
-        self.cursor.rect = self.cursor.image.get_rect()
-        self.sprite_group_manager.add_cursor_sprite(self.cursor)
 
 if __name__ == '__main__':
     game = Game()
