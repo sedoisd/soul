@@ -136,9 +136,8 @@ class Enemy(sprite.Sprite):
             atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
             for i in range(0, quan_death)]
         self.left_walking_frames = list(map(lambda x: pygame.transform.flip(
-                        x,
-                        True, False), self.right_walking_frames))
-
+            x,
+            True, False), self.right_walking_frames))
 
     def update(self, player, timedelta):
         if self.is_alive:
@@ -151,7 +150,7 @@ class Enemy(sprite.Sprite):
                     self.edit_current_frames('left')
                 elif self.rect.x < player.rect.x:
                     self.rect.x += 1
-                    self.edit_current_frames('righta')
+                    self.edit_current_frames('right')
                 if self.rect.y > player.rect.y:
                     self.rect.y -= 1
                 elif self.rect.y < player.rect.y:
@@ -170,7 +169,6 @@ class Enemy(sprite.Sprite):
         # print(self.index_frame, self.current_type_frame) # log
 
         self.image = self.current_type_frame[self.index_frame]
-
 
     def edit_current_frames(self, mode=None):
         if mode == 'death' and self.current_type_frame != self.death_frames:
