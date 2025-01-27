@@ -20,7 +20,6 @@ class Game:
         self.clock = pygame.time.Clock()
         self.camera = Camera()
         self.cursor = Cursor()
-        self.sprite_group_manager.add_cursor_sprite(self.cursor)
 
         # init variables
         self.fps = 60
@@ -31,6 +30,8 @@ class Game:
         self.player = None
         self.time_delta = None
 
+        # function exe
+        self.sprite_group_manager.add_cursor_sprite(self.cursor)
         self.gui_manager.load_start_menu()
 
     def run(self):
