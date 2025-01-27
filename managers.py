@@ -125,3 +125,58 @@ class DatabaseManager:
         # print(result) # log
         con.close()
         return result
+
+
+class SpriteGroupManager:
+    def __init__(self):
+
+        self.all_gameplay = pygame.sprite.Group()
+        self.player = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
+        self.trap = pygame.sprite.Group()
+
+        self.all_tiles = pygame.sprite.Group()
+        self.hud = pygame.sprite.Group()
+        self.cursor = pygame.sprite.Group()
+
+    def update(self, is_going_game: bool, timedelta: float) -> None:
+        if is_going_game:
+            self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
+            self.enemies.update(*self.player.sprites())
+
+    def draw(self, screen, is_going_game: bool) -> None:
+        if is_going_game:
+            self.all_tiles.draw(screen)
+            self.player.draw(screen)
+            self.enemies.draw(screen)
+            self.cursor.draw(screen)
+
+
+
+
+    def get_all_gameplay_sprites(self) -> list:
+        return self.all_gameplay.sprites()
+
+    def add_tile_sprite_by_id_layer(self, sprite: pygame.sprite.Sprite, id_layer: int) -> None:
+        groups = [self.all_gameplay, self.all_tiles]
+        # if id_layer in (0, 1):
+        #     groups.extend(self.all_tiles)
+        if id_layer == 2:
+            groups.append(self.walls)
+        elif id_layer == 3:
+            groups.append(self.trap)
+
+        for group in groups:
+            group.add(sprite)
+
+    def add_player_sprite(self, sprite: pygame.sprite.Sprite) -> None:
+        self.all_gameplay.add(sprite)
+        self.player.add(sprite)
+
+    def add_enemy_sprite(self, sprite: pygame.sprite.Sprite) -> None:
+        self.all_gameplay.add(sprite)
+        self.enemies.add(sprite)
+
+    def add_cursor_sprite(self, sprite: pygame.sprite.Sprite) -> None:
+        self.cursor.add(sprite)
