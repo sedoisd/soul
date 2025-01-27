@@ -59,15 +59,15 @@ class Game:
                     # print('iter')
                     if pygame.sprite.collide_mask(self.cursor, enemy):
                         enemy.take_damage(self.player)
-                        print(enemy.health)
-                        print(111)
+                        # print(enemy.health) # [LOG]
+                        # print(111) # [LOG]
 
             print(event.pos)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
-            print(222)  # log
+            # print(222)  # [LOG]
             if event.ui_element == self.gui_manager.button_start:
                 self.gui_manager.kill_start_menu()
-                print(111)  # log
+                # print(111)  # [LOG]
                 self._start_level()
 
     def _update(self):
@@ -96,12 +96,12 @@ class Game:
         # self._create_hud()
         self.map = pytmx.load_pygame('tmx/test_map.tmx')
         self.tile_size = self.map.tilewidth * self.scale_map
-        # print(self.tile_size) # log
+        # print(self.tile_size) # [LOG]
         for i in range(4):
             self._init_layer_level(i)
 
         for object_livestock in self.map.objects:
-            # print(object.name) # log
+            # print(object.name) # [LOG]
             x_object, y_object = object_livestock.x * self.scale_map, object_livestock.y * self.scale_map
             if object_livestock.name == 'Player':
                 self.player = Character((x_object, y_object))
