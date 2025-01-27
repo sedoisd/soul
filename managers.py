@@ -177,3 +177,7 @@ class SpriteGroupManager:
 
     def add_cursor_sprite(self, sprite: pygame.sprite.Sprite) -> None:
         self.cursor.add(sprite)
+
+    def kill_gameplay_sprite(self) -> None:
+        for sprite in self.all_gameplay:
+            sprite.kill()
