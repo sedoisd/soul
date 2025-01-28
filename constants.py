@@ -1,6 +1,6 @@
 # GENERAL
-WIDTH = 1000
-HEIGHT = 625
+WIDTH = 900
+HEIGHT = 700
 SIZE = WIDTH, HEIGHT
 FILENAME_DATABASE = 'database.sqlite'
 
@@ -10,6 +10,3 @@ FRAME_TIME = 0.08
 
 # Weapons
 ID_WEAPON = 0
-
-#background
-ID_BACKGROUND = 0
