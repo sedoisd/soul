@@ -3,7 +3,7 @@ import pygame_gui
 from constants import *
 from managers import GuiManager, DatabaseManager
 from initialization_classes import Character
-from other_functions import get_frame_current_background, load_image
+from other_functions import get_frame_current_background
 
 # import sys
 
@@ -26,38 +26,22 @@ class Game:
         self.player_group = pygame.sprite.Group()
         self.running = True
         self.fps = 30
-        # flag (be)
         self.flag_going_game = False
         self.flag_going_shop = False
         self.flag_going_setting = False
         self.flag_going_game1 = False
         self.player = None
         self.time_delta = None
-        # sound
         self.music_menu = pygame.mixer.music.load("sound/music/menu.mp3")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(self.progress_bar1 / 100)
-        pygame.mixer.music.set_volume(self.progress_bar2 / 100)
-        # mouse
-        # self.sprite = pygame.sprite.Sprite()
-        # # определим его вид
-        # self.sprite.image = load_image("other/mouse.png")
-        # # и размеры
-        # self.sprite.rect = self.sprite.image.get_rect()
-        # # добавим спрайт в группу
-        # self.all_sprites.add(self.sprite)
-
-        # pygame.mouse.set_visible(False)
+        self.gui_manager.load_start_menu()
         
     def run(self):
         while self.running:
             self.time_delta = self.clock.tick(self.fps) / 1000
             for event in pygame.event.get():
                 self.event_handling(event)
-                # if event.type == pygame.MOUSEMOTION:
-                #     self.sprite.rect.topleft = event.pos
-            # if pygame.mouse.get_focused():
-            #     self.all_sprites.draw(self.screen)
             self.update()
             self.render()
             pygame.display.flip()
@@ -73,7 +57,6 @@ class Game:
             print(event.pos)
             if self.flag_going_game:
                 self.player.rect.x, self.player.rect.y = event.pos
-        
             
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
             if event.ui_element == self.gui_manager.button_start:
@@ -88,29 +71,6 @@ class Game:
                 self.gui_manager.kill_start_menu()
                 self.flag_going_setting = True
                 self.gui_manager._load_setting()
-            elif event.ui_element == self.gui_manager.button_minys1: # Обработка настроек
-                if self.progress_bar1_f > 0:
-                    self.gui_manager.progress_bar1_f.set_current_progress(self.progress_bar1_f - 5)
-                    self.progress_bar1_f -= 5
-                    self.music_menu.set_volume(self.progress_bar1_f / 100)
-            elif event.ui_element == self.gui_manager.button_minys2:
-                if self.progress_bar2_f > 0:
-                    self.gui_manager.progress_bar2_f.set_current_progress(self.progress_bar2_f - 5)
-                    self.progress_bar2_f -= 5
-            elif event.ui_element == self.gui_manager.button_plus1:
-                if self.progress_bar1_f < 100:
-                    self.gui_manager.progress_bar1_f.set_current_progress(self.progress_bar1_f + 5)
-                    self.progress_bar1_f += 5
-                    self.music_menu.set_volume(self.progress_bar1_f / 100)
-            elif event.ui_element == self.gui_manager.button_plus2:
-                if self.progress_bar2_f < 100:
-                    self.gui_manager.progress_bar2_f.set_current_progress(self.progress_bar2_f + 5)
-                    self.progress_bar2_f += 5
-            elif event.ui_element == self.gui_manager.button_save:
-                self.progress_bar1 = self.progress_bar1_f
-                self.progress_bar2 = self.progress_bar2_f
-                self.music_menu.music.set_volume(self.progress_bar1 / 100)
-                self.database_manager.update_setting(self.progress_bar1, self.progress_bar2)
             elif event.ui_element == self.gui_manager.button_back:
                 self.gui_manager.load_start_menu()
                 self.gui_manager.button_back.kill()
@@ -131,10 +91,33 @@ class Game:
                     self.gui_manager.button_plus2.kill()
                     self.progress_bar1_f = self.progress_bar1
                     self.progress_bar2_f = self.progress_bar2
-                    self.music_menu.set_volume(self.progress_bar1 / 100)
+                    pygame.mixer.music.set_volume(self.progress_bar1 / 100)
                 self.flag_going_shop = False
                 self.flag_going_setting = False
                 self.flag_going_game1 = False
+            elif event.ui_element == self.gui_manager.button_minys1: # Обработка настроек
+                if self.progress_bar1_f > 0:
+                    self.gui_manager.progress_bar1_f.set_current_progress(self.progress_bar1_f - 5)
+                    self.progress_bar1_f -= 5
+                    pygame.mixer.music.set_volume(self.progress_bar1_f / 100)
+            elif event.ui_element == self.gui_manager.button_minys2:
+                if self.progress_bar2_f > 0:
+                    self.gui_manager.progress_bar2_f.set_current_progress(self.progress_bar2_f - 5)
+                    self.progress_bar2_f -= 5
+            elif event.ui_element == self.gui_manager.button_plus1:
+                if self.progress_bar1_f < 100:
+                    self.gui_manager.progress_bar1_f.set_current_progress(self.progress_bar1_f + 5)
+                    self.progress_bar1_f += 5
+                    pygame.mixer.music.set_volume(self.progress_bar1_f / 100)
+            elif event.ui_element == self.gui_manager.button_plus2:
+                if self.progress_bar2_f < 100:
+                    self.gui_manager.progress_bar2_f.set_current_progress(self.progress_bar2_f + 5)
+                    self.progress_bar2_f += 5
+            elif event.ui_element == self.gui_manager.button_save:
+                self.progress_bar1 = self.progress_bar1_f
+                self.progress_bar2 = self.progress_bar2_f
+                pygame.mixer.music.set_volume(self.progress_bar1 / 100)
+                self.database_manager.update_setting(self.progress_bar1, self.progress_bar2)
 
                 
 
