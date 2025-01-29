@@ -11,8 +11,8 @@ class Character(sprite.Sprite):
 
     def __init__(self, position: (int, int)):
         super().__init__()
-        self.is_detected = False
         self.character_id = DatabaseManager.get_current_character_id()
+        self.is_alive = True
 
         self._create_frames()
         self.image = self.front_frames[1]
@@ -25,37 +25,18 @@ class Character(sprite.Sprite):
         self._setup_character_characteristic()
         self.speed *= 100
 
-    def update(self, event=None, timedelta=None, mode: str = None, group_walls: pygame.sprite.Group = None) -> None:
+    def update(self, event=None, timedelta=None, mode: str = None, group_walls: pygame.sprite.Group = None,
+               group_enemy: pygame.sprite.Sprite = None) -> None:
+
         if mode == 'update':
             self.movement(timedelta, group_walls)
         elif mode == 'event':
             pass
 
-    def _setup_character_characteristic(self) -> None:
-        """Установка характеристик главного персонажа"""
-        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
-        print(self.name, self.health, self.damage, self.speed)  # [LOG]
-
-    def _create_frames(self) -> None:
-        """Создание фреймов анимации"""
-        atlas = load_image(f'char_{self.character_id}.png', 'characters')
-        atlas_width = atlas.get_width()
-        atlas_height = atlas.get_height()
-        frame_width = atlas_width / 3
-        frame_height = atlas_height / 4
-        self.rect = Rect(0, 0, frame_width, frame_height)
-        self.front_frames = [pygame.transform.rotozoom(
-            atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
-            for i in range(0, 3)]
-        self.back_frames = [pygame.transform.rotozoom(
-            atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, self.scale)
-            for i in range(0, 3)]
-        self.left_frames = [pygame.transform.rotozoom(
-            atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height), 0, self.scale)
-            for i in range(0, 3)]
-        self.right_frames = [pygame.transform.rotozoom(
-            atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height), 0, self.scale)
-            for i in range(0, 3)]
+    def take_damage(self, damager):
+        self.health -= damager.damage
+        if self.health <= 0:
+            self.is_alive = False
 
     def movement(self, timedelta, group_walls):
         """Передвижение персонажа и смена фреймов анимации"""
@@ -84,6 +65,32 @@ class Character(sprite.Sprite):
         else:
             self.index_frame = (self.index_frame + 1) % 3
             self.timedelta = 0
+
+    def _setup_character_characteristic(self) -> None:
+        """Установка характеристик главного персонажа"""
+        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
+        print(self.name, self.health, self.damage, self.speed)  # [LOG]
+
+    def _create_frames(self) -> None:
+        """Создание фреймов анимации"""
+        atlas = load_image(f'char_{self.character_id}.png', 'characters')
+        atlas_width = atlas.get_width()
+        atlas_height = atlas.get_height()
+        frame_width = atlas_width / 3
+        frame_height = atlas_height / 4
+        self.rect = Rect(0, 0, frame_width, frame_height)
+        self.front_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
+        self.back_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
+        self.left_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
+        self.right_frames = [pygame.transform.rotozoom(
+            atlas.subsurface(frame_width * i, frame_height * 2, frame_width, frame_height), 0, self.scale)
+            for i in range(0, 3)]
 
 
 class Weapon(sprite.Sprite):
@@ -117,10 +124,15 @@ class Enemy(sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = position
 
-    def update(self, player, timedelta):
+    def update(self, player, timedelta) -> None:
         """Обновление"""
-        self.ai_movement(player)
-
+        if self.is_alive:
+            self.ai_movement(player)
+            self.attack_to_player(player)
+        elif self.current_type_frame != self.death_frames:
+            self.edit_current_frames('death')
+        elif self.index_frame == len(self.death_frames) - 1:
+            self.full_death_animation = True
         # Подсчёт временного промежутка и смена кадра анимации
         if self.is_alive or not self.full_death_animation:
             if self.timedelta < self.frame_time:
@@ -128,16 +140,56 @@ class Enemy(sprite.Sprite):
             else:
                 self.index_frame = (self.index_frame + 1) % len(self.current_type_frame)
                 self.timedelta = 0
-        # print(self.index_frame, self.current_type_frame) # [LOG]
+            # print(self.index_frame, self.current_type_frame) # [LOG]
         self.image = self.current_type_frame[self.index_frame]
+
+    def attack_to_player(self, player: pygame.sprite.Sprite) -> None:
+        """Логика и выдача булева значения успеха атаки"""
+        if (((self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2) ** 0.5 <
+                self.attack_distance):
+            player.take_damage(player)
+
+    def ai_movement(self, player) -> None:
+        """Логика передвижения монстра относительно главного героя"""
+        if not self.is_attacking and ((self.rect.x - player.rect.x) ** 2 + (
+                self.rect.y - player.rect.y) ** 2) ** 0.5 < self.distance_visible:
+            self.is_attacking = True
+        if self.is_attacking:
+            if self.rect.x > player.rect.x:
+                self.rect.x -= 1
+                self.edit_current_frames('left')
+            elif self.rect.x < player.rect.x:
+                self.rect.x += 1
+                self.edit_current_frames('right')
+            if self.rect.y > player.rect.y:
+                self.rect.y -= 1
+            elif self.rect.y < player.rect.y:
+                self.rect.y += 1
+
+    def take_damage(self, damager) -> None:
+        """Получение урона от игрока"""
+        self.health -= damager.damage
+        if self.health <= 0:
+            self.is_alive = False
+
+    def edit_current_frames(self, mode=None) -> None:
+        """Смена текущих фреймов анимации"""
+        if mode == 'death' and self.current_type_frame != self.death_frames:
+            self.current_type_frame = self.death_frames
+            self.index_frame = 0
+        elif mode == 'left' and self.current_type_frame != self.left_walking_frames:
+            self.current_type_frame = self.left_walking_frames
+        elif mode == 'right' and self.current_type_frame != self.right_walking_frames:
+            self.current_type_frame = self.right_walking_frames
 
     def _setup_enemy_characteristic(self) -> None:
         """Установка характеристик монстра"""
         self.scale = 2
-        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id)
+        self.name, self.health, self.damage, self.attack_speed, self.attack_distance, self.speed = (
+            DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id))
         print(self.name, self.health, self.damage, self.speed)  # [LOG]
 
-    def _create_frames(self):
+    def _create_frames(self) -> None:
         """Создание фреймов анимации"""
         quan_walking, quan_attack, quan_death, quan_stand, quan_kinds = (
             DatabaseManager.get_quantities_frames_enemy_by_id(self.enemy_id))
@@ -161,44 +213,6 @@ class Enemy(sprite.Sprite):
             for i in range(0, quan_death)]
         self.left_walking_frames = list(map(lambda x: pygame.transform.flip(x, True, False),
                                             self.right_walking_frames))
-
-    def ai_movement(self, player):
-        """Логика передвижения монстра относительно главного героя"""
-        if self.is_alive:
-            if not self.is_attacking and ((self.rect.x - player.rect.x) ** 2 + (
-                    self.rect.y - player.rect.y) ** 2) ** 0.5 < self.distance_visible:
-                self.is_attacking = True
-            if self.is_attacking:
-                if self.rect.x > player.rect.x:
-                    self.rect.x -= 1
-                    self.edit_current_frames('left')
-                elif self.rect.x < player.rect.x:
-                    self.rect.x += 1
-                    self.edit_current_frames('right')
-                if self.rect.y > player.rect.y:
-                    self.rect.y -= 1
-                elif self.rect.y < player.rect.y:
-                    self.rect.y += 1
-        elif self.current_type_frame != self.death_frames:
-            self.edit_current_frames('death')
-        elif self.index_frame == len(self.death_frames) - 1:
-            self.full_death_animation = True
-
-    def edit_current_frames(self, mode=None):
-        """Смена текущих фреймов анимации"""
-        if mode == 'death' and self.current_type_frame != self.death_frames:
-            self.current_type_frame = self.death_frames
-            self.index_frame = 0
-        elif mode == 'left' and self.current_type_frame != self.left_walking_frames:
-            self.current_type_frame = self.left_walking_frames
-        elif mode == 'right' and self.current_type_frame != self.right_walking_frames:
-            self.current_type_frame = self.right_walking_frames
-
-    def take_damage(self, damager):
-        """Получение урона от игрока"""
-        self.health -= damager.damage
-        if self.health <= 0:
-            self.is_alive = False
 
 
 class Camera:
