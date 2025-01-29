@@ -32,8 +32,8 @@ def get_front_frame_current_characters() -> pygame.surface:
     return atlas.subsurface(image_width, 0, image_width, image_height)
 
 
-def get_frame_current_weapon() -> pygame.surface:
-    image = load_image(f'weapon_{ID_WEAPON}.png', 'weapons')
+def get_frame_current_weapon(num) -> pygame.surface:
+    image = load_image(f'weapon_{num}.png', 'weapons')
     # atlas_width = atlas.get_width()
     # atlas_height = atlas.get_height()
     # image_width = atlas_width / 3
