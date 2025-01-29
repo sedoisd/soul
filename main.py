@@ -38,6 +38,10 @@ class Game:
         """Основной цикл программы"""
         while self.running:
             self.time_delta = self.clock.tick(self.fps) / 1000
+
+            if self.is_going_game and not self.player.is_alive:
+                self._completion_level()
+
             for event in pygame.event.get():
                 self._event_handling(event)
             self._update()
@@ -48,6 +52,8 @@ class Game:
     def _event_handling(self, event):
         """Обработка событий"""
         self.gui_manager.manager.process_events(event)
+        # if pygame.event.Event == event:
+        #     print('daaa')
         if event.type == pygame.QUIT or (
                 event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.gui_manager.button_exit):
             self.running = False
@@ -55,6 +61,7 @@ class Game:
             if self.flag_create_game_cursor:
                 self.cursor.update(event.pos)
         if event.type == pygame.MOUSEBUTTONDOWN:
+            print(event.pos)
             if self.is_going_game:
                 for enemy in self.sprite_group_manager.enemies.sprites():
                     # print('iter') # [LOG]
@@ -63,7 +70,6 @@ class Game:
                         # print(enemy.health) # [LOG]
                         # print(111) # [LOG]
 
-            print(event.pos)
         if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
             # print(222)  # [LOG]
             if event.ui_element == self.gui_manager.button_start:
@@ -72,7 +78,7 @@ class Game:
                 self._start_level()
 
     def _update(self):
-        """Обновление"""
+        """Отправка обновлений"""
         self.sprite_group_manager.update(is_going_game=self.is_going_game, timedelta=self.time_delta)
         if self.is_going_game:
             self.camera.update(self.player)
@@ -109,7 +115,7 @@ class Game:
         # print(self.tile_size) # [LOG]
         for i in range(4):
             self._init_layer_level(i)
-
+        # self.map.
         for object_livestock in self.map.objects:
             # print(object.name) # [LOG]
             x_object, y_object = object_livestock.x * self.scale_map, object_livestock.y * self.scale_map
@@ -125,6 +131,8 @@ class Game:
         """Создание слоя по id. Слои из карты tmx формата"""
         for y in range(self.map.height):
             for x in range(self.map.width):
+                # if id_layer == 3:
+                #     print(self.map.get_tile_properties(x, y, id_layer)['type'])
                 image = self.map.get_tile_image(x, y, id_layer)
                 if image:
                     tile_sprite = pygame.sprite.Sprite()
