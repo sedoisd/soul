@@ -262,6 +262,41 @@ class Hud(pygame.sprite.Sprite):
         self.image = pygame.transform.rotozoom(load_image('empty_hud.png', 'hud'), 0, self.scale)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = 10, 10
+        self._init_status_bar()
+
+    def _init_status_bar(self):
+        self.health_bar = StatusBar('health')
+        self.armor_bar = StatusBar('armor')
+        self.ammunation_bar = StatusBar('ammunation')
+
+    def get_sprite_status_bar(self) -> tuple:
+        return self.health_bar, self.armor_bar, self.ammunation_bar
+
+    def update(self):
+        pass
+
+
+class StatusBar(pygame.sprite.Sprite):
+    def __init__(self, mode: str):
+        super().__init__()
+        self._create_frame(mode)
+
+    def _create_frame(self, mode: str) -> None:
+        image = pygame.transform.rotozoom(load_image('statusbar.png', 'hud'), 0, 0.7)
+        frame_width = image.get_width()
+        frame_height = image.get_height() // 3
+        if mode == 'health':
+            self.full_image = image.subsurface(0, 0, frame_width, frame_height)
+            self.x, self.y = 112, 22
+        elif mode == 'armor':
+            self.full_image = image.subsurface(0, frame_height, frame_width, frame_height)
+            self.x, self.y = 112, 50
+        elif mode == 'ammunation':
+            self.full_image = image.subsurface(0, frame_height * 2, frame_width, frame_height)
+            self.x, self.y = 112, 77
+        self.image = self.full_image
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = self.x, self.y
 
     def update(self):
         pass
