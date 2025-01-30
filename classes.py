@@ -284,7 +284,7 @@ class Hud(pygame.sprite.Sprite):
     def get_sprites_status_bar(self) -> tuple:
         return self.health_bar, self.armor_bar, self.ammunation_bar
 
-    def update(self, health: float, armor: float): #, armor: int, ammunation: int):
+    def update(self, health: float, armor: float):  # , armor: int, ammunation: int):
         self.health_bar.update(health)
         self.armor_bar.update(armor)
         # self.ammunation_bar.update()
