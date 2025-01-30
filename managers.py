@@ -161,6 +161,8 @@ class SpriteGroupManager:
 
     def add_hud(self, sprite: pygame.sprite.Sprite):
         self.hud.add(sprite)
+        for subsprite in sprite.get_sprite_status_bar():
+            self.hud.add(subsprite)
 
     def _add_gameplay(self, sprite):
         self.all_gameplay.add(sprite)
