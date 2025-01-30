@@ -83,9 +83,9 @@ class DatabaseManager:
             return con, cur
 
     @classmethod
-    def get_characteristics_character(cls) -> tuple[str, int, int, int]:
+    def get_characteristics_character(cls) -> tuple[str, int, int, int, int]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT name, health, damage, speed FROM characters
+        result = cur.execute('''SELECT name, health, damage, speed, armor FROM characters
                              WHERE id=?''', (DatabaseManager.get_current_character_id(),)).fetchone()
         # print(result) # [LOG]
         con.close()
@@ -137,6 +137,7 @@ class SpriteGroupManager:
         self.walls = pygame.sprite.Group()
         self.trap = pygame.sprite.Group()
         self.hud = pygame.sprite.Group()
+        self.hud_main_sprite = None
 
         self.all_tiles = pygame.sprite.Group()
         self.cursor = pygame.sprite.Group()
@@ -145,7 +146,7 @@ class SpriteGroupManager:
         if is_going_game:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
             self.enemies.update(*self.player.sprites(), timedelta)
-            self.hud.update()
+            self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
             # if any(map(lambda x: x.is_attacking, self.enemies)):
             #     pass
             # else:
@@ -160,8 +161,9 @@ class SpriteGroupManager:
             self.cursor.draw(screen)
 
     def add_hud(self, sprite: pygame.sprite.Sprite):
+        self.hud_main_sprite = sprite
         self.hud.add(sprite)
-        for subsprite in sprite.get_sprite_status_bar():
+        for subsprite in sprite.get_sprites_status_bar():
             self.hud.add(subsprite)
 
     def _add_gameplay(self, sprite):
@@ -196,4 +198,6 @@ class SpriteGroupManager:
 
     def kill_gameplay_sprites(self) -> None:
         for sprite in self.all_gameplay:
+            sprite.kill()
+        for sprite in self.hud:
             sprite.kill()
