@@ -136,7 +136,7 @@ class Game:
                 if id_layer == 3:
                     tile_properties = self.map.get_tile_properties(x,y, id_layer)
                     if tile_properties and tile_properties['type'] == 'trap':
-                        trap = Trap(x, y)
+                        trap = Trap(x * self.tile_size, y * self.tile_size)
                         self.sprite_group_manager.add_tile_sprite_by_id_layer(trap, id_layer)
                         flag_trap = True
                 image = self.map.get_tile_image(x, y, id_layer)

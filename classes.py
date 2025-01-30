@@ -1,5 +1,6 @@
 from pygame import sprite, Rect
 import pygame
+
 from other_functions import load_image
 from managers import DatabaseManager
 from constants import CHARACTERS_FRAME_TIME, ENEMY_FRAME_TIME, SIZE, SCALE_HUD, SCALE_MAP
@@ -25,20 +26,22 @@ class Character(sprite.Sprite):
         self._setup_character_characteristic()
         self.speed *= 100
 
-    def update(self, event=None, timedelta=None, mode: str = None, group_walls: pygame.sprite.Group = None,
+    def update(self, timedelta=None, mode: str = None, group_walls: pygame.sprite.Group = None,
                group_enemy: pygame.sprite.Sprite = None) -> None:
-
-        if mode == 'update':
-            self.movement(timedelta, group_walls)
-        elif mode == 'event':
-            pass
+        if self.flag_alive:
+            if mode == 'update':
+                self.movement(timedelta, group_walls)
+            elif mode == 'event':
+                pass
 
     def get_value_for_hud(self) -> tuple[float, float]:
         health_percents = self.health / self.max_health
         armor_percents = self.armor / self.max_armor
         return health_percents, armor_percents
 
-    def take_damage(self, damager):
+    def take_damage(self, damager) -> None:
+        """Args:
+                damager (Enemy)"""
         if self.armor > 0:
             self.armor -= damager.damage
             if self.armor < 0:
@@ -48,7 +51,7 @@ class Character(sprite.Sprite):
         if self.health <= 0:
             self.flag_alive = False
 
-    def movement(self, timedelta, group_walls):
+    def movement(self, timedelta: float, group_walls: pygame.sprite.Group) -> None:
         """Передвижение персонажа и смена фреймов анимации"""
         x, y = self.rect.x, self.rect.y
         delta_distance = self.speed * self.timedelta
@@ -138,7 +141,7 @@ class Enemy(sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = position
 
-    def update(self, player, timedelta) -> None:
+    def update(self, player: Character, timedelta: float) -> None:
         """Обновление"""
         if self.flag_alive:
             self.ai_movement(player)
@@ -157,7 +160,7 @@ class Enemy(sprite.Sprite):
             # print(self.index_frame, self.current_type_frame) # [LOG]
         self.image = self.current_type_frame[self.index_frame]
 
-    def attack_to_player(self, player: pygame.sprite.Sprite) -> None:
+    def attack_to_player(self, player: Character) -> None:
         """Логика и выдача булева значения успеха атаки"""
         if not self.flag_attack and self._is_attack_distance(player):
             self.flag_attack = True
@@ -167,7 +170,7 @@ class Enemy(sprite.Sprite):
                 player.take_damage(self)
             self.flag_attack = False
 
-    def ai_movement(self, player) -> None:
+    def ai_movement(self, player: Character) -> None:
         """Логика передвижения монстра относительно главного героя"""
         if not self.flag_angry and ((self.rect.x - player.rect.x) ** 2 + (
                 self.rect.y - player.rect.y) ** 2) ** 0.5 < self.distance_visible:
@@ -184,11 +187,12 @@ class Enemy(sprite.Sprite):
             elif self.rect.y < player.rect.y:
                 self.rect.y += 1
 
-    def take_damage(self, damager) -> None:
+    def take_damage(self, damager: Character) -> None:
         """Получение урона от игрока"""
         self.health -= damager.damage
         if self.health <= 0:
             self.flag_alive = False
+            self.flag_angry = False
 
     def _edit_current_frames(self, mode=None) -> None:
         """Смена текущих фреймов анимации"""
@@ -203,7 +207,7 @@ class Enemy(sprite.Sprite):
             self.current_type_frame = self.attack_frames
             self.index_frame = 0
 
-    def _is_attack_distance(self, player: pygame.sprite.Sprite) -> bool:
+    def _is_attack_distance(self, player: Character) -> bool:
         return ((self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2) ** 0.5 < self.attack_distance
 
     def _setup_enemy_characteristic(self) -> None:
@@ -245,12 +249,12 @@ class Camera:
         self.dy = 0
 
     # сдвинуть объект obj на смещение камеры
-    def apply(self, obj):
+    def apply(self, obj: pygame.sprite.Sprite):
         obj.rect.x += self.dx
         obj.rect.y += self.dy
 
     # позиционировать камеру на объекте target
-    def update(self, target):
+    def update(self, target: pygame.sprite.Sprite):
         self.dx = SIZE[0] // 2 - (target.rect.x + target.rect.w // 2)
         self.dy = SIZE[1] // 2 - (target.rect.y + target.rect.h // 2)
 
@@ -319,8 +323,9 @@ class StatusBar(pygame.sprite.Sprite):
 class Trap(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int):
         super().__init__()
-        self.x, self.y = x * SCALE_MAP, y * SCALE_MAP
         self._create_frames()
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = x, y
 
     def _create_frames(self):
         image = pygame.transform.rotozoom(load_image('trap.png', 'trap'), 0, SCALE_MAP)
@@ -329,14 +334,12 @@ class Trap(pygame.sprite.Sprite):
         self.frames = [image.subsurface(width * i, 0, width, height) for i in range(3)]
         self.index_frame = 2
         self.image = self.frames[self.index_frame]
-        self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = self.x, self.y
 
     def update(self, enable: bool) -> None:
         if enable:
             if self.index_frame > 0:
                 self.index_frame -= 1
-        elif not enable:
+        if not enable:
             if self.index_frame < len(self.frames) - 1:
                 self.index_frame += 1
         self.image = self.frames[self.index_frame]
