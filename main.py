@@ -39,7 +39,7 @@ class Game:
         while self.running:
             self.time_delta = self.clock.tick(self.fps) / 1000
 
-            if self.is_going_game and not self.player.is_alive:
+            if self.is_going_game and not self.player.flag_alive:
                 self._completion_level()
 
             for event in pygame.event.get():
@@ -85,7 +85,7 @@ class Game:
             for sprite in self.sprite_group_manager.get_movable_sprites():
                 self.camera.apply(sprite)
         self.gui_manager.manager.update(self.time_delta)
-        if self.is_going_game and all(map(lambda x: not x.is_alive, self.sprite_group_manager.enemies)):
+        if self.is_going_game and all(map(lambda x: not x.flag_alive, self.sprite_group_manager.enemies)):
             self._completion_level()
 
     def _render(self):

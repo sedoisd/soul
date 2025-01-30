@@ -12,7 +12,7 @@ class Character(sprite.Sprite):
     def __init__(self, position: (int, int)):
         super().__init__()
         self.character_id = DatabaseManager.get_current_character_id()
-        self.is_alive = True
+        self.flag_alive = True
 
         self._create_frames()
         self.image = self.front_frames[1]
@@ -36,7 +36,7 @@ class Character(sprite.Sprite):
     def take_damage(self, damager):
         self.health -= damager.damage
         if self.health <= 0:
-            self.is_alive = False
+            self.flag_alive = False
 
     def movement(self, timedelta, group_walls):
         """Передвижение персонажа и смена фреймов анимации"""
@@ -108,11 +108,13 @@ class Enemy(sprite.Sprite):
         super().__init__()
 
         self.enemy_id = enemy_id
-        self.is_attacking = False
-        self.is_alive = True
-        self.full_death_animation = False
+        self.flag_angry = False  # Идёт ли монстр в атаку на игрока.
+        self.flag_alive = True  # Жив ли монстр
+        self.flag_full_death_animation = False  # Проиграна ли полная анимация смерти
+        self.flag_attack = False  # Совершает ли атаку монстр
         self.index_frame = 0
         self.timedelta = 0
+        self.timedelta_for_attack_speed = 0
         self.distance_visible = 150
 
         self._setup_enemy_characteristic()
@@ -126,15 +128,15 @@ class Enemy(sprite.Sprite):
 
     def update(self, player, timedelta) -> None:
         """Обновление"""
-        if self.is_alive:
+        if self.flag_alive:
             self.ai_movement(player)
             self.attack_to_player(player)
         elif self.current_type_frame != self.death_frames:
-            self.edit_current_frames('death')
+            self._edit_current_frames('death')
         elif self.index_frame == len(self.death_frames) - 1:
-            self.full_death_animation = True
+            self.flag_full_death_animation = True
         # Подсчёт временного промежутка и смена кадра анимации
-        if self.is_alive or not self.full_death_animation:
+        if self.flag_alive or not self.flag_full_death_animation:
             if self.timedelta < self.frame_time:
                 self.timedelta += timedelta
             else:
@@ -145,22 +147,26 @@ class Enemy(sprite.Sprite):
 
     def attack_to_player(self, player: pygame.sprite.Sprite) -> None:
         """Логика и выдача булева значения успеха атаки"""
-        if (((self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2) ** 0.5 <
-                self.attack_distance):
-            player.take_damage(player)
+        if not self.flag_attack and self._is_attack_distance(player):
+            self.flag_attack = True
+            self._edit_current_frames('attack')
+        if self.flag_attack and self.index_frame == len(self.death_frames) - 2:
+            if self._is_attack_distance(player):
+                player.take_damage(self)
+            self.flag_attack = False
 
     def ai_movement(self, player) -> None:
         """Логика передвижения монстра относительно главного героя"""
-        if not self.is_attacking and ((self.rect.x - player.rect.x) ** 2 + (
+        if not self.flag_angry and ((self.rect.x - player.rect.x) ** 2 + (
                 self.rect.y - player.rect.y) ** 2) ** 0.5 < self.distance_visible:
-            self.is_attacking = True
-        if self.is_attacking:
+            self.flag_angry = True
+        if not self.flag_attack and self.flag_angry:
             if self.rect.x > player.rect.x:
                 self.rect.x -= 1
-                self.edit_current_frames('left')
+                self._edit_current_frames('left')
             elif self.rect.x < player.rect.x:
                 self.rect.x += 1
-                self.edit_current_frames('right')
+                self._edit_current_frames('right')
             if self.rect.y > player.rect.y:
                 self.rect.y -= 1
             elif self.rect.y < player.rect.y:
@@ -170,9 +176,9 @@ class Enemy(sprite.Sprite):
         """Получение урона от игрока"""
         self.health -= damager.damage
         if self.health <= 0:
-            self.is_alive = False
+            self.flag_alive = False
 
-    def edit_current_frames(self, mode=None) -> None:
+    def _edit_current_frames(self, mode=None) -> None:
         """Смена текущих фреймов анимации"""
         if mode == 'death' and self.current_type_frame != self.death_frames:
             self.current_type_frame = self.death_frames
@@ -181,6 +187,12 @@ class Enemy(sprite.Sprite):
             self.current_type_frame = self.left_walking_frames
         elif mode == 'right' and self.current_type_frame != self.right_walking_frames:
             self.current_type_frame = self.right_walking_frames
+        elif mode == 'attack':
+            self.current_type_frame = self.attack_frames
+            self.index_frame = 0
+
+    def _is_attack_distance(self, player: pygame.sprite.Sprite) -> bool:
+        return ((self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2) ** 0.5 < self.attack_distance
 
     def _setup_enemy_characteristic(self) -> None:
         """Установка характеристик монстра"""
