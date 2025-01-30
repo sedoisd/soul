@@ -33,8 +33,18 @@ class Character(sprite.Sprite):
         elif mode == 'event':
             pass
 
+    def get_value_for_hud(self) -> tuple[float, float]:
+        health_percents = self.health / self.max_health
+        armor_percents = self.armor / self.max_armor
+        return health_percents, armor_percents
+
     def take_damage(self, damager):
-        self.health -= damager.damage
+        if self.armor > 0:
+            self.armor -= damager.damage
+            if self.armor < 0:
+                self.armor = 0
+        else:
+            self.health -= damager.damage
         if self.health <= 0:
             self.flag_alive = False
 
@@ -68,8 +78,10 @@ class Character(sprite.Sprite):
 
     def _setup_character_characteristic(self) -> None:
         """Установка характеристик главного персонажа"""
-        self.name, self.health, self.damage, self.speed = DatabaseManager.get_characteristics_character()
-        print(self.name, self.health, self.damage, self.speed)  # [LOG]
+        self.name, self.health, self.damage, self.speed, self.armor = DatabaseManager.get_characteristics_character()
+        self.max_health = self.health
+        self.max_armor = self.armor
+        # print(self.name, self.health, self.damage, self.speed, self.armor)  # [LOG]
 
     def _create_frames(self) -> None:
         """Создание фреймов анимации"""
@@ -269,11 +281,13 @@ class Hud(pygame.sprite.Sprite):
         self.armor_bar = StatusBar('armor')
         self.ammunation_bar = StatusBar('ammunation')
 
-    def get_sprite_status_bar(self) -> tuple:
+    def get_sprites_status_bar(self) -> tuple:
         return self.health_bar, self.armor_bar, self.ammunation_bar
 
-    def update(self):
-        pass
+    def update(self, health: float, armor: float): #, armor: int, ammunation: int):
+        self.health_bar.update(health)
+        self.armor_bar.update(armor)
+        # self.ammunation_bar.update()
 
 
 class StatusBar(pygame.sprite.Sprite):
@@ -283,20 +297,22 @@ class StatusBar(pygame.sprite.Sprite):
 
     def _create_frame(self, mode: str) -> None:
         image = pygame.transform.rotozoom(load_image('statusbar.png', 'hud'), 0, 0.7)
-        frame_width = image.get_width()
-        frame_height = image.get_height() // 3
+        self.frame_width = image.get_width()
+        self.frame_height = image.get_height() // 3
         if mode == 'health':
-            self.full_image = image.subsurface(0, 0, frame_width, frame_height)
+            self.full_image = image.subsurface(0, 0, self.frame_width, self.frame_height)
             self.x, self.y = 112, 22
         elif mode == 'armor':
-            self.full_image = image.subsurface(0, frame_height, frame_width, frame_height)
+            self.full_image = image.subsurface(0, self.frame_height, self.frame_width, self.frame_height)
             self.x, self.y = 112, 50
         elif mode == 'ammunation':
-            self.full_image = image.subsurface(0, frame_height * 2, frame_width, frame_height)
+            self.full_image = image.subsurface(0, self.frame_height * 2, self.frame_width, self.frame_height)
             self.x, self.y = 112, 77
         self.image = self.full_image
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.x, self.y
 
-    def update(self):
-        pass
+    def update(self, value: float) -> None:
+        # print(value) # log
+        self.image = self.full_image.subsurface(0, 0, self.frame_width * value, self.frame_height)
+        self.rect.x, self.rect.y = self.x, self.y
