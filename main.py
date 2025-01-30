@@ -3,7 +3,7 @@ import pygame_gui
 import pytmx
 from constants import *
 from managers import GuiManager, SpriteGroupManager
-from classes import Character, Camera, Enemy, Cursor
+from classes import Character, Camera, Enemy, Cursor, Hud
 
 
 # import sys
@@ -31,7 +31,7 @@ class Game:
         self.time_delta = None
 
         # function exe
-        self.sprite_group_manager.add_cursor_sprite(self.cursor)
+        self.sprite_group_manager.add_cursor(self.cursor)
         self.gui_manager.load_start_menu()
 
     def run(self):
@@ -109,7 +109,8 @@ class Game:
         pygame.mouse.set_visible(False)
 
         self.is_going_game = True
-        # self._create_hud()
+        hud = Hud()
+        self.sprite_group_manager.add_hud(hud)
         self.map = pytmx.load_pygame('tmx/test_map.tmx')
         self.tile_size = self.map.tilewidth * self.scale_map
         # print(self.tile_size) # [LOG]
@@ -121,11 +122,11 @@ class Game:
             x_object, y_object = object_livestock.x * self.scale_map, object_livestock.y * self.scale_map
             if object_livestock.name == 'Player':
                 self.player = Character((x_object, y_object))
-                self.sprite_group_manager.add_player_sprite(self.player)
+                self.sprite_group_manager.add_player(self.player)
             elif object_livestock.name == 'Enemy':
                 enemy_id = int(object_livestock.properties['enemy_id'])
                 enemy = Enemy(enemy_id, (x_object, y_object))
-                self.sprite_group_manager.add_enemy_sprite(enemy)
+                self.sprite_group_manager.add_enemy(enemy)
 
     def _init_layer_level(self, id_layer):
         """Создание слоя по id. Слои из карты tmx формата"""
@@ -142,13 +143,6 @@ class Game:
                         x * self.tile_size, y * self.tile_size)
                     tile_sprite.mask = pygame.mask.from_surface(tile_sprite.image)
                     self.sprite_group_manager.add_tile_sprite_by_id_layer(tile_sprite, id_layer)
-
-    def _create_hud(self):
-        # self.gen_hud = pygame.sprite.Sprite(self.group_hud)
-        # self.gen_hud.image = pygame.transform.scale(load_image('hud.png', 'hud'), (600, 120))
-        # self.gen_hud.rect = self.gen_hud.image.get_rect()
-        # self.gen_hud.rect.x, self.gen_hud.rect.y = 150, 580
-        pass
 
 
 if __name__ == '__main__':

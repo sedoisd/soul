@@ -253,3 +253,15 @@ class Cursor(pygame.sprite.Sprite):
 
     def update(self, pos: (int, int)):
         self.rect.x, self.rect.y = pos[0] - self.rect.width // 2, pos[1] - self.rect.height // 2
+
+
+class Hud(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.scale = 0.7
+        self.image = pygame.transform.rotozoom(load_image('empty_hud.png', 'hud'), 0, self.scale)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = 10, 10
+
+    def update(self):
+        pass
