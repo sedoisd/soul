@@ -2,7 +2,7 @@ from pygame import sprite, Rect
 import pygame
 from other_functions import load_image
 from managers import DatabaseManager
-from constants import CHARACTERS_FRAME_TIME, ENEMY_FRAME_TIME, SIZE
+from constants import CHARACTERS_FRAME_TIME, ENEMY_FRAME_TIME, SIZE, SCALE_HUD
 
 
 class Character(sprite.Sprite):
@@ -208,8 +208,7 @@ class Enemy(sprite.Sprite):
 
     def _setup_enemy_characteristic(self) -> None:
         """Установка характеристик монстра"""
-        self.scale = 2
-        self.name, self.health, self.damage, self.attack_speed, self.attack_distance, self.speed = (
+        self.name, self.health, self.damage, self.scale, self.attack_distance, self.speed = (
             DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id))
         print(self.name, self.health, self.damage, self.speed)  # [LOG]
 
@@ -270,8 +269,7 @@ class Cursor(pygame.sprite.Sprite):
 class Hud(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.scale = 0.7
-        self.image = pygame.transform.rotozoom(load_image('empty_hud.png', 'hud'), 0, self.scale)
+        self.image = pygame.transform.rotozoom(load_image('empty_hud.png', 'hud'), 0, SCALE_HUD)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = 10, 10
         self._init_status_bar()
@@ -296,7 +294,7 @@ class StatusBar(pygame.sprite.Sprite):
         self._create_frame(mode)
 
     def _create_frame(self, mode: str) -> None:
-        image = pygame.transform.rotozoom(load_image('statusbar.png', 'hud'), 0, 0.7)
+        image = pygame.transform.rotozoom(load_image('statusbar.png', 'hud'), 0, SCALE_HUD)
         self.frame_width = image.get_width()
         self.frame_height = image.get_height() // 3
         if mode == 'health':
