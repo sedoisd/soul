@@ -186,20 +186,14 @@ class SpriteGroupManager:
             group.add(sprite)
 
     def add_player(self, sprite):
-        """Args:
-                sprite: classes.Player"""
         self._add_gameplay(sprite)
         self.player.add(sprite)
 
     def add_enemy(self, sprite):
-        """Args:
-                sprite: classes.Enemy"""
         self._add_gameplay(sprite)
         self.enemies.add(sprite)
 
     def add_cursor(self, sprite):
-        """Args:
-                sprite: classes.Cursor"""
         self.cursor.add(sprite)
 
     def kill_gameplay_sprites(self):

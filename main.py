@@ -128,7 +128,7 @@ class Game:
                 enemy = Enemy(enemy_id, (x_object, y_object))
                 self.sprite_group_manager.add_enemy(enemy)
 
-    def _init_layer_level(self, id_layer):
+    def _init_layer_level(self, id_layer: int):
         """Создание слоя по id. Слои из карты tmx формата"""
         for y in range(self.map.height):
             for x in range(self.map.width):
