@@ -92,7 +92,7 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_characteristics_enemy_by_id(cls, enemy_id: int) -> tuple[str, int, int, float, int,  int]:
+    def get_characteristics_enemy_by_id(cls, enemy_id: int) -> tuple[str, int, int, float, int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, attack_speed, attack_distance, speed FROM enemies
                              WHERE id=?''', (enemy_id,)).fetchone()
@@ -136,25 +136,35 @@ class SpriteGroupManager:
         self.enemies = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.trap = pygame.sprite.Group()
+        self.hud = pygame.sprite.Group()
 
         self.all_tiles = pygame.sprite.Group()
-        self.hud = pygame.sprite.Group()
         self.cursor = pygame.sprite.Group()
 
     def update(self, is_going_game: bool, timedelta: float) -> None:
         if is_going_game:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
             self.enemies.update(*self.player.sprites(), timedelta)
+            self.hud.update()
             # if any(map(lambda x: x.is_attacking, self.enemies)):
             #     pass
             # else:
             #     pass
+
     def draw(self, screen, is_going_game: bool) -> None:
         if is_going_game:
             self.all_tiles.draw(screen)
             self.player.draw(screen)
             self.enemies.draw(screen)
+            self.hud.draw(screen)
             self.cursor.draw(screen)
+
+    def add_hud(self, sprite: pygame.sprite.Sprite):
+        self.hud.add(sprite)
+
+    def _add_gameplay(self, sprite):
+        self.all_gameplay.add(sprite)
+        self.movable_for_gameplay.add(sprite)
 
     def get_movable_sprites(self) -> list:
         return self.movable_for_gameplay.sprites()
@@ -171,17 +181,15 @@ class SpriteGroupManager:
         for group in groups:
             group.add(sprite)
 
-    def add_player_sprite(self, sprite: pygame.sprite.Sprite) -> None:
-        self.all_gameplay.add(sprite)
-        self.movable_for_gameplay.add(sprite)
+    def add_player(self, sprite: pygame.sprite.Sprite) -> None:
+        self._add_gameplay(sprite)
         self.player.add(sprite)
 
-    def add_enemy_sprite(self, sprite: pygame.sprite.Sprite) -> None:
-        self.all_gameplay.add(sprite)
-        self.movable_for_gameplay.add(sprite)
+    def add_enemy(self, sprite: pygame.sprite.Sprite) -> None:
+        self._add_gameplay(sprite)
         self.enemies.add(sprite)
 
-    def add_cursor_sprite(self, sprite: pygame.sprite.Sprite) -> None:
+    def add_cursor(self, sprite: pygame.sprite.Sprite) -> None:
         self.cursor.add(sprite)
 
     def kill_gameplay_sprites(self) -> None:
