@@ -3,7 +3,7 @@ import pygame_gui
 import pytmx
 from constants import *
 from managers import GuiManager, SpriteGroupManager
-from classes import Character, Camera, Enemy, Cursor, Hud
+from classes import Character, Camera, Enemy, Cursor, Hud, Trap
 
 
 # import sys
@@ -132,10 +132,15 @@ class Game:
         """Создание слоя по id. Слои из карты tmx формата"""
         for y in range(self.map.height):
             for x in range(self.map.width):
-                # if id_layer == 3:
-                #     print(self.map.get_tile_properties(x, y, id_layer)['type'])
+                flag_trap = False
+                if id_layer == 3:
+                    tile_properties = self.map.get_tile_properties(x,y, id_layer)
+                    if tile_properties and tile_properties['type'] == 'trap':
+                        trap = Trap(x, y)
+                        self.sprite_group_manager.add_tile_sprite_by_id_layer(trap, id_layer)
+                        flag_trap = True
                 image = self.map.get_tile_image(x, y, id_layer)
-                if image:
+                if not flag_trap and image:
                     tile_sprite = pygame.sprite.Sprite()
                     tile_sprite.image = pygame.transform.rotozoom(image, 0, self.scale_map)
                     tile_sprite.rect = tile_sprite.image.get_rect()
