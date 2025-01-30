@@ -147,14 +147,12 @@ class SpriteGroupManager:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
             self.enemies.update(*self.player.sprites(), timedelta)
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
-            # if any(map(lambda x: x.is_attacking, self.enemies)):
-            #     pass
-            # else:
-            #     pass
+            self.trap.update(any(map(lambda x: x.flag_angry, self.enemies)))
 
     def draw(self, screen, is_going_game: bool) -> None:
         if is_going_game:
             self.all_tiles.draw(screen)
+            self.trap.draw(screen)
             self.player.draw(screen)
             self.enemies.draw(screen)
             self.hud.draw(screen)

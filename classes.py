@@ -2,7 +2,7 @@ from pygame import sprite, Rect
 import pygame
 from other_functions import load_image
 from managers import DatabaseManager
-from constants import CHARACTERS_FRAME_TIME, ENEMY_FRAME_TIME, SIZE, SCALE_HUD
+from constants import CHARACTERS_FRAME_TIME, ENEMY_FRAME_TIME, SIZE, SCALE_HUD, SCALE_MAP
 
 
 class Character(sprite.Sprite):
@@ -314,3 +314,29 @@ class StatusBar(pygame.sprite.Sprite):
         # print(value) # log
         self.image = self.full_image.subsurface(0, 0, self.frame_width * value, self.frame_height)
         self.rect.x, self.rect.y = self.x, self.y
+
+
+class Trap(pygame.sprite.Sprite):
+    def __init__(self, x: int, y: int):
+        super().__init__()
+        self.x, self.y = x * SCALE_MAP, y * SCALE_MAP
+        self._create_frames()
+
+    def _create_frames(self):
+        image = pygame.transform.rotozoom(load_image('trap.png', 'trap'), 0, SCALE_MAP)
+        width = image.get_width() // 3
+        height = image.get_height()
+        self.frames = [image.subsurface(width * i, 0, width, height) for i in range(3)]
+        self.index_frame = 2
+        self.image = self.frames[self.index_frame]
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = self.x, self.y
+
+    def update(self, enable: bool) -> None:
+        if enable:
+            if self.index_frame > 0:
+                self.index_frame -= 1
+        elif not enable:
+            if self.index_frame < len(self.frames) - 1:
+                self.index_frame += 1
+        self.image = self.frames[self.index_frame]
