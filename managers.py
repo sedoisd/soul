@@ -2,6 +2,7 @@ from pygame import Rect
 import pygame
 import pygame_gui
 from pygame_gui.elements import *
+
 from constants import SIZE, FILENAME_DATABASE
 from other_functions import get_frame_weapon_by_id, get_front_frame_characters_by_id
 import sqlite3
@@ -101,7 +102,7 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_quantities_frames_enemy_by_id(cls, enemy_id: int = None) -> tuple[int, int, int, int, int]:
+    def get_quantities_frames_enemy_by_id(cls, enemy_id: int) -> tuple[int, int, int, int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT quan_walking_frames, quan_attack_frames, 
                              quan_death_frames, quan_stand_frame, quan_kinds_frames FROM enemies
@@ -119,7 +120,7 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_current_weapon_and_mod_ids(cls) -> (int, int):
+    def get_current_weapon_and_mod_ids(cls) -> tuple[int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT current_weapon, current_weapon_mod FROM user''').fetchone()
         # print(result) # [LOG]
@@ -142,14 +143,14 @@ class SpriteGroupManager:
         self.all_tiles = pygame.sprite.Group()
         self.cursor = pygame.sprite.Group()
 
-    def update(self, is_going_game: bool, timedelta: float) -> None:
+    def update(self, is_going_game: bool, timedelta: float):
         if is_going_game:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
             self.enemies.update(*self.player.sprites(), timedelta)
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
             self.trap.update(any(map(lambda x: x.flag_angry, self.enemies)))
 
-    def draw(self, screen, is_going_game: bool) -> None:
+    def draw(self, screen: pygame.Surface, is_going_game: bool):
         if is_going_game:
             self.all_tiles.draw(screen)
             self.trap.draw(screen)
@@ -158,7 +159,7 @@ class SpriteGroupManager:
             self.hud.draw(screen)
             self.cursor.draw(screen)
 
-    def add_hud(self, sprite: pygame.sprite.Sprite):
+    def add_hud(self, sprite):
         self.hud_main_sprite = sprite
         self.hud.add(sprite)
         for subsprite in sprite.get_sprites_status_bar():
@@ -171,7 +172,8 @@ class SpriteGroupManager:
     def get_movable_sprites(self) -> list:
         return self.movable_for_gameplay.sprites()
 
-    def add_tile_sprite_by_id_layer(self, sprite: pygame.sprite.Sprite, id_layer: int) -> None:
+    def add_tile_sprite_by_id_layer(self, sprite, id_layer: int):
+
         groups = [self.all_gameplay, self.movable_for_gameplay, self.all_tiles]
         # if id_layer in (0, 1):
         #     groups.extend(self.all_tiles)
@@ -183,18 +185,24 @@ class SpriteGroupManager:
         for group in groups:
             group.add(sprite)
 
-    def add_player(self, sprite: pygame.sprite.Sprite) -> None:
+    def add_player(self, sprite):
+        """Args:
+                sprite: classes.Player"""
         self._add_gameplay(sprite)
         self.player.add(sprite)
 
-    def add_enemy(self, sprite: pygame.sprite.Sprite) -> None:
+    def add_enemy(self, sprite):
+        """Args:
+                sprite: classes.Enemy"""
         self._add_gameplay(sprite)
         self.enemies.add(sprite)
 
-    def add_cursor(self, sprite: pygame.sprite.Sprite) -> None:
+    def add_cursor(self, sprite):
+        """Args:
+                sprite: classes.Cursor"""
         self.cursor.add(sprite)
 
-    def kill_gameplay_sprites(self) -> None:
+    def kill_gameplay_sprites(self):
         for sprite in self.all_gameplay:
             sprite.kill()
         for sprite in self.hud:
