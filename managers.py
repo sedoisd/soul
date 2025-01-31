@@ -53,8 +53,8 @@ class GuiManager:
 
         # Weapon menu
         self.label_image_weapon = UILabel(Rect((350, 60, 150, 100)), text='')
-        self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_and_mod_ids()[0])
-        self.label_image_weapon.set_image(self.image_weapon)
+        self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
+        # self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((410, 315, 60, 30)), text='Меч')
 
     def _load_setting(self) -> None:
@@ -120,9 +120,17 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_current_weapon_and_mod_ids(cls) -> tuple[int, int]:
+    def get_current_weapon_id(cls) -> int:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT current_weapon, current_weapon_mod FROM user''').fetchone()
+        result = cur.execute('''SELECT current_weapon FROM user''').fetchone()[0]
+        # print(result) # [LOG]
+        con.close()
+        return result
+
+    @classmethod
+    def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float, float]:
+        con, cur = cls._connection_to_database()
+        result = cur.execute('''SELECT damage, scale, attack_speed FROM weapons WHERE id=?''', (weapon_id,)).fetchone()
         # print(result) # [LOG]
         con.close()
         return result
@@ -140,9 +148,10 @@ class SpriteGroupManager:
         self.hud = pygame.sprite.Group()
         self.portal = pygame.sprite.Group()
         self.hud_main_sprite = None
+        self.cursor = pygame.sprite.Group()
+        self.weapon = pygame.sprite.Group()
 
         self.all_tiles = pygame.sprite.Group()
-        self.cursor = pygame.sprite.Group()
 
     def update(self, is_going_game: bool, timedelta: float):
         if is_going_game:
@@ -159,6 +168,7 @@ class SpriteGroupManager:
             self.trap.draw(screen)
             self.portal.draw(screen)
             self.player.draw(screen)
+            self.weapon.draw(screen)
             self.enemies.draw(screen)
             self.hud.draw(screen)
             self.cursor.draw(screen)
@@ -193,6 +203,8 @@ class SpriteGroupManager:
     def add_player(self, sprite):
         self._add_gameplay(sprite)
         self.player.add(sprite)
+        self._add_gameplay(sprite.weapon)
+        self.weapon.add(sprite.weapon)
 
     def add_enemy(self, sprite):
         self._add_gameplay(sprite)

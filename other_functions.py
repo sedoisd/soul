@@ -31,7 +31,7 @@ def get_front_frame_characters_by_id(character_id: int) -> pygame.surface:  # fo
     return atlas.subsurface(image_width, 0, image_width, image_height)
 
 
-def get_frame_weapon_by_id(weapon_id: int, mod_id: int = None) -> pygame.surface:  # for gui
+def get_frame_weapon_by_id(weapon_id: int) -> pygame.surface:  # for gui
     image = load_image(f'weapon_{weapon_id}.png', 'weapons')
     # atlas_width = atlas.get_width()
     # atlas_height = atlas.get_height()
