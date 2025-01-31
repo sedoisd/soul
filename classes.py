@@ -142,10 +142,11 @@ class Enemy(sprite.Sprite):
         self.flag_alive = True  # Жив ли монстр
         self.flag_full_death_animation = False  # Проиграна ли полная анимация смерти
         self.flag_attack = False  # Совершает ли атаку монстр
+        self.direction = 'left'
         self.index_frame = 0
         self.timedelta = 0
         self.timedelta_for_attack_speed = 0
-        self.distance_visible = 150
+        self.distance_visible = 250
 
         self._setup_enemy_characteristic()
         self._create_frames()
@@ -187,8 +188,8 @@ class Enemy(sprite.Sprite):
 
     def ai_movement(self, player: Character):
         """Логика передвижения монстра относительно главного героя"""
-        if not self.flag_angry and ((self.rect.x - player.rect.x) ** 2 + (
-                self.rect.y - player.rect.y) ** 2) ** 0.5 < self.distance_visible:
+        if not self.flag_angry and ((self.rect.centerx - player.rect.centerx) ** 2 + (
+                self.rect.centery - player.rect.centery) ** 2) ** 0.5 < self.distance_visible:
             self.flag_angry = True
         if not self.flag_attack and self.flag_angry:
             if self.rect.x > player.rect.x:
@@ -218,14 +219,21 @@ class Enemy(sprite.Sprite):
             self.index_frame = 0
         elif mode == 'left' and self.current_type_frame != self.left_walking_frames:
             self.current_type_frame = self.left_walking_frames
+            self.direction = 'left'
         elif mode == 'right' and self.current_type_frame != self.right_walking_frames:
             self.current_type_frame = self.right_walking_frames
+            self.direction = 'right'
         elif mode == 'attack':
-            self.current_type_frame = self.attack_frames
+            if self.direction == 'left':
+                self.current_type_frame = list(map(lambda x: pygame.transform.flip(x, True, False),
+                                                   self.attack_frames))
+            else:
+                self.current_type_frame = self.attack_frames
             self.index_frame = 0
 
     def _is_attack_distance(self, player: Character) -> bool:
-        return ((self.rect.x - player.rect.x) ** 2 + (self.rect.y - player.rect.y) ** 2) ** 0.5 < self.attack_distance
+        return (((self.rect.centerx - player.rect.centerx) ** 2 + (self.rect.centery - player.rect.centery) ** 2) ** 0.5
+                < self.attack_distance)
 
     def _setup_enemy_characteristic(self):
         """Установка характеристик монстра"""
