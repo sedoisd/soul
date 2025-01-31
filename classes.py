@@ -232,13 +232,13 @@ class Enemy(sprite.Sprite):
 
     def _create_frames(self):
         """Создание фреймов анимации"""
-        quan_walking, quan_attack, quan_death, quan_stand, quan_kinds = (
+        quan_walking, quan_attack, quan_death, quan_stand = (
             DatabaseManager.get_quantities_frames_enemy_by_id(self.enemy_id))
         atlas = load_image(f'enemy_{self.enemy_id}.png', 'enemies')
         atlas_width = atlas.get_width()
         atlas_height = atlas.get_height()
         frame_width = atlas_width / max(quan_walking, quan_attack, quan_death, quan_stand)
-        frame_height = atlas_height / quan_kinds
+        frame_height = atlas_height / 4
         self.rect = Rect(0, 0, frame_width, frame_height)
         self.stand_frames = [pygame.transform.rotozoom(
             atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, self.scale)
