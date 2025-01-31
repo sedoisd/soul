@@ -145,7 +145,7 @@ class SpriteGroupManager:
 
     def update(self, is_going_game: bool, timedelta: float):
         if is_going_game:
-            self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls)
+            self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls, group_trap=self.trap)
             self.enemies.update(*self.player.sprites(), timedelta)
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
             flag_trap = any(map(lambda x: x.flag_angry, self.enemies))
