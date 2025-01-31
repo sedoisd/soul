@@ -52,8 +52,6 @@ class Game:
     def _event_handling(self, event):
         """Обработка событий"""
         self.gui_manager.manager.process_events(event)
-        # if pygame.event.Event == event:
-        #     print('daaa')
         if event.type == pygame.QUIT or (
                 event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.gui_manager.button_exit):
             self.running = False
@@ -88,8 +86,6 @@ class Game:
             if portal.flag_active and pygame.sprite.collide_mask(self.player, portal):
                 self._completion_level()
         self.gui_manager.manager.update(self.time_delta)
-
-
 
     def _render(self):
         """Отображение программы-игры"""
@@ -140,7 +136,7 @@ class Game:
             for x in range(self.map.width):
                 flag_trap = False
                 if id_layer == 3:
-                    tile_properties = self.map.get_tile_properties(x,y, id_layer)
+                    tile_properties = self.map.get_tile_properties(x, y, id_layer)
                     if tile_properties and tile_properties['type'] == 'trap':
                         trap = Trap(x * self.tile_size, y * self.tile_size)
                         self.sprite_group_manager.add_tile_sprite_by_id_layer(trap, id_layer)
