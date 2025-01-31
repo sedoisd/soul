@@ -20,17 +20,19 @@ class Character(sprite.Sprite):
         self.rect = self.image.get_rect()
         self.index_frame = 0
         self.timedelta = 0
+        self.timedelta_for_trap = 0
         self.rect.x, self.rect.y = position
         self.mask = pygame.mask.from_surface(self.image)
 
         self._setup_character_characteristic()
         self.speed *= 100
 
-    def update(self, timedelta=None, mode: str = None, group_walls: pygame.sprite.Group = None,
-               group_enemy: pygame.sprite.Group = None):
+    def update(self, timedelta=None, mode: str = None, group_walls=None,
+               group_enemy=None, group_trap=None):
         if self.flag_alive:
             if mode == 'update':
                 self.movement(timedelta, group_walls)
+                self.take_damage_by_trap(timedelta, group_trap)
             elif mode == 'event':
                 pass
 
@@ -40,8 +42,7 @@ class Character(sprite.Sprite):
         return health_percents, armor_percents
 
     def take_damage(self, damager):
-        """Args:
-                damager (Enemy)"""
+        """Получение урона от монстра   """
         if self.armor > 0:
             self.armor -= damager.damage
             if self.armor < 0:
@@ -50,6 +51,19 @@ class Character(sprite.Sprite):
             self.health -= damager.damage
         if self.health <= 0:
             self.flag_alive = False
+
+    def take_damage_by_trap(self, timedelta, traps):
+        if self.timedelta_for_trap < 0.2:
+            self.timedelta_for_trap += timedelta
+        else:
+            self.timedelta_for_trap = 0
+            for trap in traps.sprites():
+                if trap.enable and pygame.sprite.collide_mask(self, trap):
+                    if self.health < 2:
+                        self.flag_alive = False
+                    else:
+                        self.health = 1
+                    break
 
     def movement(self, timedelta: float, group_walls: pygame.sprite.Group):
         """Передвижение персонажа и смена фреймов анимации"""
@@ -324,6 +338,7 @@ class Trap(pygame.sprite.Sprite):
     def __init__(self, x: int, y: int):
         super().__init__()
         self._create_frames()
+        self.enable = False
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
 
@@ -336,10 +351,11 @@ class Trap(pygame.sprite.Sprite):
         self.image = self.frames[self.index_frame]
 
     def update(self, enable: bool):
-        if enable:
+        self.enable = enable
+        if self.enable:
             if self.index_frame > 0:
                 self.index_frame -= 1
-        if not enable:
+        if not self.enable:
             if self.index_frame < len(self.frames) - 1:
                 self.index_frame += 1
         self.image = self.frames[self.index_frame]
