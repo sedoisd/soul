@@ -145,7 +145,6 @@ class Weapon(sprite.Sprite):
         self.rect.x, self.rect.y = position
 
 
-
 class Enemy(sprite.Sprite):
     frame_time = ENEMY_FRAME_TIME
     scale = 2
@@ -173,6 +172,8 @@ class Enemy(sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x, self.rect.y = position
 
+        self.status_bar = EnemyStatusBar()
+
     def update(self, player: Character, timedelta: float):
         """Обновление"""
         if self.flag_alive:
@@ -191,6 +192,7 @@ class Enemy(sprite.Sprite):
                 self.timedelta = 0
             # print(self.index_frame, self.current_type_frame) # [LOG]
         self.image = self.current_type_frame[self.index_frame]
+        self.status_bar.update((self.rect.x, self.rect.y), self.health / self.max_health)
 
     def attack_to_player(self, player: Character):
         """Логика и выдача булева значения успеха атаки"""
@@ -221,7 +223,7 @@ class Enemy(sprite.Sprite):
 
     def take_damage(self, damager: Character) -> bool:
         """Получение урона от игрока"""
-        self.health -= damager.damage
+        self.health -= damager.weapon.damage
         if self.flag_alive and self.health <= 0:
             self.flag_alive = False
             self.flag_angry = False
@@ -255,6 +257,7 @@ class Enemy(sprite.Sprite):
         """Установка характеристик монстра"""
         self.name, self.health, self.damage, self.attack_distance, self.speed = (
             DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id))
+        self.max_health = self.health
         print(self.name, self.health, self.damage, self.speed)  # [LOG]
 
     def _create_frames(self):
@@ -320,9 +323,9 @@ class Hud(pygame.sprite.Sprite):
         self._init_status_bar()
 
     def _init_status_bar(self):
-        self.health_bar = StatusBar('health')
-        self.armor_bar = StatusBar('armor')
-        self.ammunation_bar = StatusBar('ammunation')
+        self.health_bar = HudStatusBar('health')
+        self.armor_bar = HudStatusBar('armor')
+        self.ammunation_bar = HudStatusBar('ammunation')
 
     def get_sprites_status_bar(self) -> tuple:
         return self.health_bar, self.armor_bar, self.ammunation_bar
@@ -333,7 +336,7 @@ class Hud(pygame.sprite.Sprite):
         # self.ammunation_bar.update()
 
 
-class StatusBar(pygame.sprite.Sprite):
+class HudStatusBar(pygame.sprite.Sprite):
     def __init__(self, mode: str):
         super().__init__()
         self._create_frame(mode)
@@ -357,8 +360,25 @@ class StatusBar(pygame.sprite.Sprite):
 
     def update(self, value: float):
         # print(value) # log
-        self.image = self.full_image.subsurface(0, 0, self.frame_width * value, self.frame_height)
-        self.rect.x, self.rect.y = self.x, self.y
+        self.image = self.full_image.subsurface(0, 0, self.frame_width, self.frame_height)
+        # self.rect.x, self.rect.y = self.x, self.y
+
+
+class EnemyStatusBar(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.scale = load_image('scale_status_bar.png', 'enemies')
+        self.empty = load_image('empty_status_bar.png', 'enemies')
+        self.image = self.empty
+        self.rect = self.image.get_rect()
+
+    def update(self, position: (int, int), value: float):
+        image = self.empty.copy()
+        if value < 0:
+            value = 0
+        image.blit(self.scale.subsurface(0, 0, self.scale.width * value, self.scale.height), (2, 2))
+        self.image = image
+        self.rect.x, self.rect.y = position
 
 
 class Trap(pygame.sprite.Sprite):

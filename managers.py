@@ -150,6 +150,7 @@ class SpriteGroupManager:
         self.hud_main_sprite = None
         self.cursor = pygame.sprite.Group()
         self.weapon = pygame.sprite.Group()
+        self.enemy_status_bar = pygame.sprite.Group()
 
         self.all_tiles = pygame.sprite.Group()
 
@@ -170,6 +171,7 @@ class SpriteGroupManager:
             self.player.draw(screen)
             self.weapon.draw(screen)
             self.enemies.draw(screen)
+            self.enemy_status_bar.draw(screen)
             self.hud.draw(screen)
             self.cursor.draw(screen)
 
@@ -209,6 +211,7 @@ class SpriteGroupManager:
     def add_enemy(self, sprite):
         self._add_gameplay(sprite)
         self.enemies.add(sprite)
+        self.enemy_status_bar.add(sprite.status_bar)
 
     def add_portal(self, sprite):
         self._add_gameplay(sprite)
