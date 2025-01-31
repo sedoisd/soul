@@ -88,7 +88,7 @@ class Game:
             for sprite in self.sprite_group_manager.get_movable_sprites():
                 self.camera.apply(sprite)
             portal = self.sprite_group_manager.get_portal_sprite()
-            if pygame.sprite.collide_mask(self.player, portal):  # portal.flag_active and
+            if pygame.sprite.collide_mask(self.player, portal):
                 self._completion_level()
         self.gui_manager.manager.update(self.time_delta)
 
@@ -122,7 +122,6 @@ class Game:
         # print(self.tile_size) # [LOG]
         for i in range(4):
             self._init_layer_level(i)
-        # self.map.
         for game_object in self.map.objects:
             # print(object.name) # [LOG]
             x_object, y_object = game_object.x * self.scale_map, game_object.y * self.scale_map
