@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "test_map.tmx",
+    "activeFile": "map_2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -12,20 +12,12 @@
             "scaleInDock": 1,
             "scaleInEditor": 3
         },
-        "map_2.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 626,
-                "y": 849.3333333333333
-            }
-        },
         "test_map.tmx": {
-            "scale": 0.75,
+            "scale": 1,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 776.6666666666665,
-                "y": 748
+                "x": 516.5,
+                "y": 507
             }
         },
         "tileset_1.tsx": {
