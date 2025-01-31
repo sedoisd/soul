@@ -12,6 +12,7 @@ class Character(sprite.Sprite):
 
     def __init__(self, position: (int, int)):
         super().__init__()
+
         self.character_id = DatabaseManager.get_current_character_id()
         self.flag_alive = True
 
@@ -26,11 +27,13 @@ class Character(sprite.Sprite):
 
         self._setup_character_characteristic()
         self.speed *= 100
+        self.weapon = Weapon((self.rect.centerx, self.rect.centery))
 
     def update(self, timedelta=None, mode: str = None, group_walls=None,
                group_enemy=None, group_trap=None):
         if self.flag_alive:
             if mode == 'update':
+                self.weapon.update((self.rect.centerx, self.rect.centery))
                 self.movement(timedelta, group_walls)
                 self.take_damage_by_trap(timedelta, group_trap)
             elif mode == 'event':
@@ -123,11 +126,24 @@ class Character(sprite.Sprite):
 
 
 class Weapon(sprite.Sprite):
-    def __init__(self):
+    def __init__(self, position: (int, int)):
         super().__init__()
+        self.weapon_id = DatabaseManager.get_current_weapon_id()
+        self._setup_characteristics()
+        self._create_frame()
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = position
 
-    def update(self, *args, **kwargs):
-        pass
+    def _create_frame(self):
+        self.image = pygame.transform.rotozoom(load_image(f'weapon_{self.weapon_id}.png', 'weapons'),
+                                               0, self.scale)
+
+    def _setup_characteristics(self):
+        self.damage, self.scale, self.attack_speed = DatabaseManager.get_characteristics_weapon_by_id(self.weapon_id)
+
+    def update(self, position: (int, int)):
+        self.rect.x, self.rect.y = position
+
 
 
 class Enemy(sprite.Sprite):

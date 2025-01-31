@@ -94,7 +94,8 @@ class Game:
 
     def _render(self):
         """Отображение программы-игры"""
-        self.screen.fill((0, 0, 0))
+        color = (122, 122, 122)
+        self.screen.fill(color)
         if self.is_going_game:
             self.sprite_group_manager.draw(self.screen, self.is_going_game)
         self.gui_manager.manager.draw_ui(self.screen)
