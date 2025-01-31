@@ -3,7 +3,7 @@ import pygame
 import pygame_gui
 from pygame_gui.elements import *
 
-from constants import SIZE, FILENAME_DATABASE
+from constants import SIZE, FILENAME_DATABASE, TILE_SIZE
 from other_functions import get_frame_weapon_by_id, get_front_frame_characters_by_id
 import sqlite3
 
@@ -102,10 +102,10 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_quantities_frames_enemy_by_id(cls, enemy_id: int) -> tuple[int, int, int, int, int]:
+    def get_quantities_frames_enemy_by_id(cls, enemy_id: int) -> tuple[int, int, int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT quan_walking_frames, quan_attack_frames, 
-                             quan_death_frames, quan_stand_frame, quan_kinds_frames FROM enemies
+                             quan_death_frames, quan_stand_frame FROM enemies
                              WHERE ID=?''', (enemy_id,)).fetchone()
         # print(result) # [LOG]
         con.close()
@@ -148,7 +148,7 @@ class SpriteGroupManager:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls, group_trap=self.trap)
             self.enemies.update(*self.player.sprites(), timedelta)
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
-            flag_trap = any(map(lambda x: x.flag_angry, self.enemies))
+            flag_trap = any(map(lambda x: x.flag_angry, self.enemies))  # or self._is_nearby_enemy()
             self.trap.update(flag_trap)
 
     def draw(self, screen: pygame.Surface, is_going_game: bool):
@@ -202,3 +202,11 @@ class SpriteGroupManager:
             sprite.kill()
         for sprite in self.hud:
             sprite.kill()
+
+    # def _is_nearby_enemy(self):
+    #     player = self.player.sprites()[0]
+    #     distance = 10 * TILE_SIZE
+    #     for enemy in self.enemies:
+    #         if ((enemy.rect.x - player.rect.x) ** 2 + (enemy.rect.y - player.rect.y) ** 2) ** 0.5 < distance:
+    #             return True
+    #     return False
