@@ -360,8 +360,10 @@ class HudStatusBar(pygame.sprite.Sprite):
 
     def update(self, value: float):
         # print(value) # log
-        self.image = self.full_image.subsurface(0, 0, self.frame_width, self.frame_height)
-        # self.rect.x, self.rect.y = self.x, self.y
+        if value < 0:
+            value = 0
+        self.image = self.full_image.subsurface(0, 0, self.frame_width * value, self.frame_height)
+        self.rect.x, self.rect.y = self.x, self.y
 
 
 class EnemyStatusBar(pygame.sprite.Sprite):
@@ -374,6 +376,7 @@ class EnemyStatusBar(pygame.sprite.Sprite):
 
     def update(self, position: (int, int), value: float):
         image = self.empty.copy()
+        print(value)
         if value < 0:
             value = 0
         image.blit(self.scale.subsurface(0, 0, self.scale.width * value, self.scale.height), (2, 2))
