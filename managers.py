@@ -182,8 +182,6 @@ class SpriteGroupManager:
     def add_tile_sprite_by_id_layer(self, sprite, id_layer: int):
 
         groups = [self.all_gameplay, self.movable_for_gameplay, self.all_tiles]
-        # if id_layer in (0, 1):
-        #     groups.extend(self.all_tiles)
         if id_layer == 2:
             groups.append(self.walls)
         elif id_layer == 3:
@@ -212,11 +210,3 @@ class SpriteGroupManager:
             sprite.kill()
         for sprite in self.hud:
             sprite.kill()
-
-    # def _is_nearby_enemy(self):
-    #     player = self.player.sprites()[0]
-    #     distance = 10 * TILE_SIZE
-    #     for enemy in self.enemies:
-    #         if ((enemy.rect.x - player.rect.x) ** 2 + (enemy.rect.y - player.rect.y) ** 2) ** 0.5 < distance:
-    #             return True
-    #     return False
