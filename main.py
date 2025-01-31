@@ -84,9 +84,12 @@ class Game:
             self.camera.update(self.player)
             for sprite in self.sprite_group_manager.get_movable_sprites():
                 self.camera.apply(sprite)
+            portal = self.sprite_group_manager.get_portal_sprite()
+            if portal.flag_active and pygame.sprite.collide_mask(self.player, portal):
+                self._completion_level()
         self.gui_manager.manager.update(self.time_delta)
-        if self.is_going_game and all(map(lambda x: not x.flag_alive, self.sprite_group_manager.enemies)):
-            self._completion_level()
+
+
 
     def _render(self):
         """Отображение программы-игры"""

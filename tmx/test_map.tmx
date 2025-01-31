@@ -74,9 +74,6 @@
     <property name="enemy_id" type="int" value="0"/>
    </properties>
   </object>
-  <object id="40" x="389.333" y="135.333">
-   <point/>
-  </object>
-  <object id="41" name="Portal" x="422" y="265.333" width="11.3333" height="20"/>
+  <object id="41" name="Portal" x="2177.33" y="2225.33" width="11.3333" height="20"/>
  </objectgroup>
 </map>

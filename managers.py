@@ -3,7 +3,7 @@ import pygame
 import pygame_gui
 from pygame_gui.elements import *
 
-from constants import SIZE, FILENAME_DATABASE, TILE_SIZE
+from constants import SIZE, FILENAME_DATABASE
 from other_functions import get_frame_weapon_by_id, get_front_frame_characters_by_id
 import sqlite3
 
@@ -151,7 +151,7 @@ class SpriteGroupManager:
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
             flag_trap = any(map(lambda x: x.flag_angry, self.enemies))  # or self._is_nearby_enemy()
             self.trap.update(flag_trap)
-            self.portal.update(timedelta)
+            self.portal.update(timedelta, self.enemies)
 
     def draw(self, screen: pygame.Surface, is_going_game: bool):
         if is_going_game:
@@ -175,6 +175,9 @@ class SpriteGroupManager:
 
     def get_movable_sprites(self) -> list:
         return self.movable_for_gameplay.sprites()
+
+    def get_portal_sprite(self):
+        return self.portal.sprites()[0]
 
     def add_tile_sprite_by_id_layer(self, sprite, id_layer: int):
 
