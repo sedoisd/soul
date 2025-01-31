@@ -211,6 +211,7 @@ class SpriteGroupManager:
     def add_enemy(self, sprite):
         self._add_gameplay(sprite)
         self.enemies.add(sprite)
+        self._add_gameplay(sprite.status_bar)
         self.enemy_status_bar.add(sprite.status_bar)
 
     def add_portal(self, sprite):
