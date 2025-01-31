@@ -201,12 +201,14 @@ class Enemy(sprite.Sprite):
             elif self.rect.y < player.rect.y:
                 self.rect.y += 1
 
-    def take_damage(self, damager: Character):
+    def take_damage(self, damager: Character) -> bool:
         """Получение урона от игрока"""
         self.health -= damager.damage
-        if self.health <= 0:
+        if self.flag_alive and self.health <= 0:
             self.flag_alive = False
             self.flag_angry = False
+            return True
+        return False
 
     def _edit_current_frames(self, mode: str = None):
         """Смена текущих фреймов анимации"""
@@ -366,7 +368,7 @@ class Portal(pygame.sprite.Sprite):
         super().__init__()
         self._create_frames()
         self.timedelta = 0
-        self.flag_active = False
+        # self.flag_active = False
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
 
@@ -377,13 +379,13 @@ class Portal(pygame.sprite.Sprite):
             self.index_frame = (self.index_frame + 1) % 7
             self.timedelta = 0
         self.image = self.frames[self.index_frame]
-        self.flag_active = self._is_active(enemies)
+        # self.flag_active = self._is_active(enemies)
 
-    def _is_active(self, enemies):
-        for enemy in enemies:
-            if enemy.flag_alive:
-                return False
-        return True
+    # def _is_active(self, enemies):
+    #     for enemy in enemies:
+    #         if enemy.flag_alive:
+    #             return False
+    #     return True
 
     def _create_frames(self):
         image = load_image('portal.png', 'for_game')

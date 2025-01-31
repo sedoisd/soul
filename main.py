@@ -30,6 +30,10 @@ class Game:
         self.player = None
         self.time_delta = None
 
+        # init counting variables
+        self.max_enemy = 0
+        self.killed_enemy = 0
+
         # function exe
         self.sprite_group_manager.add_cursor(self.cursor)
         self.gui_manager.load_start_menu()
@@ -64,7 +68,8 @@ class Game:
                 for enemy in self.sprite_group_manager.enemies.sprites():
                     # print('iter') # [LOG]
                     if pygame.sprite.collide_mask(self.cursor, enemy):
-                        enemy.take_damage(self.player)
+                        if enemy.take_damage(self.player):
+                            self.killed_enemy += 1
                         # print(enemy.health) # [LOG]
                         # print(111) # [LOG]
 
@@ -83,7 +88,7 @@ class Game:
             for sprite in self.sprite_group_manager.get_movable_sprites():
                 self.camera.apply(sprite)
             portal = self.sprite_group_manager.get_portal_sprite()
-            if portal.flag_active and pygame.sprite.collide_mask(self.player, portal):
+            if pygame.sprite.collide_mask(self.player, portal):  # portal.flag_active and
                 self._completion_level()
         self.gui_manager.manager.update(self.time_delta)
 
@@ -95,6 +100,9 @@ class Game:
         self.gui_manager.manager.draw_ui(self.screen)
 
     def _completion_level(self):
+        print(self.max_enemy, self.killed_enemy)
+        self.max_enemy = 0
+        self.killed_enemy = 0
         self.is_going_game = False
         pygame.mouse.set_visible(True)
         self.sprite_group_manager.kill_gameplay_sprites()
@@ -103,7 +111,6 @@ class Game:
 
     def _start_level(self):
         """Создание уровня"""
-
         self.flag_create_game_cursor = True
         pygame.mouse.set_visible(False)
 
@@ -126,6 +133,7 @@ class Game:
                 self.portal = Portal((x_object, y_object))
                 self.sprite_group_manager.add_portal(self.portal)
             elif game_object.name == 'Enemy':
+                self.max_enemy += 1
                 enemy_id = int(game_object.properties['enemy_id'])
                 enemy = Enemy(enemy_id, (x_object, y_object))
                 self.sprite_group_manager.add_enemy(enemy)
