@@ -342,14 +342,6 @@ class Trap(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
 
-    def _create_frames(self):
-        image = pygame.transform.rotozoom(load_image('trap.png', 'trap'), 0, SCALE_MAP)
-        width = image.get_width() // 3
-        height = image.get_height()
-        self.frames = [image.subsurface(width * i, 0, width, height) for i in range(3)]
-        self.index_frame = 2
-        self.image = self.frames[self.index_frame]
-
     def update(self, enable: bool):
         self.enable = enable
         if self.enable:
@@ -358,4 +350,38 @@ class Trap(pygame.sprite.Sprite):
         if not self.enable:
             if self.index_frame < len(self.frames) - 1:
                 self.index_frame += 1
+        self.image = self.frames[self.index_frame]
+
+    def _create_frames(self):
+        image = pygame.transform.rotozoom(load_image('trap.png', 'for_game'), 0, SCALE_MAP)
+        width = image.get_width() // 3
+        height = image.get_height()
+        self.frames = [image.subsurface(width * i, 0, width, height) for i in range(3)]
+        self.index_frame = 2
+        self.image = self.frames[self.index_frame]
+
+
+class Portal(pygame.sprite.Sprite):
+    def __init__(self, position: (int, int)):
+        super().__init__()
+        self._create_frames()
+        self.timedelta = 0
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = position
+
+    def update(self, timedelta):
+        if self.timedelta < 0.2:
+            self.timedelta += timedelta
+        else:
+            self.index_frame = (self.index_frame + 1) % 7
+            self.timedelta = 0
+        self.image = self.frames[self.index_frame]
+
+    def _create_frames(self):
+        image = load_image('portal.png', 'for_game')
+        width = image.get_width() // 8
+        height = image.get_height() // 3
+        self.frames = [pygame.transform.rotozoom(image.subsurface(width * i, 0, width, height), 0, 3)
+                       for i in range(7)]
+        self.index_frame = 0
         self.image = self.frames[self.index_frame]

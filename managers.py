@@ -138,6 +138,7 @@ class SpriteGroupManager:
         self.walls = pygame.sprite.Group()
         self.trap = pygame.sprite.Group()
         self.hud = pygame.sprite.Group()
+        self.portal = pygame.sprite.Group()
         self.hud_main_sprite = None
 
         self.all_tiles = pygame.sprite.Group()
@@ -150,11 +151,13 @@ class SpriteGroupManager:
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
             flag_trap = any(map(lambda x: x.flag_angry, self.enemies))  # or self._is_nearby_enemy()
             self.trap.update(flag_trap)
+            self.portal.update(timedelta)
 
     def draw(self, screen: pygame.Surface, is_going_game: bool):
         if is_going_game:
             self.all_tiles.draw(screen)
             self.trap.draw(screen)
+            self.portal.draw(screen)
             self.player.draw(screen)
             self.enemies.draw(screen)
             self.hud.draw(screen)
@@ -193,6 +196,10 @@ class SpriteGroupManager:
     def add_enemy(self, sprite):
         self._add_gameplay(sprite)
         self.enemies.add(sprite)
+
+    def add_portal(self, sprite):
+        self._add_gameplay(sprite)
+        self.portal.add(sprite)
 
     def add_cursor(self, sprite):
         self.cursor.add(sprite)

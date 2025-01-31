@@ -3,7 +3,7 @@ import pygame_gui
 import pytmx
 from constants import *
 from managers import GuiManager, SpriteGroupManager
-from classes import Character, Camera, Enemy, Cursor, Hud, Trap
+from classes import Character, Camera, Enemy, Cursor, Hud, Trap, Portal
 
 
 # import sys
@@ -117,14 +117,17 @@ class Game:
         for i in range(4):
             self._init_layer_level(i)
         # self.map.
-        for object_livestock in self.map.objects:
+        for game_object in self.map.objects:
             # print(object.name) # [LOG]
-            x_object, y_object = object_livestock.x * self.scale_map, object_livestock.y * self.scale_map
-            if object_livestock.name == 'Player':
+            x_object, y_object = game_object.x * self.scale_map, game_object.y * self.scale_map
+            if game_object.name == 'Player':
                 self.player = Character((x_object, y_object))
                 self.sprite_group_manager.add_player(self.player)
-            elif object_livestock.name == 'Enemy':
-                enemy_id = int(object_livestock.properties['enemy_id'])
+            elif game_object.name == 'Portal':
+                self.portal = Portal((x_object, y_object))
+                self.sprite_group_manager.add_portal(self.portal)
+            elif game_object.name == 'Enemy':
+                enemy_id = int(game_object.properties['enemy_id'])
                 enemy = Enemy(enemy_id, (x_object, y_object))
                 self.sprite_group_manager.add_enemy(enemy)
 
