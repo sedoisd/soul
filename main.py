@@ -68,7 +68,7 @@ class Game:
                 for enemy in self.sprite_group_manager.enemies.sprites():
                     # print('iter') # [LOG]
                     if pygame.sprite.collide_mask(self.cursor, enemy):
-                        if enemy.take_damage(self.player):
+                        if self.player.weapon.deal_damage(enemy):
                             self.killed_enemy += 1
                         # print(enemy.health) # [LOG]
                         # print(111) # [LOG]

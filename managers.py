@@ -128,9 +128,9 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float, float]:
+    def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT damage, scale, attack_speed FROM weapons WHERE id=?''', (weapon_id,)).fetchone()
+        result = cur.execute('''SELECT damage, scale FROM weapons WHERE id=?''', (weapon_id,)).fetchone()
         # print(result) # [LOG]
         con.close()
         return result

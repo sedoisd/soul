@@ -27,7 +27,7 @@ class Character(sprite.Sprite):
 
         self._setup_character_characteristic()
         self.speed *= 100
-        self.weapon = Weapon((self.rect.centerx, self.rect.centery))
+        self.weapon = Weapon(self, (self.rect.centerx, self.rect.centery))
 
     def update(self, timedelta=None, mode: str = None, group_walls=None,
                group_enemy=None, group_trap=None):
@@ -44,14 +44,14 @@ class Character(sprite.Sprite):
         armor_percents = self.armor / self.max_armor
         return health_percents, armor_percents
 
-    def take_damage(self, damager):
+    def take_damage(self, value):
         """Получение урона от монстра   """
         if self.armor > 0:
-            self.armor -= damager.damage
+            self.armor -= value
             if self.armor < 0:
                 self.armor = 0
         else:
-            self.health -= damager.damage
+            self.health -= value
         if self.health <= 0:
             self.flag_alive = False
 
@@ -126,23 +126,28 @@ class Character(sprite.Sprite):
 
 
 class Weapon(sprite.Sprite):
-    def __init__(self, position: (int, int)):
+    def __init__(self, player, position: (int, int)):
         super().__init__()
         self.weapon_id = DatabaseManager.get_current_weapon_id()
         self._setup_characteristics()
         self._create_frame()
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position
+        self.owner = player
+        self.timedelta = 0
+
+    def update(self, position: (int, int)):
+        self.rect.x, self.rect.y = position
+
+    def deal_damage(self, enemy):
+        return enemy.take_damage(self.damage)
+
+    def _setup_characteristics(self):
+        self.damage, self.scale = DatabaseManager.get_characteristics_weapon_by_id(self.weapon_id)
 
     def _create_frame(self):
         self.image = pygame.transform.rotozoom(load_image(f'weapon_{self.weapon_id}.png', 'weapons'),
                                                0, self.scale)
-
-    def _setup_characteristics(self):
-        self.damage, self.scale, self.attack_speed = DatabaseManager.get_characteristics_weapon_by_id(self.weapon_id)
-
-    def update(self, position: (int, int)):
-        self.rect.x, self.rect.y = position
 
 
 class Enemy(sprite.Sprite):
@@ -201,7 +206,7 @@ class Enemy(sprite.Sprite):
             self._edit_current_frames('attack')
         if self.flag_attack and self.index_frame == len(self.death_frames) - 2:
             if self._is_attack_distance(player):
-                player.take_damage(self)
+                player.take_damage(self.damage)
             self.flag_attack = False
 
     def ai_movement(self, player: Character):
@@ -221,9 +226,9 @@ class Enemy(sprite.Sprite):
             elif self.rect.y < player.rect.y:
                 self.rect.y += 1
 
-    def take_damage(self, damager: Character) -> bool:
+    def take_damage(self, value) -> bool:
         """Получение урона от игрока"""
-        self.health -= damager.weapon.damage
+        self.health -= value
         if self.flag_alive and self.health <= 0:
             self.flag_alive = False
             self.flag_angry = False
@@ -376,7 +381,7 @@ class EnemyStatusBar(pygame.sprite.Sprite):
 
     def update(self, position: (int, int), value: float):
         image = self.empty.copy()
-        print(value)
+        # print(value) # log
         if value < 0:
             value = 0
         image.blit(self.scale.subsurface(0, 0, self.scale.width * value, self.scale.height), (2, 2))
