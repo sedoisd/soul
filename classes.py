@@ -132,6 +132,7 @@ class Weapon(sprite.Sprite):
 
 class Enemy(sprite.Sprite):
     frame_time = ENEMY_FRAME_TIME
+    scale = 2
 
     def __init__(self, enemy_id: int, position: (int, int)):
         super().__init__()
@@ -228,7 +229,7 @@ class Enemy(sprite.Sprite):
 
     def _setup_enemy_characteristic(self):
         """Установка характеристик монстра"""
-        self.name, self.health, self.damage, self.scale, self.attack_distance, self.speed = (
+        self.name, self.health, self.damage, self.attack_distance, self.speed = (
             DatabaseManager.get_characteristics_enemy_by_id(self.enemy_id))
         print(self.name, self.health, self.damage, self.speed)  # [LOG]
 

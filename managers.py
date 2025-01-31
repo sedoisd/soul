@@ -93,9 +93,9 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_characteristics_enemy_by_id(cls, enemy_id: int) -> tuple[str, int, int, float, int, int]:
+    def get_characteristics_enemy_by_id(cls, enemy_id: int) -> tuple[str, int, int, int, int]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT name, health, damage, scale, attack_distance, speed FROM enemies
+        result = cur.execute('''SELECT name, health, damage, attack_distance, speed FROM enemies
                              WHERE id=?''', (enemy_id,)).fetchone()
         # print(result) # [LOG]
         con.close()
