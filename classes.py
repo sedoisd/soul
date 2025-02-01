@@ -73,10 +73,10 @@ class Character(sprite.Sprite):
         x, y = self.rect.x, self.rect.y
         delta_distance = self.speed * self.timedelta
         if pygame.key.get_pressed()[pygame.K_w]:
-            self.image = self.front_frames[self.index_frame]
+            self.image = self.back_frames[self.index_frame]
             self.rect.y -= delta_distance
         if pygame.key.get_pressed()[pygame.K_s]:
-            self.image = self.back_frames[self.index_frame]
+            self.image = self.front_frames[self.index_frame]
             self.rect.y += delta_distance
         for tile in group_walls:
             if pygame.sprite.collide_mask(self, tile):
@@ -112,10 +112,10 @@ class Character(sprite.Sprite):
         frame_height = atlas_height / 4
         self.rect = Rect(0, 0, frame_width, frame_height)
         self.front_frames = [pygame.transform.rotozoom(
-            atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
+            atlas.subsurface(frame_width * i, frame_height * 0, frame_width, frame_height), 0, self.scale)
             for i in range(0, 3)]
         self.back_frames = [pygame.transform.rotozoom(
-            atlas.subsurface(frame_width * i, 0, frame_width, frame_height), 0, self.scale)
+            atlas.subsurface(frame_width * i, frame_height * 3, frame_width, frame_height), 0, self.scale)
             for i in range(0, 3)]
         self.left_frames = [pygame.transform.rotozoom(
             atlas.subsurface(frame_width * i, frame_height * 1 + 1, frame_width, frame_height), 0, self.scale)
@@ -201,7 +201,7 @@ class Enemy(sprite.Sprite):
                 self.timedelta = 0
             # print(self.index_frame, self.current_type_frame) # [LOG]
         self.image = self.current_type_frame[self.index_frame]
-        self.status_bar.update((self.rect.x, self.rect.y), self.health / self.max_health)
+        self.status_bar.update((self.rect.centerx, self.rect.y), self.health / self.max_health)
 
     def attack_to_player(self, player: Character):
         """Логика и выдача булева значения успеха атаки"""
@@ -390,7 +390,7 @@ class EnemyStatusBar(pygame.sprite.Sprite):
             value = 0
         image.blit(self.scale.subsurface(0, 0, self.scale.width * value, self.scale.height), (2, 2))
         self.image = image
-        self.rect.x, self.rect.y = position
+        self.rect.x, self.rect.y = position[0] - self.rect.width // 2, position[1] - 15
 
 
 class Trap(pygame.sprite.Sprite):

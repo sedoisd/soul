@@ -41,7 +41,7 @@
   </object>
   <object id="25" name="Enemy" x="1308" y="348.667" width="5.33333" height="2">
    <properties>
-    <property name="enemy_id" type="int" value="0"/>
+    <property name="enemy_id" type="int" value="1"/>
    </properties>
   </object>
   <object id="27" name="Enemy" x="2052.33" y="246.833" width="2" height="1">
@@ -75,10 +75,5 @@
    </properties>
   </object>
   <object id="41" name="Portal" x="2177.33" y="2225.33" width="11.3333" height="20"/>
-  <object id="54" name="Enemy" x="592.667" y="381.833" width="4.66667" height="4.33333">
-   <properties>
-    <property name="enemy_id" type="int" value="2"/>
-   </properties>
-  </object>
  </objectgroup>
 </map>
