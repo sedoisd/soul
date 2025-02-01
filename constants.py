@@ -2,6 +2,10 @@
 SIZE = WIDTH, HEIGHT = 900, 700
 FILENAME_DATABASE = 'database.sqlite'
 
+# Map
+SCALE_MAP = 1.5
+TILE_SIZE = 32 * SCALE_MAP
+
 # Characters
 CHARACTERS_FRAME_TIME = 0.08
 
@@ -11,6 +15,4 @@ ENEMY_FRAME_TIME = 0.2
 # Hud
 SCALE_HUD = 0.7
 
-# Map
-SCALE_MAP = 1.5
-TILE_SIZE = 32 * SCALE_MAP
+
