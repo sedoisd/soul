@@ -56,7 +56,7 @@ class Character(sprite.Sprite):
             self.flag_alive = False
 
     def take_damage_by_trap(self, timedelta, traps):
-        if self.timedelta_for_trap < 0.2:
+        if self.timedelta_for_trap < 0.5:
             self.timedelta_for_trap += timedelta
         else:
             self.timedelta_for_trap = 0
@@ -74,7 +74,7 @@ class Character(sprite.Sprite):
         delta_distance = self.speed * self.timedelta
         for trap in group_trap:
             if trap.enable and pygame.sprite.collide_mask(self, trap):
-                delta_distance *= 0.1
+                delta_distance *= 0.2
                 break
         if pygame.key.get_pressed()[pygame.K_w]:
             self.image = self.back_frames[self.index_frame]
