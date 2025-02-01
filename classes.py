@@ -431,7 +431,7 @@ class Portal(pygame.sprite.Sprite):
         self.timedelta = 0
         # self.flag_active = False
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = position
+        self.rect.x, self.rect.y = position[0] - self.rect.width // 2, position[1] - self.rect.height // 2
 
     def update(self, timedelta, enemies):
         if self.timedelta < 0.2:
