@@ -34,7 +34,7 @@ class Character(sprite.Sprite):
         if self.flag_alive:
             if mode == 'update':
                 # self.weapon.update((self.rect.centerx, self.rect.centery))
-                self.movement(timedelta, group_walls)
+                self.movement(timedelta, group_walls, group_trap)
                 self.take_damage_by_trap(timedelta, group_trap)
             elif mode == 'event':
                 pass
@@ -68,10 +68,14 @@ class Character(sprite.Sprite):
                         self.health = 1
                     break
 
-    def movement(self, timedelta: float, group_walls: pygame.sprite.Group):
+    def movement(self, timedelta: float, group_walls: pygame.sprite.Group, group_trap):
         """Передвижение персонажа и смена фреймов анимации"""
         x, y = self.rect.x, self.rect.y
         delta_distance = self.speed * self.timedelta
+        for trap in group_trap:
+            if trap.enable and pygame.sprite.collide_mask(self, trap):
+                delta_distance *= 0.1
+                break
         if pygame.key.get_pressed()[pygame.K_w]:
             self.image = self.back_frames[self.index_frame]
             self.rect.y -= delta_distance
