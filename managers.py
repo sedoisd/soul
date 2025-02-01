@@ -128,9 +128,10 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float]:
+    def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float, int]:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT damage, scale FROM weapons WHERE id=?''', (weapon_id,)).fetchone()
+        result = cur.execute('''SELECT damage, scale, attack_distance FROM weapons WHERE id=?''',
+                             (weapon_id,)).fetchone()
         # print(result) # [LOG]
         con.close()
         return result
@@ -169,10 +170,10 @@ class SpriteGroupManager:
             self.trap.draw(screen)
             self.portal.draw(screen)
             self.player.draw(screen)
-            self.weapon.draw(screen)
             self.enemies.draw(screen)
             self.enemy_status_bar.draw(screen)
             self.hud.draw(screen)
+            self.weapon.draw(screen)
             self.cursor.draw(screen)
 
     def add_hud(self, sprite):
@@ -205,7 +206,7 @@ class SpriteGroupManager:
     def add_player(self, sprite):
         self._add_gameplay(sprite)
         self.player.add(sprite)
-        self._add_gameplay(sprite.weapon)
+        # self._add_gameplay(sprite.weapon)
         self.weapon.add(sprite.weapon)
 
     def add_enemy(self, sprite):
@@ -225,4 +226,6 @@ class SpriteGroupManager:
         for sprite in self.all_gameplay:
             sprite.kill()
         for sprite in self.hud:
+            sprite.kill()
+        for sprite in self.weapon:
             sprite.kill()

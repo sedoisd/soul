@@ -27,13 +27,13 @@ class Character(sprite.Sprite):
 
         self._setup_character_characteristic()
         self.speed *= 100
-        self.weapon = Weapon(self, (self.rect.centerx, self.rect.centery))
+        self.weapon = Weapon(self)
 
     def update(self, timedelta=None, mode: str = None, group_walls=None,
                group_enemy=None, group_trap=None):
         if self.flag_alive:
             if mode == 'update':
-                self.weapon.update((self.rect.centerx, self.rect.centery))
+                # self.weapon.update((self.rect.centerx, self.rect.centery))
                 self.movement(timedelta, group_walls)
                 self.take_damage_by_trap(timedelta, group_trap)
             elif mode == 'event':
@@ -126,24 +126,28 @@ class Character(sprite.Sprite):
 
 
 class Weapon(sprite.Sprite):
-    def __init__(self, player, position: (int, int)):
+    def __init__(self, player):
         super().__init__()
         self.weapon_id = DatabaseManager.get_current_weapon_id()
         self._setup_characteristics()
         self._create_frame()
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = position
+        self.rect.x, self.rect.y = 30, 30
         self.owner = player
         self.timedelta = 0
 
-    def update(self, position: (int, int)):
-        self.rect.x, self.rect.y = position
+    # def update(self):
+    #     self.rect.x, self.rect.y = 20, 20
+    #     self.rect.x, self.rect.y = position[0] - self.rect.width // 2, position[1] - self.rect.height // 2
 
     def deal_damage(self, enemy):
-        return enemy.take_damage(self.damage)
+        if (((enemy.rect.centerx - self.owner.rect.centerx) ** 2 +
+             (enemy.rect.centery - self.owner.rect.centery) ** 2) ** 0.5 < self.attack_distance):
+            return enemy.take_damage(self.damage)
+        return False
 
     def _setup_characteristics(self):
-        self.damage, self.scale = DatabaseManager.get_characteristics_weapon_by_id(self.weapon_id)
+        self.damage, self.scale, self.attack_distance = DatabaseManager.get_characteristics_weapon_by_id(self.weapon_id)
 
     def _create_frame(self):
         self.image = pygame.transform.rotozoom(load_image(f'weapon_{self.weapon_id}.png', 'weapons'),
