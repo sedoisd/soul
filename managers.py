@@ -127,7 +127,7 @@ class GuiManager:
 
         self.mode = 'selection'
         self.current_lvl = 1
-        self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
+        self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
                                     manager=self.manager)
         # Character
         characters_image = get_front_frame_characters_by_id(DatabaseManager.get_current_id_by_group('characters'))
@@ -194,32 +194,32 @@ class GuiManager:
         self.mode = 'setting'
         # Громкость звука всe категории
         volume_music, volume_effects = DatabaseManager.get_settings_values()
-        self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
+        self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
                                     manager=self.manager)
         # image_button_back = pygame.image.load('image/back.png')
         # self.button_back._set_image(image_button_back)
         self.scroll_setting = UIVerticalScrollBar(relative_rect=pygame.Rect(10, 150, 20, 400), visible_percentage=0.5,
                                                   manager=self.manager)
-        self.music_label = UILabel(relative_rect=pygame.Rect(50, 50, 100, 40), text='Музыка',
+        self.music_label = UILabel(relative_rect=pygame.Rect(130, 55, 100, 40), text='Музыка',
                                    manager=self.manager)
-        self.effects_label = UILabel(relative_rect=pygame.Rect(50, 100, 100, 40), text='Эффекты',
+        self.effects_label = UILabel(relative_rect=pygame.Rect(130, 100, 100, 40), text='Эффекты',
                                      manager=self.manager)
 
-        self.music_progress_bar = UIProgressBar(relative_rect=pygame.Rect((250, 55), (100, 30)),
+        self.music_progress_bar = UIProgressBar(relative_rect=pygame.Rect((290, 55), (100, 30)),
                                                 manager=self.manager)
         self.music_progress_bar.set_current_progress(volume_music)
-        self.effects_progress_bar = UIProgressBar(relative_rect=pygame.Rect((250, 105), (100, 30)),
+        self.effects_progress_bar = UIProgressBar(relative_rect=pygame.Rect((290, 105), (100, 30)),
                                                   manager=self.manager)
         self.effects_progress_bar.set_current_progress(volume_effects)
 
-        self.music_button_minus = UIButton(relative_rect=pygame.Rect(210, 55, 30, 30), text='-',
+        self.music_button_minus = UIButton(relative_rect=pygame.Rect(260, 55, 30, 30), text='-',
                                            manager=self.manager)
-        self.music_button_plus = UIButton(relative_rect=pygame.Rect(360, 55, 30, 30), text='+',
+        self.music_button_plus = UIButton(relative_rect=pygame.Rect(390, 55, 30, 30), text='+',
                                           manager=self.manager)
 
-        self.effects_button_minus = UIButton(relative_rect=pygame.Rect(210, 105, 30, 30), text='-',
+        self.effects_button_minus = UIButton(relative_rect=pygame.Rect(260, 105, 30, 30), text='-',
                                              manager=self.manager)
-        self.effects_button_plus = UIButton(relative_rect=pygame.Rect(360, 105, 30, 30), text='+',
+        self.effects_button_plus = UIButton(relative_rect=pygame.Rect(390, 105, 30, 30), text='+',
                                             manager=self.manager)
         # print(self.music_progress_bar.current_progress)
         # self.button_save = UIButton(relative_rect=pygame.Rect(820, 0, 80, 50), text='сохранить',
@@ -261,7 +261,10 @@ class GuiManager:
                 self.shop_characteristic_all_characters[self.characters_viewing_index][0])
             new_character_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
             new_character_price = str(self.shop_characteristic_all_characters[self.characters_viewing_index][2])
-            self.character_ui_image.set_image(new_character_image)
+            if DatabaseManager.is_purchased_by_group_and_id('characters', self.shop_characteristic_all_characters[
+                self.characters_viewing_index][0]):
+                new_character_price = 'Приобретено'
+                self.character_ui_image.set_image(new_character_image)
             self.character_name_label.set_text(new_character_name)
             self.character_price_label.set_text(new_character_price)
 
@@ -288,7 +291,7 @@ class GuiManager:
             self.weapon_price_label.set_text(new_weapon_price)
 
         self.mode = 'shop'
-        self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
+        self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
                                     manager=self.manager)
         # Загрузка монет
         money = DatabaseManager.get_money()
@@ -303,13 +306,13 @@ class GuiManager:
         character_image = get_front_frame_characters_by_id(
             self.shop_characteristic_all_characters[self.characters_viewing_index][0])
         character_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
-        character_price = str(self.shop_characteristic_all_characters[
-                                  self.characters_viewing_index][2])
+        # character_price = str(self.shop_characteristic_all_characters[
+        #                           self.characters_viewing_index][2])
         self.character_ui_image = UIImage(Rect((150, 200, 100, 100)), character_image)
         self.character_name_label = UILabel(Rect((155, 310, 80, 30)), text=character_name)
         # print(self.shop_characteristic_all_characters)
-        self.character_price_label = UILabel(Rect((175, 345, 40, 20)),
-                                             text=character_price)
+        self.character_price_label = UILabel(Rect((155, 345, 80, 20)),
+                                             text='Приобретено')
 
         self.characters_button_back = UIButton(Rect((110, 280, 30, 25)), text='<-',
                                                command=lambda: characters_navigation('back'))
@@ -324,19 +327,19 @@ class GuiManager:
         weapon_image = get_frame_weapon_by_id(
             self.shop_characteristic_all_weapons[self.characters_viewing_index][0])
         weapon_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
-        weapon_price = str(self.shop_characteristic_all_weapons[
-                                  self.weapons_viewing_index][2])
+        # weapon_price = str(self.shop_characteristic_all_weapons[
+        #                           self.weapons_viewing_index][2])
         self.weapon_ui_image = UIImage(Rect((560, 180, 100, 100)), weapon_image)
         self.weapon_name_label = UILabel(Rect((580, 310, 80, 30)), text=weapon_name)
         # print(self.shop_characteristic_all_characters)
-        self.weapon_price_label = UILabel(Rect((600, 345, 40, 20)),
-                                             text=weapon_price)
+        self.weapon_price_label = UILabel(Rect((580, 345, 80, 20)),
+                                          text='Приобретено')
 
         self.weapons_button_back = UIButton(Rect((520, 280, 30, 25)), text='<-',
-                                               command=lambda: weapons_navigation('back'))
+                                            command=lambda: weapons_navigation('back'))
         self.weapons_button_back.disable()
         self.weapons_button_farther = UIButton(Rect((680, 280, 30, 25)), text='->',
-                                                  command=lambda: weapons_navigation('father'))
+                                               command=lambda: weapons_navigation('father'))
 
     def exit_shop(self):
         self.button_back.kill()
@@ -349,6 +352,12 @@ class GuiManager:
         self.character_price_label.kill()
         self.characters_button_back.kill()
         self.characters_button_farther.kill()
+
+        self.weapon_ui_image.kill()
+        self.weapon_name_label.kill()
+        self.weapon_price_label.kill()
+        self.weapons_button_back.kill()
+        self.weapons_button_farther.kill()
 
     # def load_swap_characters(self) -> None:
     #     self.exit_setting()
@@ -513,6 +522,18 @@ class DatabaseManager:
             cur.execute('''UPDATE user SET current_weapon = ?''', (current_id,))
         con.commit()
         con.close()
+
+    @classmethod
+    def is_purchased_by_group_and_id(cls, group_name: str, current_id: int) -> bool:
+        con, cur = cls._connection_to_database()
+        if group_name == 'characters':
+            result = cur.execute('''SELECT purchased FROM characters WHERE id=?''',
+                                 (current_id,)).fetchone()[0]
+        elif group_name == 'weapons':
+            result = cur.execute('''SELECT purchased FROM weapons WHERE id=?''',
+                                 (current_id,)).fetchone()[0]
+        con.close()
+        return True if result == 1 else False
 
     # @classmethod
     # def shop(cls):
