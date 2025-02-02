@@ -4,7 +4,7 @@ import pytmx
 from constants import *
 from managers import GuiManager, SpriteGroupManager, DatabaseManager
 from classes import Character, Camera, Enemy, Cursor, Hud, Trap, Portal
-from other_functions import get_frame_current_background
+from other_functions import get_frame_current_background, load_image
 
 
 # import sys
@@ -30,10 +30,7 @@ class Game:
         self.flag_create_game_cursor = False
         self.player = None
         self.time_delta = None
-
-        self.flag_going_shop = False
-        self.flag_going_setting = False
-        self.flag_going_game1 = False
+        self.semi_transperency_fon = load_image('semi_transperency.png', 'hud')
 
         # init counting variables
         self.max_enemy = 0
@@ -117,20 +114,21 @@ class Game:
             self.screen.fill(color)
         # ------------------
         gui_mode = self.gui_manager.get_mode()
-        # if gui_mode is None:
-        #     self.screen.fill(color)
-        if gui_mode == 'shop':
-            fon = get_frame_current_background(1)
-            self.screen.blit(fon, (0, 0))
-        elif gui_mode == 'setting':
-            fon = get_frame_current_background(2)
-            self.screen.blit(fon, (0, 0))
-        elif gui_mode == 'selection':
-            fon = get_frame_current_background(3)
-            self.screen.blit(fon, (0, 0))
-        elif gui_mode == 'menu':
+        if gui_mode == 'menu':
             fon = get_frame_current_background(0)
             self.screen.blit(fon, (0, 0))
+        else:
+            if gui_mode == 'shop':
+                fon = get_frame_current_background(1)
+                self.screen.blit(fon, (0, 0))
+            elif gui_mode == 'setting':
+                fon = get_frame_current_background(2)
+                self.screen.blit(fon, (0, 0))
+            elif gui_mode == 'selection':
+                fon = get_frame_current_background(3)
+                self.screen.blit(fon, (0, 0))
+            self.screen.blit(self.semi_transperency_fon, (25, 25))
+
         # --------------
         if self.is_going_game:
             self.sprite_group_manager.draw(self.screen, self.is_going_game)
