@@ -80,6 +80,7 @@ class GuiManager:
         self.name = None
         self.mode = 'menu'
         self.func_start_level = func_start_level
+
     def load_values_mixer(self, sound_open):
         self.sound_open = sound_open
 
@@ -99,8 +100,7 @@ class GuiManager:
                     self.kill_start_menu()
                     # self.start_game1()
             elif self.mode == 'selection':
-                self.exit_selection_window()
-                self.func_start_level(1)
+                pass
             elif self.mode == 'setting':
                 if event.ui_element == self.button_back:
                     self.exit_setting()
@@ -133,7 +133,6 @@ class GuiManager:
             #         elif event.ui_element == self.gui_manager.button_characters_swap:
             #             self.gui_manager.load_swap_characters()
 
-
     def kill_start_menu(self) -> None:
         self.button_start.kill()
         self.button_shop.kill()
@@ -165,7 +164,15 @@ class GuiManager:
                                     text='Выход', manager=self.manager)
 
     def _load_selection_window_for_start_game(self) -> None:
+        def edit_cur_lvl(id_lvl):
+            self.current_lvl = id_lvl
+
+        def start_lvl(cur_lvl):
+            self.exit_selection_window()
+            self.func_start_level(cur_lvl)
+
         self.mode = 'selection'
+        self.current_lvl = 1
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
         # Character menu
@@ -185,13 +192,17 @@ class GuiManager:
         self.button_characters_swap = UIButton(relative_rect=Rect((470, 650, 150, 50)),
                                                text='Cменить персонажа', manager=self.manager, )
         self.button_level1 = UIButton(relative_rect=Rect((140, 100, 100, 70)),
-                                      text='1 уровень', manager=self.manager, )
+                                      text='1 уровень', manager=self.manager,
+                                      command=lambda: edit_cur_lvl(1))
         self.button_level2 = UIButton(relative_rect=Rect((340, 100, 100, 70)),
-                                      text='2 уровень', manager=self.manager, )
+                                      text='2 уровень', manager=self.manager,
+                                      command=lambda: edit_cur_lvl(2))
         self.button_level3 = UIButton(relative_rect=Rect((540, 100, 100, 70)),
-                                      text='3 уровень', manager=self.manager, )
+                                      text='3 уровень', manager=self.manager,
+                                      command=lambda: edit_cur_lvl(3))
         self.button_play = UIButton(relative_rect=Rect((290, 250, 200, 70)),
-                                    text='ИГРАТЬ', manager=self.manager, )
+                                    text='ИГРАТЬ', manager=self.manager,
+                                    command=lambda: start_lvl(self.current_lvl))
 
     def exit_selection_window(self):
         self.button_back.kill()
