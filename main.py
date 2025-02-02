@@ -117,7 +117,7 @@ class Game:
         if gui_mode == 'menu':
             fon = get_frame_current_background(0)
             self.screen.blit(fon, (0, 0))
-        else:
+        elif gui_mode is not None:
             if gui_mode == 'shop':
                 fon = get_frame_current_background(1)
                 self.screen.blit(fon, (0, 0))
