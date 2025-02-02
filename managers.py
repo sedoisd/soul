@@ -75,11 +75,11 @@ import sqlite3
 #         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 40, 40), text='back',
 #                                     manager=self.manager, command=back)
 class GuiManager:
-    def __init__(self):
+    def __init__(self, func_start_level):
         self.manager = pygame_gui.UIManager(SIZE, 'theme.json')
         self.name = None
         self.mode = 'menu'
-
+        self.func_start_level = func_start_level
     def load_values_mixer(self, sound_open):
         self.sound_open = sound_open
 
@@ -98,10 +98,12 @@ class GuiManager:
                 if event.ui_element == self.button_start:
                     self.kill_start_menu()
                     # self.start_game1()
-                    # elif self.mode == 'setting':
+            elif self.mode == 'selection':
+                self.exit_selection_window()
+                self.func_start_level(1)
+            elif self.mode == 'setting':
                 if event.ui_element == self.button_back:
                     self.exit_setting()
-                    self.button_back.kill()
                     self.load_start_menu()
                     DatabaseManager.update_volume_settings(*self.get_values_volume())
                 volume_music = self.music_progress_bar.current_progress
@@ -120,8 +122,6 @@ class GuiManager:
                     self.effects_progress_bar.set_current_progress(volume_effects)
                 self.sound_open.set_volume(volume_effects / 100)
                 DatabaseManager.update_volume_settings(volume_music, volume_effects)
-            elif self.mode == 'selection':
-                pass
             elif self.mode == 'shop':
                 pass
             #     elif self.gui_mode == 'shop':
@@ -179,6 +179,7 @@ class GuiManager:
         self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
         self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((220, 600, 100, 30)), text='Меч')
+
         self.button_weapon_swap = UIButton(relative_rect=Rect((190, 650, 150, 50)),
                                            text='Cменить оружие', manager=self.manager, )
         self.button_characters_swap = UIButton(relative_rect=Rect((470, 650, 150, 50)),
@@ -191,6 +192,19 @@ class GuiManager:
                                       text='3 уровень', manager=self.manager, )
         self.button_play = UIButton(relative_rect=Rect((290, 250, 200, 70)),
                                     text='ИГРАТЬ', manager=self.manager, )
+
+    def exit_selection_window(self):
+        self.button_back.kill()
+        self.label_image_character.kill()
+        self.label_image_weapon.kill()
+        self.label_name_character.kill()
+        self.label_name_weapon.kill()
+        self.button_weapon_swap.kill()
+        self.button_characters_swap.kill()
+        self.button_level1.kill()
+        self.button_level2.kill()
+        self.button_level3.kill()
+        self.button_play.kill()
 
     def _load_setting(self) -> None:
         self.mode = 'setting'
@@ -230,6 +244,7 @@ class GuiManager:
         return self.music_progress_bar.current_progress, self.effects_progress_bar.current_progress
 
     def exit_setting(self):
+        self.button_back.kill()
         self.music_label.kill()
         self.music_progress_bar.kill()
         self.music_button_minus.kill()
@@ -272,6 +287,7 @@ class GuiManager:
         buy(DatabaseManager.buy(self.name))
 
     def exit_shop(self):
+        self.button_back.kill()
         self.label_image_weapon.kill()
         self.label_name_weapon.kill()
         self.button_buy.kill()
@@ -323,18 +339,6 @@ class GuiManager:
         self.label_image_weapon3.set_image(self.image_weapon1)
         self.label_name_weapon3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
         self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-
-    def exit_game1(self):
-        self.label_image_character.kill()
-        self.label_image_weapon.kill()
-        self.label_name_character.kill()
-        self.label_name_weapon.kill()
-        self.button_weapon_swap.kill()
-        self.button_characters_swap.kill()
-        self.button_level1.kill()
-        self.button_level2.kill()
-        self.button_level3.kill()
-        self.button_play.kill()
 
 
 class DatabaseManager:

@@ -1,19 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="57">
  <tileset firstgid="1" source="tileset_1.tsx"/>
+ <tileset firstgid="321" source="TX Props.tsx"/>
  <layer id="2" name="background" width="100" height="100" locked="1">
   <data encoding="base64" compression="zlib">
    eJztwwEJAAAMBKHL8P3DDpZDwVVTVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/AVI6vz8=
   </data>
  </layer>
- <layer id="1" name="floor" width="100" height="100">
+ <layer id="1" name="floor" width="100" height="100" locked="1">
   <data encoding="base64" compression="zlib">
-   eJzt2stOw0AMhWG/JxI6W7rg/ZeARCWYdkicejJn6P9JKItpa5r65KI4AgDQo8+/t+/tS2d7XX//Yz2jop6SNVdxid/f9bXZtuvt667rGRX1LsmaVX7+L2/N9tJZr/r83r64t56xt16bh3Z9hmz/ZvumPSa0+2jrmHFdz6io956sWeWrdrafqj6/l7976xkV9ZSsWeVo//a+09b7j/br3nptL/2nfPT6ae++yfZjdn10vRmO9u/W9tJ5/9F+3VuvPd+Rj/772+un0fl4tN4M5ON58rH1+up8VNebYVQ+qq93zq63Uj5Gfz73H7l+qvz8rfuU6vvzvfWeMR9bdarzkamnZM1VXPutvfYcnY9H683Kx2iK7fydlY9MPSVrrqLtw/a+ZPT542i9/5qPHsVtX47eB73fBHP2zc96Z/XAKhTkwwn58KIgH07IhxcF+XBCPrwoyIcT8uFFQT6ckI85FLfPUEfPt688vzva7Pn21Z6fj6ao6deMlZ+fj8Z8uxcF8yVOyIcXxbz5xBXnd0erysfe32L1+d3RFHX9unemmvNHH/nwoqjrV/LxuLPz0d5L9tafdf5KcV4+2uurrWMa84nH+zXj6/XM796n8JlvZ3533nw787v3KZhvd8J8O3p4fu5FcXtsIgfzkA8vCvLhhHx4UZAPJ+TDi4J8OCEfXhTkwwn58KIgHzMw3+5FwXyJE+ZLvCjIhxPy4UVBPpww3+5FQT6ccP7woiAfTsiHFwXz7U6Yb/eiYL7dCfO7XhTM7zohH14U5AMAAAAAAAAAAAAA0PcBfI9g8Q==
+   eJzt3NFu4kAMhWG/Z6XKt8sF73+5i7SR6FAzcTKenJD/k6oRnYILmRMSYmEGAIj4v58//8evYFzm7535bN299bbUVXezn8/1uxnb+fbvbk9jxoh6y/xMz/9Luy5uwfyox49ei2g+W7dXr81DtA1nyq7f7Dpt9wnta9TbZ9yfxowR9Zb5mR41167f5faox4/yF81n6+6td0Q+tq7f6Dn17k8+3nvUzK7ftdsiux6z89X1zpSP3ngL7j9ivb6r177fkY/4/u3xU3U+9tYjH+TjUbMqH72/H52P0fU+KR/RsXNVPirrzfSoedT5Oecfr7bkY+Tj985T7k+3M7L1vprfXzEfvTqj85Gtd0Q+qi3rrD32rM5Htp5KPqq59fM3Kx/Zep+cj+i8pF2v7bre+/7Rq3e1fETcXtfl8hrMqttukyt7l49K0Rq4Sg4ibuRDiVo+stdXPo0b+VBCPrS4kQ8lavng+EonHzPqqiMfWtzIhxLycQy312uo9LcfZ0t/8G/z38m6Z+1vr+aW7w+O5rN199a7wvWP3nW60dc/ztZfUs2N/hIl5EOLG/2JSkbmY8149v7dam7j+s3X9nCfub+9GvnQ4jZuf57NB+8fr7L5iObX5qM9tyMfP7lx/qGE/nYtbvS3K6G/XYsb/e1Ksv3tUT6y1w3pbz8Ht3ibY75oH3X1/sSjuJEPJeRDixv5UBIdA5OPY7jFn+ljPvKhxY18KCEfWtzIh5J3n71jji093ajjVvudz8ip/s415LjVfucacsiHFjfyoYR8aHEjH0rIhxY38qGEfGhxIx8AAAAAAAAAAAAAAAAAAFT5C/UyP0Y=
   </data>
  </layer>
- <layer id="3" name="walls" width="100" height="100" visible="0">
+ <layer id="3" name="walls" width="100" height="100" locked="1">
   <data encoding="base64" compression="zlib">
-   eJzt20tOwzAUQFEPgHnFZ853Xn4LgB3ADmAHsEGWRjq3kV7j4PuaeyTPojrqDWlLX0uRRHI0reOZ6yTBnlmcTet85rpIsGcv0Wspet1sSvmZe46bBHv2Er2WoteNPWJOg8dneG7s0e/xs+7ZS/TcL0vs9ea6wzmO2DNLj22Jvd48dDjHEXtm6bEW9mCxB4s9WLL0+JzWbWB9dDjHEXtm6fE9rafA+upwjiP2zNIjw2ezzJ8Hb0rsXnAXfHx7xDyW2L3gOfj49mCxB0vrflh7D9R6HxW9R47YM4vW/bD2Hqj1Pip6jxyxZ3a17yiWvkeM2DMLe7DYg8UeLPZgsQeLPVjswWIPltr/mJZ+bkbsSbObD76qrJfKsa+NY/eZb//vPbPYzQffV9Zb5dj3xrH7zLfP3fNQ/26c32WxB4s9WPx+kKXHc7Om+fal9eixpvn2pWWdR7UHiz1Y7MFij7Y1zbcvrcdnszXNty/Nz4Ms9mCxB4s9WKK/93G+fVnR3/s4374ezpew2IPFHiz2YLEHiz1Y7MFiDxZ7sDjfPobz7SwjZurV5vwuiz1Y7MHi94Ms9mCxB4s9WOzBYg8We7DYg8UeLPZgsQeLPVh69DjUeeoRRszUq23ETL0kSZIkSZIkSZIk/eUXfol5VQ==
+   eJzt3EtOwzAURmEPgHnFY85zznMBsAPYAewAWCBLI5U66CBWddVr+bg5n+RRo1wrf+QmzU1LkURyNI3jhHEySF26s2mcJ4yLQeruK3oeRc+XVSl/GfNcDVJ3X9HzKHq+mEfMaXD7UY6LeeTsf/S6+4rO+7LEvm+uk+bZqy49j/sS+755TJpnr7r0PJbGPFjMg8U8WOh5fE3jNjA+k+bZqy49j59pPAfGd9I8e9Wl5zHKfdmo94M3JbYO3AX3bx4xTyW2DrwE928eLObBUlsPa9c/teuo6DrZqy5dbT2sXf/UrqOi62RW3d9g3VHVnk+0Xh961aUzDxbzYDEPFvNgMQ8W82AxDxbzYKn9vtT6uPSqS7HuD76aGa+V7d82n2f0t0frLqW//WFmvFe2/9h8ntHfHq1L6G9vzf5dFvNgMQ8Wnw+yZB2XpfS3t5aVx1L621sbvR/VPFjMg8U8WMxj3lL621vLui9bSn97a94PspgHi3mwmAdL9H2frPeA7G+fF33fJ+s9IPvbx2B/CYt5sJgHi3mwmAeLebCYB4t5sJgHy9L72wm2e9139dWvx6H1tNNs97rv6qtfj0PraaeJPjN27WrLPFha/weeYsyDxTxYzIPFPFjMg8U8WMyDpfV/Pism2gNmz5UkSZIkSZIkSZIkSZIksf0DT7xzMw==
   </data>
  </layer>
+ <layer id="8" name="trap" width="100" height="100" locked="1">
+  <data encoding="base64" compression="zlib">
+   eJzt2jEOABAQRUH3P7BaoVUoJD47k2ht8Tq2NQAAAKCifumeU3N/o0cWPbLokUUPAACq6ovz81wAAAAA3uL9CgAAJvuJWfTIokcWPbLoAQAAe/wPAgAAAAAAAAAAAAAAAAAAAAAAUNEAghkwDQ==
+  </data>
+ </layer>
+ <objectgroup id="4" name="game_objects">
+  <object id="13" name="Player" type="Characters" x="355.542" y="363.458"/>
+  <object id="22" name="Enemy" x="1119" y="254" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="23" name="Enemy" x="1118.67" y="351.667" width="4.66667" height="4.33333">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="24" name="Enemy" x="1308" y="253.333" width="4" height="3.33333">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="25" name="Enemy" x="1308" y="348.667" width="5.33333" height="2">
+   <properties>
+    <property name="enemy_id" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="27" name="Enemy" x="2052.33" y="246.833" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="29" name="Enemy" x="2308.33" y="483.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="30" name="Enemy" x="2092.33" y="431.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="31" name="Enemy" x="2032.33" y="1228.83" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="32" name="Enemy" x="2168.33" y="1454.17" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="33" name="Enemy" x="2304.33" y="1271.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="41" name="Portal" x="2186.33" y="2193.33" width="11.3333" height="20"/>
+ </objectgroup>
 </map>

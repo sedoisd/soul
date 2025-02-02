@@ -16,7 +16,7 @@ class Game:
         self.screen = pygame.display.set_mode(SIZE)
 
         # init classes
-        self.gui_manager = GuiManager()
+        self.gui_manager = GuiManager(self._start_level)
         self.sprite_group_manager = SpriteGroupManager()
         self.clock = pygame.time.Clock()
         self.camera = Camera()
@@ -71,7 +71,8 @@ class Game:
 
     def _event_handling(self, event):
         """Обработка событий"""
-        self.gui_manager.event_processing(event)
+        if not self.is_going_game:
+            self.gui_manager.event_processing(event)
         if event.type == pygame.QUIT or (
                 event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.gui_manager.button_exit):
             self.running = False
@@ -115,10 +116,11 @@ class Game:
 
     def _render(self):
         """Отображение программы-игры"""
-        color = (122, 122, 122)
-        self.screen.fill(color)
+        if self.is_going_game:
+            color = (122, 122, 122)
+            self.screen.fill(color)
         # ------------------
-        if self.flag_going_shop:
+        elif self.flag_going_shop:
             fon = get_frame_current_background(1)
             self.screen.blit(fon, (0, 0))
         elif self.flag_going_setting:
@@ -145,15 +147,17 @@ class Game:
 
         self.gui_manager.load_start_menu()
 
-    def _start_level(self):
+    def _start_level(self, id_lvl: int):
         """Создание уровня"""
         self.flag_create_game_cursor = True
+        self.is_going_game = True
         pygame.mouse.set_visible(False)
 
-        self.is_going_game = True
         hud = Hud()
         self.sprite_group_manager.add_hud(hud)
-        self.map = pytmx.load_pygame('tmx/test_map.tmx')
+        filename = 'tmx/test_map.tmx'
+        filename = f'tmx/map_{id_lvl}.tmx'
+        self.map = pytmx.load_pygame(filename)
         self.tile_size = self.map.tilewidth * self.scale_map
         # print(self.tile_size) # [LOG]
         for i in range(4):
