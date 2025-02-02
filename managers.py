@@ -1,16 +1,15 @@
-from pygame import Rect
-import pygame
-import pygame_gui
-from pygame_gui.elements import *
+from pygame import Rect, sprite, Surface
+from pygame_gui import UIManager, UI_BUTTON_PRESSED, UI_DROP_DOWN_MENU_CHANGED
+from pygame_gui.elements import UILabel, UIButton, UIImage, UIDropDownMenu, UIProgressBar
 
 from constants import SIZE, FILENAME_DATABASE
-from other_functions import *
+from other_functions import get_frame_weapon_by_id, get_front_frame_characters_by_id, load_image
 import sqlite3
 
 
 class GuiManager:
     def __init__(self, func_start_level):
-        self.manager = pygame_gui.UIManager(SIZE, 'theme.json')
+        self.manager = UIManager(SIZE, 'theme.json')
         self.name = None
         self.mode = 'menu'
         self.func_start_level = func_start_level
@@ -21,16 +20,9 @@ class GuiManager:
     def load_values_mixer(self, sound_open):
         self.sound_open = sound_open
 
-    def start_game(self):
-        pass
-
-    def update(self):
-        pass
-
     def event_processing(self, event):
         self.manager.process_events(event)
-        # try:
-        if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Нажатие на кнопки
+        if event.type == UI_BUTTON_PRESSED:  # Нажатие на кнопки
             self.sound_open.play()
             if self.mode == 'menu':
                 if event.ui_element == self.button_start:
@@ -64,7 +56,7 @@ class GuiManager:
                 if event.ui_element == self.button_back:
                     self.exit_shop()
                     self.load_start_menu()
-        elif event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+        elif event.type == UI_DROP_DOWN_MENU_CHANGED:
             if self.mode == 'selection':
                 if event.ui_element == self.weapon_drop_menu:
                     new_current_weapon_id = self.dict_purchased_weapons_by_name[event.text]
@@ -81,7 +73,6 @@ class GuiManager:
                     new_name_characters = DatabaseManager.get_current_name_by_group('characters')
                     self.character_ui_image.set_image(new_character_image)
                     self.character_name_label.set_text(new_name_characters)
-                # print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
 
     def load_start_menu(self) -> None:
         def redirection(command_load=None) -> None:
@@ -119,7 +110,7 @@ class GuiManager:
 
         self.mode = 'selection'
         self.current_lvl = 1
-        self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
+        self.button_back = UIButton(relative_rect=Rect(25, 25, 60, 40), text='назад',
                                     manager=self.manager)
         # Character
         characters_image = get_front_frame_characters_by_id(DatabaseManager.get_current_id_by_group('characters'))
@@ -186,32 +177,28 @@ class GuiManager:
         self.mode = 'setting'
         # Громкость звука всe категории
         volume_music, volume_effects = DatabaseManager.get_settings_values()
-        self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
+        self.button_back = UIButton(relative_rect=Rect(25, 25, 60, 40), text='назад',
                                     manager=self.manager)
-        # image_button_back = pygame.image.load('image/back.png')
-        # self.button_back._set_image(image_button_back)
-        self.scroll_setting = UIVerticalScrollBar(relative_rect=pygame.Rect(10, 150, 20, 400), visible_percentage=0.5,
-                                                  manager=self.manager)
-        self.music_label = UILabel(relative_rect=pygame.Rect(130, 55, 100, 40), text='Музыка',
+        self.music_label = UILabel(relative_rect=Rect(130, 55, 100, 40), text='Музыка',
                                    manager=self.manager)
-        self.effects_label = UILabel(relative_rect=pygame.Rect(130, 100, 100, 40), text='Эффекты',
+        self.effects_label = UILabel(relative_rect=Rect(130, 100, 100, 40), text='Эффекты',
                                      manager=self.manager)
 
-        self.music_progress_bar = UIProgressBar(relative_rect=pygame.Rect((290, 55), (100, 30)),
+        self.music_progress_bar = UIProgressBar(relative_rect=Rect((290, 55), (100, 30)),
                                                 manager=self.manager)
         self.music_progress_bar.set_current_progress(volume_music)
-        self.effects_progress_bar = UIProgressBar(relative_rect=pygame.Rect((290, 105), (100, 30)),
+        self.effects_progress_bar = UIProgressBar(relative_rect=Rect((290, 105), (100, 30)),
                                                   manager=self.manager)
         self.effects_progress_bar.set_current_progress(volume_effects)
 
-        self.music_button_minus = UIButton(relative_rect=pygame.Rect(260, 55, 30, 30), text='-',
+        self.music_button_minus = UIButton(relative_rect=Rect(260, 55, 30, 30), text='-',
                                            manager=self.manager)
-        self.music_button_plus = UIButton(relative_rect=pygame.Rect(390, 55, 30, 30), text='+',
+        self.music_button_plus = UIButton(relative_rect=Rect(390, 55, 30, 30), text='+',
                                           manager=self.manager)
 
-        self.effects_button_minus = UIButton(relative_rect=pygame.Rect(260, 105, 30, 30), text='-',
+        self.effects_button_minus = UIButton(relative_rect=Rect(260, 105, 30, 30), text='-',
                                              manager=self.manager)
-        self.effects_button_plus = UIButton(relative_rect=pygame.Rect(390, 105, 30, 30), text='+',
+        self.effects_button_plus = UIButton(relative_rect=Rect(390, 105, 30, 30), text='+',
                                             manager=self.manager)
 
     def get_values_volume(self) -> (int, int):
@@ -228,8 +215,6 @@ class GuiManager:
         self.effects_progress_bar.kill()
         self.effects_button_plus.kill()
         self.effects_button_minus.kill()
-
-        self.scroll_setting.kill()
 
     def _load_shop(self) -> None:
         def characters_navigation(direction: str):
@@ -312,12 +297,12 @@ class GuiManager:
             self.money_label.set_text(str(money_as_the_moment) + ' Монет(а/ы)')
 
         self.mode = 'shop'
-        self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
+        self.button_back = UIButton(relative_rect=Rect(25, 25, 60, 40), text='назад',
                                     manager=self.manager)
         # Загрузка монет
         money = DatabaseManager.get_money()
         money_image = load_image('coin.png', 'other')
-        self.money_label = UILabel(Rect((150, 40, 100, 30)), text=f'{money} монет')
+        self.money_label = UILabel(Rect((150, 40, 100, 30)), text=f'{money} Монет(а/ы)')
         self.money_ui_image = UIImage(Rect((100, 40, 40, 40)), money_image)
 
         # загрузка магазина персонажей
@@ -327,11 +312,8 @@ class GuiManager:
         character_image = get_front_frame_characters_by_id(
             self.shop_characteristic_all_characters[self.characters_viewing_index][0])
         character_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
-        # character_price = str(self.shop_characteristic_all_characters[
-        #                           self.characters_viewing_index][2])
         self.character_ui_image = UIImage(Rect((150, 200, 100, 100)), character_image)
         self.character_name_label = UILabel(Rect((155, 310, 80, 30)), text=character_name)
-        # print(self.shop_characteristic_all_characters)
         self.character_price_button = UIButton(Rect((140, 345, 110, 30)),
                                                text='Приобретено', command=lambda: buy_item_by_group('characters'))
         self.character_price_button.disable()
@@ -349,11 +331,8 @@ class GuiManager:
         weapon_image = get_frame_weapon_by_id(
             self.shop_characteristic_all_weapons[self.characters_viewing_index][0])
         weapon_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
-        # weapon_price = str(self.shop_characteristic_all_weapons[
-        #                           self.weapons_viewing_index][2])
         self.weapon_ui_image = UIImage(Rect((560, 180, 100, 100)), weapon_image)
         self.weapon_name_label = UILabel(Rect((580, 310, 80, 30)), text=weapon_name)
-        # print(self.shop_characteristic_all_characters)
         self.weapon_price_button = UIButton(Rect((565, 345, 110, 30)),
                                             text='Приобретено', command=lambda: buy_item_by_group('weapons'))
         self.weapon_price_button.disable()
@@ -382,50 +361,6 @@ class GuiManager:
         self.weapons_button_back.kill()
         self.weapons_button_farther.kill()
 
-    # def load_swap_characters(self) -> None:
-    #     self.exit_setting()
-    #     f = get_weapon_settings
-    #     self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
-    #                                 manager=self.manager, )
-    #     self.label_image_characters1 = UILabel(Rect((100, 50, 400, 400)), text=f'')
-    #     self.image_characters1 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-    #     self.label_image_characters1.set_image(self.image_weapon1)
-    #     self.label_name_characters1 = UILabel(Rect((300, 500, 100, 50)), text=f'{f[4]}')
-    #     self.label_name1 = UILabel(Rect((300, 600, 50, 30)), text='выбрано')
-    #     characters = self.database_manager.get_character()
-    #     self.label_image_characters2 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-    #     self.image_characters2 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-    #     self.label_image_characters2.set_image(self.image_weapon1)
-    #     self.label_name_characters2 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[0][1]}')
-    #     self.button_characters2 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-    #     self.label_image_characters3 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-    #     self.image_characters3 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-    #     self.label_image_characters3.set_image(self.image_weapon1)
-    #     self.label_name_characters3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
-    #     self.button_characters3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-
-    # def load_swap_weapons(self) -> None:
-    #     self.exit_setting()
-    #     f = get_weapon_settings
-    #     self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
-    #                                 manager=self.manager, )
-    #     self.label_image_weapon1 = UILabel(Rect((100, 50, 400, 400)), text=f'')
-    #     self.image_weapon1 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-    #     self.label_image_weapon1.set_image(self.image_weapon1)
-    #     self.label_name_weapon1 = UILabel(Rect((300, 500, 100, 50)), text=f'{f}')
-    #     self.label_name1 = UILabel(Rect((300, 600, 50, 30)), text='выбрано')
-    #     characters = DatabaseManager.get_current_character_id()
-    #     self.label_image_weapon2 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-    #     self.image_weapon2 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-    #     self.label_image_weapon2.set_image(self.image_weapon1)
-    #     self.label_name_weapon2 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters}')
-    #     self.button_weapon2 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-    #     self.label_image_weapon3 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-    #     self.image_weapon3 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-    #     self.label_image_weapon3.set_image(self.image_weapon1)
-    #     self.label_name_weapon3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters}')
-    #     self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-
 
 class DatabaseManager:
     @classmethod
@@ -440,7 +375,6 @@ class DatabaseManager:
         result = cur.execute('''SELECT name, health, damage, speed, armor FROM characters
                              WHERE id=?''',
                              (DatabaseManager.get_current_id_by_group('characters'),)).fetchone()
-        # print(result) # [LOG]
         con.close()
         return result
 
@@ -449,7 +383,6 @@ class DatabaseManager:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, attack_distance, speed FROM enemies
                              WHERE id=?''', (enemy_id,)).fetchone()
-        # print(result) # [LOG]
         con.close()
         return result
 
@@ -505,7 +438,6 @@ class DatabaseManager:
     def get_settings_values(cls) -> tuple[int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('SELECT volume_music, volume_effects FROM user').fetchone()
-        # print(result)
         con.close()
         return result
 
@@ -573,31 +505,31 @@ class DatabaseManager:
 class SpriteGroupManager:
     def __init__(self):
 
-        self.all_gameplay = pygame.sprite.Group()
-        self.movable_for_gameplay = pygame.sprite.Group()
-        self.player = pygame.sprite.Group()
-        self.enemies = pygame.sprite.Group()
-        self.walls = pygame.sprite.Group()
-        self.trap = pygame.sprite.Group()
-        self.hud = pygame.sprite.Group()
-        self.portal = pygame.sprite.Group()
+        self.all_gameplay = sprite.Group()
+        self.movable_for_gameplay = sprite.Group()
+        self.player = sprite.Group()
+        self.enemies = sprite.Group()
+        self.walls = sprite.Group()
+        self.trap = sprite.Group()
+        self.hud = sprite.Group()
+        self.portal = sprite.Group()
         self.hud_main_sprite = None
-        self.cursor = pygame.sprite.Group()
-        self.weapon = pygame.sprite.Group()
-        self.enemy_status_bar = pygame.sprite.Group()
+        self.cursor = sprite.Group()
+        self.weapon = sprite.Group()
+        self.enemy_status_bar = sprite.Group()
 
-        self.all_tiles = pygame.sprite.Group()
+        self.all_tiles = sprite.Group()
 
     def update(self, is_going_game: bool, timedelta: float):
         if is_going_game:
             self.player.update(timedelta=timedelta, mode='update', group_walls=self.walls, group_trap=self.trap)
             self.enemies.update(*self.player.sprites(), timedelta)
             self.hud_main_sprite.update(*self.player.sprites()[0].get_value_for_hud())
-            flag_trap = any(map(lambda x: x.flag_angry, self.enemies))  # or self._is_nearby_enemy()
+            flag_trap = any(map(lambda x: x.flag_angry, self.enemies))
             self.trap.update(flag_trap)
             self.portal.update(timedelta, self.enemies)
 
-    def draw(self, screen: pygame.Surface, is_going_game: bool):
+    def draw(self, screen: Surface, is_going_game: bool):
         if is_going_game:
             self.all_tiles.draw(screen)
             self.trap.draw(screen)
@@ -609,15 +541,15 @@ class SpriteGroupManager:
             self.weapon.draw(screen)
             self.cursor.draw(screen)
 
-    def add_hud(self, sprite):
-        self.hud_main_sprite = sprite
-        self.hud.add(sprite)
-        for subsprite in sprite.get_sprites_status_bar():
+    def add_hud(self, sprite_to_add):
+        self.hud_main_sprite = sprite_to_add
+        self.hud.add(sprite_to_add)
+        for subsprite in sprite_to_add.get_sprites_status_bar():
             self.hud.add(subsprite)
 
-    def _add_gameplay(self, sprite):
-        self.all_gameplay.add(sprite)
-        self.movable_for_gameplay.add(sprite)
+    def _add_gameplay(self, sprite_to_add):
+        self.all_gameplay.add(sprite_to_add)
+        self.movable_for_gameplay.add(sprite_to_add)
 
     def get_movable_sprites(self) -> list:
         return self.movable_for_gameplay.sprites()
@@ -625,7 +557,7 @@ class SpriteGroupManager:
     def get_portal_sprite(self):
         return self.portal.sprites()[0]
 
-    def add_tile_sprite_by_id_layer(self, sprite, id_layer: int):
+    def add_tile_sprite_by_id_layer(self, sprite_to_add, id_layer: int):
 
         groups = [self.all_gameplay, self.movable_for_gameplay, self.all_tiles]
         if id_layer == 2:
@@ -634,31 +566,30 @@ class SpriteGroupManager:
             groups.append(self.trap)
 
         for group in groups:
-            group.add(sprite)
+            group.add(sprite_to_add)
 
-    def add_player(self, sprite):
-        self._add_gameplay(sprite)
-        self.player.add(sprite)
-        # self._add_gameplay(sprite.weapon)
-        self.weapon.add(sprite.weapon)
+    def add_player(self, sprite_to_add):
+        self._add_gameplay(sprite_to_add)
+        self.player.add(sprite_to_add)
+        self.weapon.add(sprite_to_add.weapon)
 
-    def add_enemy(self, sprite):
-        self._add_gameplay(sprite)
-        self.enemies.add(sprite)
-        self._add_gameplay(sprite.status_bar)
-        self.enemy_status_bar.add(sprite.status_bar)
+    def add_enemy(self, sprite_to_add):
+        self._add_gameplay(sprite_to_add)
+        self.enemies.add(sprite_to_add)
+        self._add_gameplay(sprite_to_add.status_bar)
+        self.enemy_status_bar.add(sprite_to_add.status_bar)
 
-    def add_portal(self, sprite):
-        self._add_gameplay(sprite)
-        self.portal.add(sprite)
+    def add_portal(self, sprite_to_add):
+        self._add_gameplay(sprite_to_add)
+        self.portal.add(sprite_to_add)
 
-    def add_cursor(self, sprite):
-        self.cursor.add(sprite)
+    def add_cursor(self, sprite_to_add):
+        self.cursor.add(sprite_to_add)
 
     def kill_gameplay_sprites(self):
-        for sprite in self.all_gameplay:
-            sprite.kill()
-        for sprite in self.hud:
-            sprite.kill()
-        for sprite in self.weapon:
-            sprite.kill()
+        for gameplay_sprite in self.all_gameplay:
+            gameplay_sprite.kill()
+        for hud_sprite in self.hud:
+            hud_sprite.kill()
+        for weapon_spite in self.weapon:
+            weapon_spite.kill()

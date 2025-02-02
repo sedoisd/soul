@@ -96,7 +96,6 @@ class Game:
     def _update(self):
         """Отправка обновлений"""
         self.sprite_group_manager.update(is_going_game=self.is_going_game, timedelta=self.time_delta)
-        self.gui_manager.update()
         pygame.mixer.music.set_volume(DatabaseManager.get_settings_values()[0] / 100)
         if self.is_going_game:
             self.camera.update(self.player)
