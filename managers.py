@@ -147,26 +147,29 @@ class GuiManager:
         # self.button_back._set_image(image_button_back)
         self.scroll_setting = UIVerticalScrollBar(relative_rect=pygame.Rect(10, 150, 20, 400), visible_percentage=0.5,
                                                   manager=self.manager)
-        self.button_sound = UILabel(relative_rect=pygame.Rect(50, 50, 100, 40), text='музыка',
+        self.music_label = UILabel(relative_rect=pygame.Rect(50, 50, 100, 40), text='Музыка',
                                     manager=self.manager)
-        self.button_fihki = UILabel(relative_rect=pygame.Rect(50, 100, 100, 40), text='эффекты',
+        self.effects_label = UILabel(relative_rect=pygame.Rect(50, 100, 100, 40), text='Эффекты',
                                     manager=self.manager)
-        self.progress_bar1_f = UIProgressBar(relative_rect=pygame.Rect((250, 55), (100, 30)),
+
+        self.music_progress_bar = UIProgressBar(relative_rect=pygame.Rect((250, 55), (100, 30)),
                                              manager=self.manager)
-        self.progress_bar1_f.set_current_progress(volume_music)
-        self.progress_bar2_f = UIProgressBar(relative_rect=pygame.Rect((250, 105), (100, 30)),
+        self.music_progress_bar.set_current_progress(volume_music)
+        self.effects_progress_bar = UIProgressBar(relative_rect=pygame.Rect((250, 105), (100, 30)),
                                              manager=self.manager)
-        self.progress_bar2_f.set_current_progress(volume_effects)
-        self.button_minys1 = UIButton(relative_rect=pygame.Rect(210, 55, 30, 30), text='-',
+        self.effects_progress_bar.set_current_progress(volume_effects)
+
+        self.music_button_minus = UIButton(relative_rect=pygame.Rect(210, 55, 30, 30), text='-',
                                       manager=self.manager)
-        self.button_plus1 = UIButton(relative_rect=pygame.Rect(360, 55, 30, 30), text='+',
+        self.music_button_plus = UIButton(relative_rect=pygame.Rect(360, 55, 30, 30), text='+',
                                      manager=self.manager)
-        self.button_minys2 = UIButton(relative_rect=pygame.Rect(210, 105, 30, 30), text='-',
+
+        self.effects_button_minus = UIButton(relative_rect=pygame.Rect(210, 105, 30, 30), text='-',
                                       manager=self.manager)
-        self.button_plus2 = UIButton(relative_rect=pygame.Rect(360, 105, 30, 30), text='+',
+        self.effects_button_plus = UIButton(relative_rect=pygame.Rect(360, 105, 30, 30), text='+',
                                      manager=self.manager)
-        self.button_save = UIButton(relative_rect=pygame.Rect(820, 0, 80, 50), text='сохранить',
-                                    manager=self.manager)
+        # self.button_save = UIButton(relative_rect=pygame.Rect(820, 0, 80, 50), text='сохранить',
+        #                             manager=self.manager)
 
     def _load_shop(self) -> None:
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
@@ -241,15 +244,16 @@ class GuiManager:
         self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
 
     def exit_setting(self):
-        self.button_fihki.kill()
-        self.button_sound.kill()
-        self.progress_bar1_f.kill()
-        self.progress_bar2_f.kill()
-        self.button_save.kill()
-        self.button_minys1.kill()
-        self.button_minys2.kill()
-        self.button_plus1.kill()
-        self.button_plus2.kill()
+        self.music_label.kill()
+        self.music_progress_bar.kill()
+        self.music_button_minus.kill()
+        self.music_button_plus.kill()
+
+        self.effects_label.kill()
+        self.effects_progress_bar.kill()
+        self.effects_button_plus.kill()
+        self.effects_button_minus.kill()
+
         self.scroll_setting.kill()
 
     def exit_game1(self):
@@ -339,9 +343,12 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def update_setting(cls, progress_bar1, progress_bar2) -> None:
+    def update_volume_settings(cls, volume_music, volume_effects) -> None:
         con, cur = cls._connection_to_database()
-        cur.execute(f"UPDATE settings SET progress_bar1 = {progress_bar1}, progress_bar2 = {progress_bar2}")
+        cur.execute('''UPDATE user SET 
+                            volume_music = ?, 
+                            volume_effects = ?
+                    ''', (volume_music, volume_effects))
         con.close()
 
     @classmethod
