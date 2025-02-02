@@ -12,13 +12,6 @@ def load_image(name, path=None) -> pygame.Surface:
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
     image = pygame.image.load(fullname)
-    # if colorkey is not None:
-    #     image = image.convert()
-    #     if colorkey == -1:
-    #         colorkey = image.get_at((0, 0))
-    #     image.set_colorkey(colorkey)
-    # else:
-    #     image = image.convert_alpha()
     return image
 
 
@@ -48,33 +41,33 @@ def get_frame_current_background(num) -> pygame.surface:
     # image_height = atlas_height / 4
     return image
 
-
-def buy(price):
-    f = get_weapon_settings()
-    text = open('text.txt', 'w')
-    print(f'{f[0] - price}\n{f[1]}\n{f[2]}\n{f[3]}\n{f[4]}')
-    text.write(f'{f[0] - price}\n{f[1]}\n{f[2]}\n{f[3]}\n{f[4]}')
-    text.close()
-
-
-def get_weapon_settings():
-    text = open('text.txt', 'r')
-    f = [i for i in text]
-    text.close()
-    return f
-
-
-def update_setting(progress_bar1, progress_bar2) -> None:
-    f = get_weapon_settings()
-    text = open('text.txt', 'w')
-    print(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
-    text.write(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
-    text.close()
-
-
-def update_weapon(progress_bar1, progress_bar2) -> None:
-    f = get_weapon_settings()
-    text = open('text.txt', 'w')
-    print(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
-    text.write(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
-    text.close()
+#
+# def buy(price):
+#     f = get_weapon_settings()
+#     text = open('text.txt', 'w')
+#     print(f'{f[0] - price}\n{f[1]}\n{f[2]}\n{f[3]}\n{f[4]}')
+#     text.write(f'{f[0] - price}\n{f[1]}\n{f[2]}\n{f[3]}\n{f[4]}')
+#     text.close()
+#
+#
+# def get_weapon_settings():
+#     text = open('text.txt', 'r')
+#     f = [i for i in text]
+#     text.close()
+#     return f
+#
+#
+# def update_setting(progress_bar1, progress_bar2) -> None:
+#     f = get_weapon_settings()
+#     text = open('text.txt', 'w')
+#     print(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
+#     text.write(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
+#     text.close()
+#
+#
+# def update_weapon(progress_bar1, progress_bar2) -> None:
+#     f = get_weapon_settings()
+#     text = open('text.txt', 'w')
+#     print(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
+#     text.write(f'{f[0]}\n{progress_bar1}\n{progress_bar2}\n{f[3]}\n{f[4]}')
+#     text.close()

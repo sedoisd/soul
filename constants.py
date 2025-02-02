@@ -14,5 +14,3 @@ ENEMY_FRAME_TIME = 0.2
 
 # Hud
 SCALE_HUD = 0.7
-
-
