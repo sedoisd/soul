@@ -71,7 +71,7 @@ class GuiManager:
                     DatabaseManager.update_current_id_by_group('weapons', new_current_weapon_id)
                     new_weapon_image = get_frame_weapon_by_id(DatabaseManager.get_current_id_by_group('weapons'))
                     new_name_weapon = DatabaseManager.get_current_name_by_group('weapons')
-                    self.weapon_image.set_image(new_weapon_image)
+                    self.weapon_ui_image.set_image(new_weapon_image)
                     self.weapon_name_label.set_text(new_name_weapon)
                 elif event.ui_element == self.characters_drop_menu:
                     new_current_character_id = self.dict_purchased_characters_by_name[event.text]
@@ -79,7 +79,7 @@ class GuiManager:
                     new_character_image = get_front_frame_characters_by_id(
                         DatabaseManager.get_current_id_by_group('characters'))
                     new_name_characters = DatabaseManager.get_current_name_by_group('characters')
-                    self.character_image.set_image(new_character_image)
+                    self.character_ui_image.set_image(new_character_image)
                     self.weapon_name_label.set_text(new_name_characters)
                 # print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
             #     elif self.gui_mode == 'shop':
@@ -243,7 +243,49 @@ class GuiManager:
         self.scroll_setting.kill()
 
     def _load_shop(self) -> None:
-        # def
+        def characters_navigation(direction: str):
+            if direction == 'father':
+                self.characters_viewing_index += 1
+                if self.characters_viewing_index == 1:
+                    self.characters_button_back.enable()
+                if self.characters_viewing_index == len(self.shop_characteristic_all_characters) - 1:
+                    self.characters_button_farther.disable()
+            elif direction == 'back':
+                self.characters_viewing_index -= 1
+                if self.characters_viewing_index == 0:
+                    self.characters_button_back.disable()
+                if self.characters_viewing_index == len(self.shop_characteristic_all_characters) - 2:
+                    self.characters_button_farther.enable()
+            # Загрузка нового содержимого
+            new_character_image = get_front_frame_characters_by_id(
+                self.shop_characteristic_all_characters[self.characters_viewing_index][0])
+            new_character_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
+            new_character_price = str(self.shop_characteristic_all_characters[self.characters_viewing_index][2])
+            self.character_ui_image.set_image(new_character_image)
+            self.character_name_label.set_text(new_character_name)
+            self.character_price_label.set_text(new_character_price)
+
+        def weapons_navigation(direction: str):
+            if direction == 'father':
+                self.weapons_viewing_index += 1
+                if self.weapons_viewing_index == 1:
+                    self.weapons_button_back.enable()
+                if self.weapons_viewing_index == len(self.shop_characteristic_all_weapons) - 1:
+                    self.weapons_button_farther.disable()
+            elif direction == 'back':
+                self.weapons_viewing_index -= 1
+                if self.weapons_viewing_index == 0:
+                    self.weapons_button_back.disable()
+                if self.weapons_viewing_index == len(self.shop_characteristic_all_weapons) - 2:
+                    self.weapons_button_farther.enable()
+            # Загрузка нового содержимого
+            new_weapon_image = get_frame_weapon_by_id(
+                self.shop_characteristic_all_weapons[self.weapons_viewing_index][0])
+            new_weapon_name = self.shop_characteristic_all_weapons[self.weapons_viewing_index][1]
+            new_weapon_price = str(self.shop_characteristic_all_weapons[self.weapons_viewing_index][2])
+            self.weapon_ui_image.set_image(new_weapon_image)
+            self.weapon_name_label.set_text(new_weapon_name)
+            self.weapon_price_label.set_text(new_weapon_price)
 
         self.mode = 'shop'
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
@@ -260,17 +302,41 @@ class GuiManager:
             'characters')  # [(id, name, price, health, armor, speed), (int, name, int, int, int), ...]
         character_image = get_front_frame_characters_by_id(
             self.shop_characteristic_all_characters[self.characters_viewing_index][0])
-        characters_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
+        character_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
+        character_price = str(self.shop_characteristic_all_characters[
+                                  self.characters_viewing_index][2])
         self.character_ui_image = UIImage(Rect((150, 200, 100, 100)), character_image)
-        self.character_name_label = UILabel(Rect((175, 310, 50, 30)), text=characters_name)
+        self.character_name_label = UILabel(Rect((155, 310, 80, 30)), text=character_name)
         # print(self.shop_characteristic_all_characters)
         self.character_price_label = UILabel(Rect((175, 345, 40, 20)),
-                                             text=str(self.shop_characteristic_all_characters[
-                                                          self.characters_viewing_index][2]))
+                                             text=character_price)
 
-        self.characters_button_back = UIButton(Rect((110, 280, 30, 25)), text='<-')
+        self.characters_button_back = UIButton(Rect((110, 280, 30, 25)), text='<-',
+                                               command=lambda: characters_navigation('back'))
         self.characters_button_back.disable()
-        self.characters_button_farther = UIButton(Rect((275, 280, 30, 25)), text='->')
+        self.characters_button_farther = UIButton(Rect((275, 280, 30, 25)), text='->',
+                                                  command=lambda: characters_navigation('father'))
+
+        # загрузка магазина оружий
+        self.weapons_viewing_index = 0
+        self.shop_characteristic_all_weapons = DatabaseManager.get_shop_characteristic_all_items_by_group(
+            'weapons')  # [(id, name, price, damage, attack_distance), (int, name, int, int), ...]
+        weapon_image = get_frame_weapon_by_id(
+            self.shop_characteristic_all_weapons[self.characters_viewing_index][0])
+        weapon_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
+        weapon_price = str(self.shop_characteristic_all_weapons[
+                                  self.weapons_viewing_index][2])
+        self.weapon_ui_image = UIImage(Rect((560, 180, 100, 100)), weapon_image)
+        self.weapon_name_label = UILabel(Rect((580, 310, 80, 30)), text=weapon_name)
+        # print(self.shop_characteristic_all_characters)
+        self.weapon_price_label = UILabel(Rect((600, 345, 40, 20)),
+                                             text=weapon_price)
+
+        self.weapons_button_back = UIButton(Rect((520, 280, 30, 25)), text='<-',
+                                               command=lambda: weapons_navigation('back'))
+        self.weapons_button_back.disable()
+        self.weapons_button_farther = UIButton(Rect((680, 280, 30, 25)), text='->',
+                                                  command=lambda: weapons_navigation('father'))
 
     def exit_shop(self):
         self.button_back.kill()
@@ -391,7 +457,7 @@ class DatabaseManager:
         if group_name == 'characters':
             result = cur.execute('''SELECT id, name, price, health, armor, speed FROM characters''').fetchall()
         elif group_name == 'weapons':
-            result = cur.execute('''SELECT id, name FROM weapons''').fetchall()
+            result = cur.execute('''SELECT id, name, price, damage, attack_distance FROM weapons''').fetchall()
             con.close()
         return result
 
