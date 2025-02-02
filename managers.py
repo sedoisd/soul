@@ -67,7 +67,12 @@ class GuiManager:
         elif event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
             if self.mode == 'selection':
                 if event.ui_element == self.weapon_drop_menu:
-                    pass
+                    new_current_weapon_id = self.dict_purchased_weapons_by_name[event.text]
+                    DatabaseManager.update_current_id_by_group('weapons', new_current_weapon_id)
+                    new_weapon_image = get_frame_weapon_by_id(DatabaseManager.get_current_id_by_group('weapons'))
+                    self.weapon_image.set_image(new_weapon_image)
+                    new_name_weapon = DatabaseManager.get_current_name_by_group('weapons')
+                    self.weapon_name_label.set_text(new_name_weapon)
                 elif event.ui_element == self.characters_drop_menu:
                     pass
                 print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
@@ -85,12 +90,6 @@ class GuiManager:
         self.button_shop.kill()
         self.button_setting.kill()
         self.button_exit.kill()
-        # self.image_character = None
-        # self.label_image_character.kill()
-        # self.label_name_character.kill()
-        # self.image_weapon = None
-        # self.label_image_weapon.kill()
-        # self.label_name_weapon.kill()
 
     def load_start_menu(self) -> None:
         def redirection(command_load=None) -> None:
@@ -125,26 +124,36 @@ class GuiManager:
         self.current_lvl = 1
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
-        # Character menu
-        char_image = get_front_frame_characters_by_id(DatabaseManager.get_current_id_by_group('characters'))
-        self.character_image = UIImage(Rect((515, 30, 100, 100)), char_image)
-        self.character_name_label = UILabel(Rect((515, 145, 100, 30)), text='Рыцарь')
-        purchased_characters = list(map(lambda x: x[1], DatabaseManager.get_purchased_items_by_group('characters')))
-        # print(purchased_characters)
-        optional_list_characters = purchased_characters  # ['Меч', 'Гайка']
-        start_option_characters = DatabaseManager.get_current_name_by_group('characters')
-        self.characters_drop_menu = UIDropDownMenu(relative_rect=Rect((502, 250, 150, 50)), manager=self.manager,
-                                                   options_list=optional_list_characters,
-                                                   starting_option=start_option_characters)
+        # Character
+        characters_image = get_front_frame_characters_by_id(DatabaseManager.get_current_id_by_group('characters'))
+        name_characters = DatabaseManager.get_current_name_by_group('characters')
+        purchased_characters = DatabaseManager.get_purchased_items_by_group('characters')
+        characters_optional_list = list(map(lambda x: x[1], purchased_characters))
+        characters_start_option = DatabaseManager.get_current_name_by_group('characters')
+        self.dict_purchased_characters_by_name = dict()
+        for char_id, name in purchased_characters:
+            self.dict_purchased_characters_by_name[name] = char_id
 
-        # Weapon menu
-        weap_image = get_frame_weapon_by_id(DatabaseManager.get_current_id_by_group('weapons'))
-        self.weapon_image = UIImage(Rect((140, 30, 100, 100)), weap_image)
-        self.weapon_name_label = UILabel(Rect((160, 200, 100, 30)), text='Меч')
-        optional_list_weapon = list(map(lambda x: x[1], DatabaseManager.get_purchased_items_by_group('weapons')))
-        start_option_weapon = DatabaseManager.get_current_name_by_group('weapons')
+        self.character_image = UIImage(Rect((515, 30, 100, 100)), characters_image)
+        self.character_name_label = UILabel(Rect((515, 145, 100, 30)), text=name_characters)
+        self.characters_drop_menu = UIDropDownMenu(relative_rect=Rect((502, 250, 150, 50)), manager=self.manager,
+                                                   options_list=characters_optional_list,
+                                                   starting_option=characters_start_option)
+
+        # Weapon
+        weapon_image = get_frame_weapon_by_id(DatabaseManager.get_current_id_by_group('weapons'))
+        weapon_name = DatabaseManager.get_current_name_by_group('weapons')
+        purchased_weapons = DatabaseManager.get_purchased_items_by_group('weapons')
+        weapon_optional_list = list(map(lambda x: x[1], purchased_weapons))
+        weapon_start_option = DatabaseManager.get_current_name_by_group('weapons')
+        self.dict_purchased_weapons_by_name = dict()
+        for char_id, name in purchased_weapons:
+            self.dict_purchased_weapons_by_name[name] = char_id
+
+        self.weapon_image = UIImage(Rect((140, 30, 100, 100)), weapon_image)
+        self.weapon_name_label = UILabel(Rect((160, 200, 100, 30)), text=weapon_name)
         self.weapon_drop_menu = UIDropDownMenu(relative_rect=Rect((160, 240, 150, 50)), manager=self.manager,
-                                               options_list=optional_list_weapon, starting_option=start_option_weapon)
+                                               options_list=weapon_optional_list, starting_option=weapon_start_option)
 
         # Выбор ЛВЛа
         self.button_level1 = UIButton(relative_rect=Rect((300, 600, 100, 70)),
@@ -347,22 +356,22 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_current_id_by_group(cls, name_group: str) -> int:
+    def get_current_id_by_group(cls, group_name: str) -> int:
         con, cur = cls._connection_to_database()
-        if name_group == 'characters':
+        if group_name == 'characters':
             result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
-        elif name_group == 'weapons':
+        elif group_name == 'weapons':
             result = cur.execute('''SELECT current_weapon FROM user''').fetchone()[0]
         con.close()
         return result
 
     @classmethod
-    def get_current_name_by_group(cls, name_group: str) -> str:
+    def get_current_name_by_group(cls, group_name: str) -> str:
         con, cur = cls._connection_to_database()
-        cur_id = DatabaseManager.get_current_id_by_group(name_group)
-        if name_group == 'characters':
+        cur_id = DatabaseManager.get_current_id_by_group(group_name)
+        if group_name == 'characters':
             result = cur.execute('''SELECT name FROM characters WHERE id=?''', (cur_id,)).fetchone()[0]
-        elif name_group == 'weapons':
+        elif group_name == 'weapons':
             result = cur.execute('''SELECT name FROM weapons WHERE id=?''', (cur_id,)).fetchone()[0]
         con.close()
         return result
@@ -413,11 +422,11 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_purchased_items_by_group(cls, name_group: str):
+    def get_purchased_items_by_group(cls, group_name: str):
         con, cur = cls._connection_to_database()
-        if name_group == 'characters':
+        if group_name == 'characters':
             result = cur.execute('''SELECT id, name FROM characters WHERE purchased=1''').fetchall()
-        elif name_group == 'weapons':
+        elif group_name == 'weapons':
             result = cur.execute('''SELECT id, name FROM weapons WHERE purchased=1''').fetchall()
         con.close()
         return result
@@ -429,6 +438,16 @@ class DatabaseManager:
                             volume_music = ?, 
                             volume_effects = ?
                     ''', (volume_music, volume_effects))
+        con.commit()
+        con.close()
+
+    @classmethod
+    def update_current_id_by_group(cls, group_name, current_id: int) -> None:
+        con, cur = cls._connection_to_database()
+        if group_name == 'characters':
+            cur.execute('''UPDATE user SET current_character = ? ''', (current_id,))
+        elif group_name == 'weapons':
+            cur.execute('''UPDATE user SET current_weapon = ?''', (current_id,))
         con.commit()
         con.close()
 
