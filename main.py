@@ -117,6 +117,8 @@ class Game:
             self.screen.fill(color)
         # ------------------
         gui_mode = self.gui_manager.get_mode()
+        # if gui_mode is None:
+        #     self.screen.fill(color)
         if gui_mode == 'shop':
             fon = get_frame_current_background(1)
             self.screen.blit(fon, (0, 0))
