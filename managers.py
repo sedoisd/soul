@@ -180,19 +180,17 @@ class GuiManager:
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
         # Character menu
-        self.label_image_character = UILabel(Rect((420, 370, 400, 400)), text='')
-        self.image_character = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-        # self.image_character = ц(self.image_character, 0, 0.2)
-        self.label_image_character.set_image(self.image_character)
+        char_image = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
+        self.image_character = UIImage(Rect((420, 370, 100, 100)), char_image)
         self.label_name_character = UILabel(Rect((490, 600, 100, 30)), text='Рыцарь')
         # Weapon menu
-        self.label_image_weapon = UILabel(Rect((170, 400, 150, 100)), text='')
-        self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.label_image_weapon.set_image(self.image_weapon)
+        weap_image = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
+        self.image_weapon = UIImage(Rect((170, 400, 150, 100)), weap_image)
         self.label_name_weapon = UILabel(Rect((220, 600, 100, 30)), text='Меч')
-
-        self.button_weapon_swap = UIButton(relative_rect=Rect((190, 650, 150, 50)),
-                                           text='Cменить оружие', manager=self.manager, )
+        optional_list_weapon = ['Меч', 'Гайка']
+        start_option = 'Меч'
+        self.button_weapon_swap = UIDropDownMenu(relative_rect=Rect((190, 650, 150, 50)), manager=self.manager,
+                                                options_list=optional_list_weapon, starting_option=start_option)
         self.button_characters_swap = UIButton(relative_rect=Rect((470, 650, 150, 50)),
                                                text='Cменить персонажа', manager=self.manager, )
         self.button_level1 = UIButton(relative_rect=Rect((140, 100, 100, 70)),
@@ -277,83 +275,83 @@ class GuiManager:
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager, )
         shop = DatabaseManager.shop()
-        self.label_name_weapon = UILabel(Rect((150, 400, 60, 30)), text=f'{shop[0][1]} - {shop[0][4]}$')
-        self.label_image_weapon = UILabel(Rect((100, 180, 150, 100)), text='')
-        self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.label_image_weapon.set_image(self.image_weapon)
-        self.scroll_shop = UIHorizontalScrollBar(relative_rect=pygame.Rect(200, 650, 400, 20), visible_percentage=0.5,
-                                                 manager=self.manager)
-        if not shop[0][3]:
-            self.button_buy = UIButton(relative_rect=pygame.Rect(150, 450, 60, 30), text='купить',
-                                       manager=self.manager)
-            self.name = shop[0][1]
-        else:
-            self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
+        # self.label_name_weapon = UILabel(Rect((150, 400, 60, 30)), text=f'{shop[0][1]} - {shop[0][4]}$')
+        # self.label_image_weapon = UILabel(Rect((100, 180, 150, 100)), text='')
+        # self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
+        # self.label_image_weapon.set_image(self.image_weapon)
+        # self.scroll_shop = UIHorizontalScrollBar(relative_rect=pygame.Rect(200, 650, 400, 20), visible_percentage=0.5,
+        #                                          manager=self.manager)
+        # if not shop[0][3]:
+        #     self.button_buy = UIButton(relative_rect=pygame.Rect(150, 450, 60, 30), text='купить',
+        #                                manager=self.manager)
+        #     self.name = shop[0][1]
+        # else:
+        #     self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
         myonets = get_weapon_settings()[0]
         self.label_name_myonets = UILabel(Rect((150, 50, 50, 30)), text=str(myonets) + "$")
         self.label_image_myonets = UILabel(Rect((120, 50, 30, 30)), text='')
         self.image_myonets = pygame.image.load('image/other/icon-coin.png')
         self.label_image_myonets.set_image(self.image_myonets)
 
-    def update_shop(self) -> None:
-        self.button_buy.kill()
-        self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
-        DatabaseManager.update_inventory(self.name)
-        buy(DatabaseManager.buy(self.name))
+    # def update_shop(self) -> None:
+    #     self.button_buy.kill()
+    #     self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
+    #     DatabaseManager.update_inventory(self.name)
+    #     buy(DatabaseManager.buy(self.name))
 
     def exit_shop(self):
         self.button_back.kill()
-        self.label_image_weapon.kill()
-        self.label_name_weapon.kill()
+        # self.label_image_weapon.kill()
+        # self.label_name_weapon.kill()
         # self.button_buy.kill()
-        self.label_image_weapon.kill()
-        self.scroll_shop.kill()
+        # self.label_image_weapon.kill()
+        # self.scroll_shop.kill()
         self.label_image_myonets.kill()
         self.label_name_myonets.kill()
 
-    def load_swap_characters(self) -> None:
-        self.exit_setting()
-        f = get_weapon_settings
-        self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
-                                    manager=self.manager, )
-        self.label_image_characters1 = UILabel(Rect((100, 50, 400, 400)), text=f'')
-        self.image_characters1 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-        self.label_image_characters1.set_image(self.image_weapon1)
-        self.label_name_characters1 = UILabel(Rect((300, 500, 100, 50)), text=f'{f[4]}')
-        self.label_name1 = UILabel(Rect((300, 600, 50, 30)), text='выбрано')
-        characters = self.database_manager.get_character()
-        self.label_image_characters2 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-        self.image_characters2 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-        self.label_image_characters2.set_image(self.image_weapon1)
-        self.label_name_characters2 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[0][1]}')
-        self.button_characters2 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-        self.label_image_characters3 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-        self.image_characters3 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-        self.label_image_characters3.set_image(self.image_weapon1)
-        self.label_name_characters3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
-        self.button_characters3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
+    # def load_swap_characters(self) -> None:
+    #     self.exit_setting()
+    #     f = get_weapon_settings
+    #     self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
+    #                                 manager=self.manager, )
+    #     self.label_image_characters1 = UILabel(Rect((100, 50, 400, 400)), text=f'')
+    #     self.image_characters1 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
+    #     self.label_image_characters1.set_image(self.image_weapon1)
+    #     self.label_name_characters1 = UILabel(Rect((300, 500, 100, 50)), text=f'{f[4]}')
+    #     self.label_name1 = UILabel(Rect((300, 600, 50, 30)), text='выбрано')
+    #     characters = self.database_manager.get_character()
+    #     self.label_image_characters2 = UILabel(Rect((550, 50, 400, 400)), text=f'')
+    #     self.image_characters2 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
+    #     self.label_image_characters2.set_image(self.image_weapon1)
+    #     self.label_name_characters2 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[0][1]}')
+    #     self.button_characters2 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
+    #     self.label_image_characters3 = UILabel(Rect((550, 50, 400, 400)), text=f'')
+    #     self.image_characters3 = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
+    #     self.label_image_characters3.set_image(self.image_weapon1)
+    #     self.label_name_characters3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
+    #     self.button_characters3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
 
-    def load_swap_weapons(self) -> None:
-        self.exit_setting()
-        f = get_weapon_settings
-        self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
-                                    manager=self.manager, )
-        self.label_image_weapon1 = UILabel(Rect((100, 50, 400, 400)), text=f'')
-        self.image_weapon1 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.label_image_weapon1.set_image(self.image_weapon1)
-        self.label_name_weapon1 = UILabel(Rect((300, 500, 100, 50)), text=f'{f[4]}')
-        self.label_name1 = UILabel(Rect((300, 600, 50, 30)), text='выбрано')
-        characters = self.database_manager.get_character()
-        self.label_image_weapon2 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-        self.image_weapon2 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.label_image_weapon2.set_image(self.image_weapon1)
-        self.label_name_weapon2 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[0][1]}')
-        self.button_weapon2 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-        self.label_image_weapon3 = UILabel(Rect((550, 50, 400, 400)), text=f'')
-        self.image_weapon3 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.label_image_weapon3.set_image(self.image_weapon1)
-        self.label_name_weapon3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
-        self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
+    # def load_swap_weapons(self) -> None:
+    #     self.exit_setting()
+    #     f = get_weapon_settings
+    #     self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
+    #                                 manager=self.manager, )
+    #     self.label_image_weapon1 = UILabel(Rect((100, 50, 400, 400)), text=f'')
+    #     self.image_weapon1 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
+    #     self.label_image_weapon1.set_image(self.image_weapon1)
+    #     self.label_name_weapon1 = UILabel(Rect((300, 500, 100, 50)), text=f'{f}')
+    #     self.label_name1 = UILabel(Rect((300, 600, 50, 30)), text='выбрано')
+    #     characters = DatabaseManager.get_current_character_id()
+    #     self.label_image_weapon2 = UILabel(Rect((550, 50, 400, 400)), text=f'')
+    #     self.image_weapon2 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
+    #     self.label_image_weapon2.set_image(self.image_weapon1)
+    #     self.label_name_weapon2 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters}')
+    #     self.button_weapon2 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
+    #     self.label_image_weapon3 = UILabel(Rect((550, 50, 400, 400)), text=f'')
+    #     self.image_weapon3 = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
+    #     self.label_image_weapon3.set_image(self.image_weapon1)
+    #     self.label_name_weapon3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters}')
+    #     self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
 
 
 class DatabaseManager:
@@ -416,7 +414,7 @@ class DatabaseManager:
     def get_settings_values(cls) -> tuple[int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('SELECT volume_music, volume_effects FROM user').fetchone()
-        print(result)
+        # print(result)
         con.close()
         return result
 
