@@ -70,11 +70,17 @@ class GuiManager:
                     new_current_weapon_id = self.dict_purchased_weapons_by_name[event.text]
                     DatabaseManager.update_current_id_by_group('weapons', new_current_weapon_id)
                     new_weapon_image = get_frame_weapon_by_id(DatabaseManager.get_current_id_by_group('weapons'))
-                    self.weapon_image.set_image(new_weapon_image)
                     new_name_weapon = DatabaseManager.get_current_name_by_group('weapons')
+                    self.weapon_image.set_image(new_weapon_image)
                     self.weapon_name_label.set_text(new_name_weapon)
                 elif event.ui_element == self.characters_drop_menu:
-                    pass
+                    new_current_character_id = self.dict_purchased_characters_by_name[event.text]
+                    DatabaseManager.update_current_id_by_group('characters', new_current_character_id)
+                    new_character_image = get_front_frame_characters_by_id(
+                        DatabaseManager.get_current_id_by_group('characters'))
+                    new_name_characters = DatabaseManager.get_current_name_by_group('characters')
+                    self.character_image.set_image(new_character_image)
+                    self.weapon_name_label.set_text(new_name_characters)
                 print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
             #     elif self.gui_mode == 'shop':
             #         if event.ui_element == self.gui_manager.button_buy:
