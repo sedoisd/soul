@@ -34,7 +34,6 @@ class Game:
         self.flag_going_shop = False
         self.flag_going_setting = False
         self.flag_going_game1 = False
-        self.gui_mode = 'menu'
 
         # init counting variables
         self.max_enemy = 0
@@ -117,16 +116,17 @@ class Game:
             color = (122, 122, 122)
             self.screen.fill(color)
         # ------------------
-        elif self.flag_going_shop:
+        gui_mode = self.gui_manager.get_mode()
+        if gui_mode == 'shop':
             fon = get_frame_current_background(1)
             self.screen.blit(fon, (0, 0))
-        elif self.flag_going_setting:
+        elif gui_mode == 'setting':
             fon = get_frame_current_background(2)
             self.screen.blit(fon, (0, 0))
-        elif self.flag_going_game1:
+        elif gui_mode == 'selection':
             fon = get_frame_current_background(3)
             self.screen.blit(fon, (0, 0))
-        else:
+        elif gui_mode == 'menu':
             fon = get_frame_current_background(0)
             self.screen.blit(fon, (0, 0))
         # --------------

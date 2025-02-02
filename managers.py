@@ -81,6 +81,9 @@ class GuiManager:
         self.mode = 'menu'
         self.func_start_level = func_start_level
 
+    def get_mode(self):
+        return self.mode
+
     def load_values_mixer(self, sound_open):
         self.sound_open = sound_open
 
@@ -142,10 +145,10 @@ class GuiManager:
         self.button_shop.kill()
         self.button_setting.kill()
         self.button_exit.kill()
-        self.image_character = None
+        # self.image_character = None
         # self.label_image_character.kill()
         # self.label_name_character.kill()
-        self.image_weapon = None
+        # self.image_weapon = None
         # self.label_image_weapon.kill()
         # self.label_name_weapon.kill()
 
@@ -153,6 +156,8 @@ class GuiManager:
         def redirection(command_load=None) -> None:
             self.kill_start_menu()
             command_load()
+
+        self.mode = 'menu'
 
         # size_button = (200, 70)
         self.button_start = UIButton(relative_rect=Rect((340, 220, 200, 70)),
@@ -172,6 +177,7 @@ class GuiManager:
             self.current_lvl = id_lvl
 
         def start_lvl(cur_lvl):
+            self.mode = None
             self.exit_selection_window()
             self.func_start_level(cur_lvl)
 
@@ -185,12 +191,12 @@ class GuiManager:
         self.label_name_character = UILabel(Rect((490, 600, 100, 30)), text='Рыцарь')
         # Weapon menu
         weap_image = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.image_weapon = UIImage(Rect((170, 400, 150, 100)), weap_image)
-        self.label_name_weapon = UILabel(Rect((220, 600, 100, 30)), text='Меч')
+        self.image_weapon = UIImage(Rect((140, 30, 100, 100)), weap_image)
+        self.label_name_weapon = UILabel(Rect((160, 200, 100, 30)), text='Меч')
         optional_list_weapon = ['Меч', 'Гайка']
         start_option = 'Меч'
-        self.button_weapon_swap = UIDropDownMenu(relative_rect=Rect((190, 650, 150, 50)), manager=self.manager,
-                                                options_list=optional_list_weapon, starting_option=start_option)
+        self.button_weapon_swap = UIDropDownMenu(relative_rect=Rect((160, 240, 150, 50)), manager=self.manager,
+                                                 options_list=optional_list_weapon, starting_option=start_option)
         self.button_characters_swap = UIButton(relative_rect=Rect((470, 650, 150, 50)),
                                                text='Cменить персонажа', manager=self.manager, )
         self.button_level1 = UIButton(relative_rect=Rect((140, 100, 100, 70)),
@@ -202,14 +208,14 @@ class GuiManager:
         self.button_level3 = UIButton(relative_rect=Rect((540, 100, 100, 70)),
                                       text='3 уровень', manager=self.manager,
                                       command=lambda: edit_cur_lvl(3))
-        self.button_play = UIButton(relative_rect=Rect((290, 250, 200, 70)),
+        self.button_play = UIButton(relative_rect=Rect((360, 600, 200, 70)),
                                     text='ИГРАТЬ', manager=self.manager,
                                     command=lambda: start_lvl(self.current_lvl))
 
     def exit_selection_window(self):
         self.button_back.kill()
-        self.label_image_character.kill()
-        self.label_image_weapon.kill()
+        self.image_character.kill()
+        self.image_weapon.kill()
         self.label_name_character.kill()
         self.label_name_weapon.kill()
         self.button_weapon_swap.kill()
