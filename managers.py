@@ -98,8 +98,7 @@ class GuiManager:
                 if event.ui_element == self.button_start:
                     self.kill_start_menu()
                     # self.start_game1()
-                    self.flag_going_game1 = True
-            elif self.mode == 'setting':
+                    # elif self.mode == 'setting':
                 if event.ui_element == self.button_back:
                     self.exit_setting()
                     self.button_back.kill()
@@ -121,24 +120,19 @@ class GuiManager:
                     self.effects_progress_bar.set_current_progress(volume_effects)
                 self.sound_open.set_volume(volume_effects / 100)
                 DatabaseManager.update_volume_settings(volume_music, volume_effects)
-                # if event.ui_element == self.gui_manager.music_minus_button:  # Обработка громкости музыки
+            elif self.mode == 'selection':
+                pass
+            elif self.mode == 'shop':
+                pass
+            #     elif self.gui_mode == 'shop':
+            #         if event.ui_element == self.gui_manager.button_buy:
+            #             self.database_manager.update_inventory(self.gui_manager.name)
+            #             self.gui_manager.update_shop()
+            #         elif event.ui_element == self.gui_manager.button_weapon_swap:
+            #             self.gui_manager.load_swap_weapon()
+            #         elif event.ui_element == self.gui_manager.button_characters_swap:
+            #             self.gui_manager.load_swap_characters()
 
-    #             elif event.ui_element == self.gui_manager.button_save:
-    #                 self.progress_bar1 = self.progress_bar1_f
-    #                 self.progress_bar2 = self.progress_bar2_f
-    #                 pygame.mixer.music.set_volume(self.progress_bar1 / 100)
-    #                 self.sound_open.set_volume(self.progress_bar2 / 100)
-    #                 self.database_manager.update_setting(self.progress_bar1, self.progress_bar2)
-    #     elif self.gui_mode == 'shop':
-    #         if event.ui_element == self.gui_manager.button_buy:
-    #             self.database_manager.update_inventory(self.gui_manager.name)
-    #             self.gui_manager.update_shop()
-    #         elif event.ui_element == self.gui_manager.button_weapon_swap:
-    #             self.gui_manager.load_swap_weapon()
-    #         elif event.ui_element == self.gui_manager.button_characters_swap:
-    #             self.gui_manager.load_swap_characters()
-    # except AttributeError as e:
-    #     print(e)
 
     def kill_start_menu(self) -> None:
         self.button_start.kill()
@@ -159,7 +153,8 @@ class GuiManager:
 
         # size_button = (200, 70)
         self.button_start = UIButton(relative_rect=Rect((363, 430, 200, 70)),
-                                     text='Играть', manager=self.manager, )
+                                     text='Играть', manager=self.manager,
+                                     command=lambda: redirection(self._load_selection_window_for_start_game))
         self.button_shop = UIButton(relative_rect=Rect((170, 370, 100, 50)),
                                     text='Магазин', manager=self.manager,
                                     command=lambda: redirection(self._load_shop))
@@ -169,7 +164,8 @@ class GuiManager:
         self.button_exit = UIButton(relative_rect=Rect((775, 290, 100, 50)),
                                     text='Выход', manager=self.manager)
 
-    def load_start_game1(self) -> None:
+    def _load_selection_window_for_start_game(self) -> None:
+        self.mode = 'selection'
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
         # Character menu
@@ -184,9 +180,9 @@ class GuiManager:
         self.label_image_weapon.set_image(self.image_weapon)
         self.label_name_weapon = UILabel(Rect((220, 600, 100, 30)), text='Меч')
         self.button_weapon_swap = UIButton(relative_rect=Rect((190, 650, 150, 50)),
-                                           text='сменить оружие', manager=self.manager, )
+                                           text='Cменить оружие', manager=self.manager, )
         self.button_characters_swap = UIButton(relative_rect=Rect((470, 650, 150, 50)),
-                                               text='сменить персонажа', manager=self.manager, )
+                                               text='Cменить персонажа', manager=self.manager, )
         self.button_level1 = UIButton(relative_rect=Rect((140, 100, 100, 70)),
                                       text='1 уровень', manager=self.manager, )
         self.button_level2 = UIButton(relative_rect=Rect((340, 100, 100, 70)),
@@ -250,7 +246,7 @@ class GuiManager:
         self.mode = 'shop'
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager, )
-        shop = self.database_manager.shop()
+        shop = DatabaseManager.shop()
         self.label_name_weapon = UILabel(Rect((150, 400, 60, 30)), text=f'{shop[0][1]} - {shop[0][4]}$')
         self.label_image_weapon = UILabel(Rect((100, 180, 150, 100)), text='')
         self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
@@ -272,8 +268,17 @@ class GuiManager:
     def update_shop(self) -> None:
         self.button_buy.kill()
         self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
-        self.database_manager.update_inventory(self.name)
-        buy(self.database_manager.buy(self.name))
+        DatabaseManager.update_inventory(self.name)
+        buy(DatabaseManager.buy(self.name))
+
+    def exit_shop(self):
+        self.label_image_weapon.kill()
+        self.label_name_weapon.kill()
+        self.button_buy.kill()
+        self.label_image_weapon.kill()
+        self.scroll_shop.kill()
+        self.label_image_myonets.kill()
+        self.label_name_myonets.kill()
 
     def load_swap_characters(self) -> None:
         self.exit_setting()
@@ -318,15 +323,6 @@ class GuiManager:
         self.label_image_weapon3.set_image(self.image_weapon1)
         self.label_name_weapon3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
         self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
-
-    def exit_shop(self):
-        self.label_image_weapon.kill()
-        self.label_name_weapon.kill()
-        self.button_buy.kill()
-        self.label_image_weapon.kill()
-        self.scroll_shop.kill()
-        self.label_image_myonets.kill()
-        self.label_name_myonets.kill()
 
     def exit_game1(self):
         self.label_image_character.kill()
