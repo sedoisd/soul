@@ -81,7 +81,7 @@ class GuiManager:
                     new_name_characters = DatabaseManager.get_current_name_by_group('characters')
                     self.character_image.set_image(new_character_image)
                     self.weapon_name_label.set_text(new_name_characters)
-                print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
+                # print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
             #     elif self.gui_mode == 'shop':
             #         if event.ui_element == self.gui_manager.button_buy:
             #             self.database_manager.update_inventory(self.gui_manager.name)
@@ -91,12 +91,6 @@ class GuiManager:
             #         elif event.ui_element == self.gui_manager.button_characters_swap:
             #             self.gui_manager.load_swap_characters()
 
-    def kill_start_menu(self) -> None:
-        self.button_start.kill()
-        self.button_shop.kill()
-        self.button_setting.kill()
-        self.button_exit.kill()
-
     def load_start_menu(self) -> None:
         def redirection(command_load=None) -> None:
             self.kill_start_menu()
@@ -104,7 +98,6 @@ class GuiManager:
 
         self.mode = 'menu'
 
-        # size_button = (200, 70)
         self.button_start = UIButton(relative_rect=Rect((340, 220, 200, 70)),
                                      text='Играть', manager=self.manager,
                                      command=lambda: redirection(self._load_selection_window))
@@ -117,14 +110,20 @@ class GuiManager:
         self.button_exit = UIButton(relative_rect=Rect((340, 520, 200, 70)),
                                     text='Выход', manager=self.manager)
 
+    def kill_start_menu(self) -> None:
+        self.button_start.kill()
+        self.button_shop.kill()
+        self.button_setting.kill()
+        self.button_exit.kill()
+
     def _load_selection_window(self) -> None:
-        def edit_cur_lvl(id_lvl):
+        def edit_current_lvl(id_lvl):
             self.current_lvl = id_lvl
 
-        def start_lvl(cur_lvl):
+        def start_lvl(current_lvl):
             self.mode = None
             self.exit_selection_window()
-            self.func_start_level(cur_lvl)
+            self.func_start_level(current_lvl)
 
         self.mode = 'selection'
         self.current_lvl = 1
@@ -140,7 +139,7 @@ class GuiManager:
         for char_id, name in purchased_characters:
             self.dict_purchased_characters_by_name[name] = char_id
 
-        self.character_image = UIImage(Rect((515, 30, 100, 100)), characters_image)
+        self.character_ui_image = UIImage(Rect((515, 30, 100, 100)), characters_image)
         self.character_name_label = UILabel(Rect((515, 145, 100, 30)), text=name_characters)
         self.characters_drop_menu = UIDropDownMenu(relative_rect=Rect((502, 250, 150, 50)), manager=self.manager,
                                                    options_list=characters_optional_list,
@@ -156,21 +155,21 @@ class GuiManager:
         for char_id, name in purchased_weapons:
             self.dict_purchased_weapons_by_name[name] = char_id
 
-        self.weapon_image = UIImage(Rect((140, 30, 100, 100)), weapon_image)
+        self.weapon_ui_image = UIImage(Rect((140, 30, 100, 100)), weapon_image)
         self.weapon_name_label = UILabel(Rect((160, 200, 100, 30)), text=weapon_name)
         self.weapon_drop_menu = UIDropDownMenu(relative_rect=Rect((160, 240, 150, 50)), manager=self.manager,
                                                options_list=weapon_optional_list, starting_option=weapon_start_option)
 
-        # Выбор ЛВЛа
+        # Выбор ЛВЛа и старт
         self.button_level1 = UIButton(relative_rect=Rect((300, 600, 100, 70)),
                                       text='1 уровень', manager=self.manager,
-                                      command=lambda: edit_cur_lvl(1))
+                                      command=lambda: edit_current_lvl(1))
         self.button_level2 = UIButton(relative_rect=Rect((400, 600, 100, 70)),
                                       text='2 уровень', manager=self.manager,
-                                      command=lambda: edit_cur_lvl(2))
+                                      command=lambda: edit_current_lvl(2))
         self.button_level3 = UIButton(relative_rect=Rect((500, 600, 100, 70)),
                                       text='3 уровень', manager=self.manager,
-                                      command=lambda: edit_cur_lvl(3))
+                                      command=lambda: edit_current_lvl(3))
         self.button_play = UIButton(relative_rect=Rect((350, 500, 200, 70)),
                                     text='ИГРАТЬ', manager=self.manager,
                                     command=lambda: start_lvl(self.current_lvl))
@@ -178,11 +177,11 @@ class GuiManager:
     def exit_selection_window(self):
         self.button_back.kill()
 
-        self.character_image.kill()
+        self.character_ui_image.kill()
         self.character_name_label.kill()
         self.characters_drop_menu.kill()
 
-        self.weapon_image.kill()
+        self.weapon_ui_image.kill()
         self.weapon_name_label.kill()
         self.weapon_drop_menu.kill()
 
@@ -193,6 +192,7 @@ class GuiManager:
 
     def _load_setting(self) -> None:
         self.mode = 'setting'
+        # Громкость звука всe категории
         volume_music, volume_effects = DatabaseManager.get_settings_values()
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
@@ -225,7 +225,7 @@ class GuiManager:
         # self.button_save = UIButton(relative_rect=pygame.Rect(820, 0, 80, 50), text='сохранить',
         #                             manager=self.manager)
 
-    def get_values_volume(self):
+    def get_values_volume(self) -> (int, int):
         return self.music_progress_bar.current_progress, self.effects_progress_bar.current_progress
 
     def exit_setting(self):
@@ -243,43 +243,46 @@ class GuiManager:
         self.scroll_setting.kill()
 
     def _load_shop(self) -> None:
+        # def
+
         self.mode = 'shop'
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
-                                    manager=self.manager, )
-        shop = DatabaseManager.shop()
-        # self.label_name_weapon = UILabel(Rect((150, 400, 60, 30)), text=f'{shop[0][1]} - {shop[0][4]}$')
-        # self.label_image_weapon = UILabel(Rect((100, 180, 150, 100)), text='')
-        # self.image_weapon = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        # self.label_image_weapon.set_image(self.image_weapon)
-        # self.scroll_shop = UIHorizontalScrollBar(relative_rect=pygame.Rect(200, 650, 400, 20), visible_percentage=0.5,
-        #                                          manager=self.manager)
-        # if not shop[0][3]:
-        #     self.button_buy = UIButton(relative_rect=pygame.Rect(150, 450, 60, 30), text='купить',
-        #                                manager=self.manager)
-        #     self.name = shop[0][1]
-        # else:
-        #     self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
-        myonets = get_weapon_settings()[0]
-        self.label_name_myonets = UILabel(Rect((150, 50, 50, 30)), text=str(myonets) + "$")
-        self.label_image_myonets = UILabel(Rect((120, 50, 30, 30)), text='')
-        self.image_myonets = pygame.image.load('image/other/icon-coin.png')
-        self.label_image_myonets.set_image(self.image_myonets)
+                                    manager=self.manager)
+        # Загрузка монет
+        money = DatabaseManager.get_money()
+        money_image = load_image('coin.png', 'other')
+        self.money_label = UILabel(Rect((150, 40, 60, 30)), text=f'{money} монет')
+        self.money_ui_image = UIImage(Rect((100, 40, 40, 40)), money_image)
 
-    # def update_shop(self) -> None:
-    #     self.button_buy.kill()
-    #     self.label_image_weapon = UILabel(Rect((150, 450, 60, 30)), text='купленно')
-    #     DatabaseManager.update_inventory(self.name)
-    #     buy(DatabaseManager.buy(self.name))
+        # загрузка магазина персонажей
+        self.characters_viewing_index = 0
+        self.shop_characteristic_all_characters = DatabaseManager.get_shop_characteristic_all_items_by_group(
+            'characters')  # [(id, name, price, health, armor, speed), (int, name, int, int, int), ...]
+        character_image = get_front_frame_characters_by_id(
+            self.shop_characteristic_all_characters[self.characters_viewing_index][0])
+        characters_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
+        self.character_ui_image = UIImage(Rect((150, 200, 100, 100)), character_image)
+        self.character_name_label = UILabel(Rect((175, 310, 50, 30)), text=characters_name)
+        # print(self.shop_characteristic_all_characters)
+        self.character_price_label = UILabel(Rect((175, 345, 40, 20)),
+                                             text=str(self.shop_characteristic_all_characters[
+                                                          self.characters_viewing_index][2]))
+
+        self.characters_button_back = UIButton(Rect((110, 280, 30, 25)), text='<-')
+        self.characters_button_back.disable()
+        self.characters_button_farther = UIButton(Rect((275, 280, 30, 25)), text='->')
 
     def exit_shop(self):
         self.button_back.kill()
-        # self.label_image_weapon.kill()
-        # self.label_name_weapon.kill()
-        # self.button_buy.kill()
-        # self.label_image_weapon.kill()
-        # self.scroll_shop.kill()
-        self.label_image_myonets.kill()
-        self.label_name_myonets.kill()
+
+        self.money_ui_image.kill()
+        self.money_label.kill()
+
+        self.character_ui_image.kill()
+        self.character_name_label.kill()
+        self.character_price_label.kill()
+        self.characters_button_back.kill()
+        self.characters_button_farther.kill()
 
     # def load_swap_characters(self) -> None:
     #     self.exit_setting()
@@ -382,34 +385,15 @@ class DatabaseManager:
         con.close()
         return result
 
-    # @classmethod
-    # def get_current_character_id(cls) -> int:
-    #     con, cur = cls._connection_to_database()
-    #     result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
-    #     con.close()
-    #     return result
-    #
-    # @classmethod
-    # def get_current_character_name(cls) -> str:
-    #     con, cur = cls._connection_to_database()
-    #     result = cur.execute('''SELECT name FROM characters WHERE id=?''',
-    #                          (DatabaseManager.get_current_character_id(),)).fetchone()[0]
-    #     con.close()
-    #     return result
-    #
-    # @classmethod
-    # def get_current_weapon_id(cls) -> int:
-    #     con, cur = cls._connection_to_database()
-    #     result = cur.execute('''SELECT current_weapon FROM user''').fetchone()[0]
-    #     con.close()
-    #     return result
-    #
-    # @classmethod
-    # def get_current_weapon_name(cls) -> int:
-    #     con, cur = cls._connection_to_database()
-    #     result = cur.execute('''SELECT name FROM user''').fetchone()[0]
-    #     con.close()
-    #     return result
+    @classmethod
+    def get_shop_characteristic_all_items_by_group(cls, group_name: str):
+        con, cur = cls._connection_to_database()
+        if group_name == 'characters':
+            result = cur.execute('''SELECT id, name, price, health, armor, speed FROM characters''').fetchall()
+        elif group_name == 'weapons':
+            result = cur.execute('''SELECT id, name FROM weapons''').fetchall()
+            con.close()
+        return result
 
     @classmethod
     def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float, int]:
@@ -438,6 +422,13 @@ class DatabaseManager:
         return result
 
     @classmethod
+    def get_money(cls) -> int:
+        con, cur = cls._connection_to_database()
+        result = cur.execute('''SELECT money FROM user''').fetchone()[0]
+        con.close()
+        return result
+
+    @classmethod
     def update_volume_settings(cls, volume_music, volume_effects) -> None:
         con, cur = cls._connection_to_database()
         cur.execute('''UPDATE user SET 
@@ -457,12 +448,12 @@ class DatabaseManager:
         con.commit()
         con.close()
 
-    @classmethod
-    def shop(cls):
-        con, cur = cls._connection_to_database()
-        result = cur.execute(f"SELECT * FROM Weapons").fetchall()
-        con.close()
-        return result
+    # @classmethod
+    # def shop(cls):
+    #     con, cur = cls._connection_to_database()
+    #     result = cur.execute(f"SELECT * FROM Weapons").fetchall()
+    #     con.close()
+    #     return result
 
     @classmethod
     def update_inventory(cls, name):
