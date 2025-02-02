@@ -78,10 +78,67 @@ class GuiManager:
     def __init__(self):
         self.manager = pygame_gui.UIManager(SIZE, 'theme.json')
         self.name = None
-        self.database_manager = DatabaseManager()
+        self.mode = 'menu'
+
+    def load_values_mixer(self, sound_open):
+        self.sound_open = sound_open
 
     def start_game(self):
         pass
+
+    def update(self):
+        pass
+
+    def event_processing(self, event):
+        self.manager.process_events(event)
+        # try:
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            self.sound_open.play()
+            if self.mode == 'menu':
+                if event.ui_element == self.button_start:
+                    self.kill_start_menu()
+                    # self.start_game1()
+                    self.flag_going_game1 = True
+            elif self.mode == 'setting':
+                if event.ui_element == self.button_back:
+                    self.exit_setting()
+                    self.button_back.kill()
+                    self.load_start_menu()
+                    DatabaseManager.update_volume_settings(*self.get_values_volume())
+                volume_music = self.music_progress_bar.current_progress
+                if event.ui_element == self.music_button_minus and volume_music >= 5:  # Обработка громкости музыки
+                    volume_music -= 5
+                    self.music_progress_bar.set_current_progress(volume_music)
+                elif event.ui_element == self.music_button_plus and volume_music <= 95:
+                    volume_music += 5
+                    self.music_progress_bar.set_current_progress(volume_music)
+                volume_effects = self.effects_progress_bar.current_progress
+                if event.ui_element == self.effects_button_minus and volume_effects >= 5:  # Обр. громкости эффектов
+                    volume_effects -= 5
+                    self.effects_progress_bar.set_current_progress(volume_effects)
+                elif event.ui_element == self.effects_button_plus and volume_effects <= 95:
+                    volume_effects += 5
+                    self.effects_progress_bar.set_current_progress(volume_effects)
+                self.sound_open.set_volume(volume_effects / 100)
+                DatabaseManager.update_volume_settings(volume_music, volume_effects)
+                # if event.ui_element == self.gui_manager.music_minus_button:  # Обработка громкости музыки
+
+    #             elif event.ui_element == self.gui_manager.button_save:
+    #                 self.progress_bar1 = self.progress_bar1_f
+    #                 self.progress_bar2 = self.progress_bar2_f
+    #                 pygame.mixer.music.set_volume(self.progress_bar1 / 100)
+    #                 self.sound_open.set_volume(self.progress_bar2 / 100)
+    #                 self.database_manager.update_setting(self.progress_bar1, self.progress_bar2)
+    #     elif self.gui_mode == 'shop':
+    #         if event.ui_element == self.gui_manager.button_buy:
+    #             self.database_manager.update_inventory(self.gui_manager.name)
+    #             self.gui_manager.update_shop()
+    #         elif event.ui_element == self.gui_manager.button_weapon_swap:
+    #             self.gui_manager.load_swap_weapon()
+    #         elif event.ui_element == self.gui_manager.button_characters_swap:
+    #             self.gui_manager.load_swap_characters()
+    # except AttributeError as e:
+    #     print(e)
 
     def kill_start_menu(self) -> None:
         self.button_start.kill()
@@ -105,10 +162,10 @@ class GuiManager:
                                      text='Играть', manager=self.manager, )
         self.button_shop = UIButton(relative_rect=Rect((170, 370, 100, 50)),
                                     text='Магазин', manager=self.manager,
-                                    )
+                                    command=lambda: redirection(self._load_shop))
         self.button_setting = UIButton(relative_rect=Rect((0, 650, 80, 50)),
                                        text='Настройки', manager=self.manager,
-                                       )
+                                       command=lambda: redirection(self._load_setting))
         self.button_exit = UIButton(relative_rect=Rect((775, 290, 100, 50)),
                                     text='Выход', manager=self.manager)
 
@@ -140,6 +197,7 @@ class GuiManager:
                                     text='ИГРАТЬ', manager=self.manager, )
 
     def _load_setting(self) -> None:
+        self.mode = 'setting'
         volume_music, volume_effects = DatabaseManager.get_settings_values()
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
@@ -148,30 +206,48 @@ class GuiManager:
         self.scroll_setting = UIVerticalScrollBar(relative_rect=pygame.Rect(10, 150, 20, 400), visible_percentage=0.5,
                                                   manager=self.manager)
         self.music_label = UILabel(relative_rect=pygame.Rect(50, 50, 100, 40), text='Музыка',
-                                    manager=self.manager)
+                                   manager=self.manager)
         self.effects_label = UILabel(relative_rect=pygame.Rect(50, 100, 100, 40), text='Эффекты',
-                                    manager=self.manager)
+                                     manager=self.manager)
 
         self.music_progress_bar = UIProgressBar(relative_rect=pygame.Rect((250, 55), (100, 30)),
-                                             manager=self.manager)
+                                                manager=self.manager)
         self.music_progress_bar.set_current_progress(volume_music)
         self.effects_progress_bar = UIProgressBar(relative_rect=pygame.Rect((250, 105), (100, 30)),
-                                             manager=self.manager)
+                                                  manager=self.manager)
         self.effects_progress_bar.set_current_progress(volume_effects)
 
         self.music_button_minus = UIButton(relative_rect=pygame.Rect(210, 55, 30, 30), text='-',
-                                      manager=self.manager)
+                                           manager=self.manager)
         self.music_button_plus = UIButton(relative_rect=pygame.Rect(360, 55, 30, 30), text='+',
-                                     manager=self.manager)
+                                          manager=self.manager)
 
         self.effects_button_minus = UIButton(relative_rect=pygame.Rect(210, 105, 30, 30), text='-',
-                                      manager=self.manager)
+                                             manager=self.manager)
         self.effects_button_plus = UIButton(relative_rect=pygame.Rect(360, 105, 30, 30), text='+',
-                                     manager=self.manager)
+                                            manager=self.manager)
+        # print(self.music_progress_bar.current_progress)
         # self.button_save = UIButton(relative_rect=pygame.Rect(820, 0, 80, 50), text='сохранить',
         #                             manager=self.manager)
 
+    def get_values_volume(self):
+        return self.music_progress_bar.current_progress, self.effects_progress_bar.current_progress
+
+    def exit_setting(self):
+        self.music_label.kill()
+        self.music_progress_bar.kill()
+        self.music_button_minus.kill()
+        self.music_button_plus.kill()
+
+        self.effects_label.kill()
+        self.effects_progress_bar.kill()
+        self.effects_button_plus.kill()
+        self.effects_button_minus.kill()
+
+        self.scroll_setting.kill()
+
     def _load_shop(self) -> None:
+        self.mode = 'shop'
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager, )
         shop = self.database_manager.shop()
@@ -243,18 +319,14 @@ class GuiManager:
         self.label_name_weapon3 = UILabel(Rect((750, 500, 100, 50)), text=f'{characters[1][1]}')
         self.button_weapon3 = UIButton(Rect((600, 600, 50, 30)), text='выбрать')
 
-    def exit_setting(self):
-        self.music_label.kill()
-        self.music_progress_bar.kill()
-        self.music_button_minus.kill()
-        self.music_button_plus.kill()
-
-        self.effects_label.kill()
-        self.effects_progress_bar.kill()
-        self.effects_button_plus.kill()
-        self.effects_button_minus.kill()
-
-        self.scroll_setting.kill()
+    def exit_shop(self):
+        self.label_image_weapon.kill()
+        self.label_name_weapon.kill()
+        self.button_buy.kill()
+        self.label_image_weapon.kill()
+        self.scroll_shop.kill()
+        self.label_image_myonets.kill()
+        self.label_name_myonets.kill()
 
     def exit_game1(self):
         self.label_image_character.kill()
@@ -267,15 +339,6 @@ class GuiManager:
         self.button_level2.kill()
         self.button_level3.kill()
         self.button_play.kill()
-
-    def exit_shop(self):
-        self.label_image_weapon.kill()
-        self.label_name_weapon.kill()
-        self.button_buy.kill()
-        self.label_image_weapon.kill()
-        self.scroll_shop.kill()
-        self.label_image_myonets.kill()
-        self.label_name_myonets.kill()
 
 
 class DatabaseManager:
@@ -349,6 +412,7 @@ class DatabaseManager:
                             volume_music = ?, 
                             volume_effects = ?
                     ''', (volume_music, volume_effects))
+        con.commit()
         con.close()
 
     @classmethod

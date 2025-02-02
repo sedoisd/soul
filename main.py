@@ -31,29 +31,28 @@ class Game:
         self.player = None
         self.time_delta = None
 
-        # gui vetka
-        self.money, self.progress_bar1, self.progress_bar2, self.characters, self.weapon = get_weapon_settings()
-        self.money, self.progress_bar1, self.progress_bar2 = int(self.money), int(self.progress_bar1), int(
-            self.progress_bar2)
-        self.progress_bar1_f, self.progress_bar2_f = self.progress_bar1, self.progress_bar2
-
         self.flag_going_shop = False
         self.flag_going_setting = False
         self.flag_going_game1 = False
         self.gui_mode = 'menu'
-        self.music_menu = pygame.mixer.music.load("sound/music/menu.mp3")
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(self.progress_bar1 / 100)
-        self.sound_open = pygame.mixer.Sound("sound/effects/sound_button.mp3")
-        self.sound_open.set_volume(self.progress_bar2 / 100)
 
         # init counting variables
         self.max_enemy = 0
         self.killed_enemy = 0
 
         # function exe
+        self.load_settings_volume()
+        self.gui_manager.load_values_mixer(self.sound_open)
         self.sprite_group_manager.add_cursor(self.cursor)
         self.gui_manager.load_start_menu()
+
+    def load_settings_volume(self):
+        volume_music, volume_effects = DatabaseManager.get_settings_values()
+        self.music_menu = pygame.mixer.music.load("sound/music/menu.mp3")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(volume_music)
+        self.sound_open = pygame.mixer.Sound("sound/effects/sound_button.mp3")
+        self.sound_open.set_volume(volume_effects)
 
     def run(self):
         """Основной цикл программы"""
@@ -72,7 +71,7 @@ class Game:
 
     def _event_handling(self, event):
         """Обработка событий"""
-        self.gui_manager.manager.process_events(event)
+        self.gui_manager.event_processing(event)
         if event.type == pygame.QUIT or (
                 event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.gui_manager.button_exit):
             self.running = False
@@ -96,174 +95,104 @@ class Game:
         #         self.gui_manager.kill_start_menu()
         #         # print(111)  # [LOG]
         #         self._start_level()
-        try:
-            if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
-                self.sound_open.play()
-                if self.gui_mode == 'menu:'
-                    if event.ui_element == self.gui_manager.button_start:
-                        self.gui_manager.kill_start_menu()
-                        self.start_game1()
-                        self.flag_going_game1 = True
-                    elif event.ui_element == self.gui_manager.button_shop:
-                        self.gui_manager.kill_start_menu()
-                        self.flag_going_shop = True
-                        self.gui_manager._load_shop()
-                    elif event.ui_element == self.gui_manager.button_setting:
-                        self.gui_manager.kill_start_menu()
-                        self.flag_going_setting = True
-                        self.gui_manager._load_setting()
-                elif self.gui_mode == 'setting':
-                    if event.ui_element == self.gui_manager.button_back:
-                        self.gui_manager.load_start_menu()
-                        self.gui_manager.button_back.kill()
-                    if self.flag_going_game1:
-                        self.gui_manager.exit_game1()
-                    if self.flag_going_setting:
-                        self.gui_manager.exit_setting()
-                        self.progress_bar1_f = self.progress_bar1
-                        self.progress_bar2_f = self.progress_bar2
-                        pygame.mixer.music.set_volume(self.progress_bar1 / 100)
-                        self.sound_open.set_volume(self.progress_bar2 / 100)
-                    if self.flag_going_shop:
-                        self.gui_manager.exit_shop()
-                    self.flag_going_shop = False
-                    self.flag_going_setting = False
-                    self.flag_going_game1 = False
-                    # if event.ui_element == self.gui_manager.music_minus_button:  # Обработка громкости музыки
-                    if self.music_progress_bar > 0:
-                        self.gui_manager.music_progress_bar.set_current_progress(self.progress_bar1_f - 5)
-                        self.progress_bar1_f -= 5
-                        pygame.mixer.music.set_volume(self.progress_bar1_f / 100)
-                    elif event.ui_element == self.gui_manager.music_plus_button:
-                        if self.progress_bar1_f < 100:
-                            self.gui_manager.music_progress_bar.set_current_progress(self.progress_bar1_f + 5)
-                            self.progress_bar1_f += 5
-                            pygame.mixer.music.set_volume(self.progress_bar1_f / 100)
-                    elif event.ui_element == self.gui_manager.effect_minus_button:  # Обработка громкости эффектов
-                        if self.progress_bar2_f > 0:
-                            self.gui_manager.effect_progress_bar.set_current_progress(self.progress_bar2_f - 5)
-                            self.progress_bar2_f -= 5
-                            self.sound_open.set_volume(self.progress_bar2_f / 100)
-                    elif event.ui_element == self.gui_manager.effect_plus_button:
-                        if self.progress_bar2_f < 100:
-                            self.gui_manager.effect_progress_bar.set_current_progress(self.progress_bar2_f + 5)
-                            self.progress_bar2_f += 5
-                            self.sound_open.set_volume(self.progress_bar2 / 100)
-                    elif event.ui_element == self.gui_manager.button_save:
-                        self.progress_bar1 = self.progress_bar1_f
-                        self.progress_bar2 = self.progress_bar2_f
-                        pygame.mixer.music.set_volume(self.progress_bar1 / 100)
-                        self.sound_open.set_volume(self.progress_bar2 / 100)
-                        self.database_manager.update_setting(self.progress_bar1, self.progress_bar2)
-            elif self.gui_mode == 'shop':
-                if event.ui_element == self.gui_manager.button_buy:
-                    self.database_manager.update_inventory(self.gui_manager.name)
-                    self.gui_manager.update_shop()
-                elif event.ui_element == self.gui_manager.button_weapon_swap:
-                    self.gui_manager.load_swap_weapon()
-                elif event.ui_element == self.gui_manager.button_characters_swap:
-                    self.gui_manager.load_swap_characters()
-
-        except AttributeError as e:
-        print(e)
 
 
-def _update(self):
-    """Отправка обновлений"""
-    self.sprite_group_manager.update(is_going_game=self.is_going_game, timedelta=self.time_delta)
-    if self.is_going_game:
-        self.camera.update(self.player)
-        for sprite in self.sprite_group_manager.get_movable_sprites():
-            self.camera.apply(sprite)
-        portal = self.sprite_group_manager.get_portal_sprite()
-        if pygame.sprite.collide_mask(self.player, portal):
-            self._completion_level()
-    self.gui_manager.manager.update(self.time_delta)
 
 
-def _render(self):
-    """Отображение программы-игры"""
-    color = (122, 122, 122)
-    self.screen.fill(color)
-    # ------------------
-    if self.flag_going_shop:
-        fon = get_frame_current_background(1)
-        self.screen.blit(fon, (0, 0))
-    elif self.flag_going_setting:
-        fon = get_frame_current_background(2)
-        self.screen.blit(fon, (0, 0))
-    elif self.flag_going_game1:
-        fon = get_frame_current_background(3)
-        self.screen.blit(fon, (0, 0))
-    else:
-        fon = get_frame_current_background(0)
-        self.screen.blit(fon, (0, 0))
-    # --------------
-    if self.is_going_game:
-        self.sprite_group_manager.draw(self.screen, self.is_going_game)
-    self.gui_manager.manager.draw_ui(self.screen)
+    def _update(self):
+        """Отправка обновлений"""
+        self.sprite_group_manager.update(is_going_game=self.is_going_game, timedelta=self.time_delta)
+        self.gui_manager.update()
+        pygame.mixer.music.set_volume(DatabaseManager.get_settings_values()[0] / 100)
+        if self.is_going_game:
+            self.camera.update(self.player)
+            for sprite in self.sprite_group_manager.get_movable_sprites():
+                self.camera.apply(sprite)
+            portal = self.sprite_group_manager.get_portal_sprite()
+            if pygame.sprite.collide_mask(self.player, portal):
+                self._completion_level()
+        self.gui_manager.manager.update(self.time_delta)
 
+    def _render(self):
+        """Отображение программы-игры"""
+        color = (122, 122, 122)
+        self.screen.fill(color)
+        # ------------------
+        if self.flag_going_shop:
+            fon = get_frame_current_background(1)
+            self.screen.blit(fon, (0, 0))
+        elif self.flag_going_setting:
+            fon = get_frame_current_background(2)
+            self.screen.blit(fon, (0, 0))
+        elif self.flag_going_game1:
+            fon = get_frame_current_background(3)
+            self.screen.blit(fon, (0, 0))
+        else:
+            fon = get_frame_current_background(0)
+            self.screen.blit(fon, (0, 0))
+        # --------------
+        if self.is_going_game:
+            self.sprite_group_manager.draw(self.screen, self.is_going_game)
+        self.gui_manager.manager.draw_ui(self.screen)
 
-def _completion_level(self):
-    print(self.max_enemy, self.killed_enemy)
-    self.max_enemy = 0
-    self.killed_enemy = 0
-    self.is_going_game = False
-    pygame.mouse.set_visible(True)
-    self.sprite_group_manager.kill_gameplay_sprites()
+    def _completion_level(self):
+        # print(self.max_enemy, self.killed_enemy)
+        self.max_enemy = 0
+        self.killed_enemy = 0
+        self.is_going_game = False
+        pygame.mouse.set_visible(True)
+        self.sprite_group_manager.kill_gameplay_sprites()
 
-    self.gui_manager.load_start_menu()
+        self.gui_manager.load_start_menu()
 
+    def _start_level(self):
+        """Создание уровня"""
+        self.flag_create_game_cursor = True
+        pygame.mouse.set_visible(False)
 
-def _start_level(self):
-    """Создание уровня"""
-    self.flag_create_game_cursor = True
-    pygame.mouse.set_visible(False)
+        self.is_going_game = True
+        hud = Hud()
+        self.sprite_group_manager.add_hud(hud)
+        self.map = pytmx.load_pygame('tmx/test_map.tmx')
+        self.tile_size = self.map.tilewidth * self.scale_map
+        # print(self.tile_size) # [LOG]
+        for i in range(4):
+            self._init_layer_level(i)
+        for game_object in self.map.objects:
+            # print(object.name) # [LOG]
+            x_object, y_object = game_object.x * self.scale_map, game_object.y * self.scale_map
+            if game_object.name == 'Player':
+                self.player = Character((x_object, y_object))
+                self.sprite_group_manager.add_player(self.player)
+            elif game_object.name == 'Portal':
+                self.portal = Portal((x_object, y_object))
+                self.sprite_group_manager.add_portal(self.portal)
+            elif game_object.name == 'Enemy':
+                self.max_enemy += 1
+                enemy_id = int(game_object.properties['enemy_id'])
+                enemy = Enemy(enemy_id, (x_object, y_object))
+                self.sprite_group_manager.add_enemy(enemy)
 
-    self.is_going_game = True
-    hud = Hud()
-    self.sprite_group_manager.add_hud(hud)
-    self.map = pytmx.load_pygame('tmx/test_map.tmx')
-    self.tile_size = self.map.tilewidth * self.scale_map
-    # print(self.tile_size) # [LOG]
-    for i in range(4):
-        self._init_layer_level(i)
-    for game_object in self.map.objects:
-        # print(object.name) # [LOG]
-        x_object, y_object = game_object.x * self.scale_map, game_object.y * self.scale_map
-        if game_object.name == 'Player':
-            self.player = Character((x_object, y_object))
-            self.sprite_group_manager.add_player(self.player)
-        elif game_object.name == 'Portal':
-            self.portal = Portal((x_object, y_object))
-            self.sprite_group_manager.add_portal(self.portal)
-        elif game_object.name == 'Enemy':
-            self.max_enemy += 1
-            enemy_id = int(game_object.properties['enemy_id'])
-            enemy = Enemy(enemy_id, (x_object, y_object))
-            self.sprite_group_manager.add_enemy(enemy)
-
-
-def _init_layer_level(self, id_layer: int):
-    """Создание слоя по id. Слои из карты tmx формата"""
-    for y in range(self.map.height):
-        for x in range(self.map.width):
-            flag_trap = False
-            if id_layer == 3:
-                tile_properties = self.map.get_tile_properties(x, y, id_layer)
-                if tile_properties and tile_properties['type'] == 'trap':
-                    trap = Trap(x * self.tile_size, y * self.tile_size)
-                    self.sprite_group_manager.add_tile_sprite_by_id_layer(trap, id_layer)
-                    flag_trap = True
-            image = self.map.get_tile_image(x, y, id_layer)
-            if not flag_trap and image:
-                tile_sprite = pygame.sprite.Sprite()
-                tile_sprite.image = pygame.transform.rotozoom(image, 0, self.scale_map)
-                tile_sprite.rect = tile_sprite.image.get_rect()
-                tile_sprite.rect.x, tile_sprite.rect.y = (
-                    x * self.tile_size, y * self.tile_size)
-                tile_sprite.mask = pygame.mask.from_surface(tile_sprite.image)
-                self.sprite_group_manager.add_tile_sprite_by_id_layer(tile_sprite, id_layer)
+    def _init_layer_level(self, id_layer: int):
+        """Создание слоя по id. Слои из карты tmx формата"""
+        for y in range(self.map.height):
+            for x in range(self.map.width):
+                flag_trap = False
+                if id_layer == 3:
+                    tile_properties = self.map.get_tile_properties(x, y, id_layer)
+                    if tile_properties and tile_properties['type'] == 'trap':
+                        trap = Trap(x * self.tile_size, y * self.tile_size)
+                        self.sprite_group_manager.add_tile_sprite_by_id_layer(trap, id_layer)
+                        flag_trap = True
+                image = self.map.get_tile_image(x, y, id_layer)
+                if not flag_trap and image:
+                    tile_sprite = pygame.sprite.Sprite()
+                    tile_sprite.image = pygame.transform.rotozoom(image, 0, self.scale_map)
+                    tile_sprite.rect = tile_sprite.image.get_rect()
+                    tile_sprite.rect.x, tile_sprite.rect.y = (
+                        x * self.tile_size, y * self.tile_size)
+                    tile_sprite.mask = pygame.mask.from_surface(tile_sprite.image)
+                    self.sprite_group_manager.add_tile_sprite_by_id_layer(tile_sprite, id_layer)
 
 
 if __name__ == '__main__':
