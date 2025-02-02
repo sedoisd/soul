@@ -30,7 +30,7 @@ class GuiManager:
     def event_processing(self, event):
         self.manager.process_events(event)
         # try:
-        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Нажатие на кнопки
             self.sound_open.play()
             if self.mode == 'menu':
                 if event.ui_element == self.button_start:
@@ -64,6 +64,13 @@ class GuiManager:
                 if event.ui_element == self.button_back:
                     self.exit_shop()
                     self.load_start_menu()
+        elif event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+            if self.mode == 'selection':
+                if event.ui_element == self.weapon_drop_menu:
+                    pass
+                elif event.ui_element == self.characters_drop_menu:
+                    pass
+                print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
             #     elif self.gui_mode == 'shop':
             #         if event.ui_element == self.gui_manager.button_buy:
             #             self.database_manager.update_inventory(self.gui_manager.name)
@@ -95,7 +102,7 @@ class GuiManager:
         # size_button = (200, 70)
         self.button_start = UIButton(relative_rect=Rect((340, 220, 200, 70)),
                                      text='Играть', manager=self.manager,
-                                     command=lambda: redirection(self._load_selection_window_for_start_game))
+                                     command=lambda: redirection(self._load_selection_window))
         self.button_shop = UIButton(relative_rect=Rect((340, 320, 200, 70)),
                                     text='Магазин', manager=self.manager,
                                     command=lambda: redirection(self._load_shop))
@@ -105,7 +112,7 @@ class GuiManager:
         self.button_exit = UIButton(relative_rect=Rect((340, 520, 200, 70)),
                                     text='Выход', manager=self.manager)
 
-    def _load_selection_window_for_start_game(self) -> None:
+    def _load_selection_window(self) -> None:
         def edit_cur_lvl(id_lvl):
             self.current_lvl = id_lvl
 
@@ -119,40 +126,51 @@ class GuiManager:
         self.button_back = UIButton(relative_rect=pygame.Rect(2, 2, 50, 30), text='назад',
                                     manager=self.manager)
         # Character menu
-        char_image = get_front_frame_characters_by_id(DatabaseManager.get_current_character_id())
-        self.image_character = UIImage(Rect((420, 370, 100, 100)), char_image)
-        self.label_name_character = UILabel(Rect((490, 600, 100, 30)), text='Рыцарь')
+        char_image = get_front_frame_characters_by_id(DatabaseManager.get_current_id_by_group('characters'))
+        self.character_image = UIImage(Rect((515, 30, 100, 100)), char_image)
+        self.character_name_label = UILabel(Rect((515, 145, 100, 30)), text='Рыцарь')
+        purchased_characters = list(map(lambda x: x[1], DatabaseManager.get_purchased_items_by_group('characters')))
+        # print(purchased_characters)
+        optional_list_characters = purchased_characters  # ['Меч', 'Гайка']
+        start_option_characters = DatabaseManager.get_current_name_by_group('characters')
+        self.characters_drop_menu = UIDropDownMenu(relative_rect=Rect((502, 250, 150, 50)), manager=self.manager,
+                                                   options_list=optional_list_characters,
+                                                   starting_option=start_option_characters)
+
         # Weapon menu
-        weap_image = get_frame_weapon_by_id(DatabaseManager.get_current_weapon_id())
-        self.image_weapon = UIImage(Rect((140, 30, 100, 100)), weap_image)
-        self.label_name_weapon = UILabel(Rect((160, 200, 100, 30)), text='Меч')
-        optional_list_weapon = ['Меч', 'Гайка']
-        start_option = 'Меч'
-        self.button_weapon_swap = UIDropDownMenu(relative_rect=Rect((160, 240, 150, 50)), manager=self.manager,
-                                                 options_list=optional_list_weapon, starting_option=start_option)
-        self.button_characters_swap = UIButton(relative_rect=Rect((470, 650, 150, 50)),
-                                               text='Cменить персонажа', manager=self.manager, )
-        self.button_level1 = UIButton(relative_rect=Rect((140, 100, 100, 70)),
+        weap_image = get_frame_weapon_by_id(DatabaseManager.get_current_id_by_group('weapons'))
+        self.weapon_image = UIImage(Rect((140, 30, 100, 100)), weap_image)
+        self.weapon_name_label = UILabel(Rect((160, 200, 100, 30)), text='Меч')
+        optional_list_weapon = list(map(lambda x: x[1], DatabaseManager.get_purchased_items_by_group('weapons')))
+        start_option_weapon = DatabaseManager.get_current_name_by_group('weapons')
+        self.weapon_drop_menu = UIDropDownMenu(relative_rect=Rect((160, 240, 150, 50)), manager=self.manager,
+                                               options_list=optional_list_weapon, starting_option=start_option_weapon)
+
+        # Выбор ЛВЛа
+        self.button_level1 = UIButton(relative_rect=Rect((300, 600, 100, 70)),
                                       text='1 уровень', manager=self.manager,
                                       command=lambda: edit_cur_lvl(1))
-        self.button_level2 = UIButton(relative_rect=Rect((340, 100, 100, 70)),
+        self.button_level2 = UIButton(relative_rect=Rect((400, 600, 100, 70)),
                                       text='2 уровень', manager=self.manager,
                                       command=lambda: edit_cur_lvl(2))
-        self.button_level3 = UIButton(relative_rect=Rect((540, 100, 100, 70)),
+        self.button_level3 = UIButton(relative_rect=Rect((500, 600, 100, 70)),
                                       text='3 уровень', manager=self.manager,
                                       command=lambda: edit_cur_lvl(3))
-        self.button_play = UIButton(relative_rect=Rect((360, 600, 200, 70)),
+        self.button_play = UIButton(relative_rect=Rect((350, 500, 200, 70)),
                                     text='ИГРАТЬ', manager=self.manager,
                                     command=lambda: start_lvl(self.current_lvl))
 
     def exit_selection_window(self):
         self.button_back.kill()
-        self.image_character.kill()
-        self.image_weapon.kill()
-        self.label_name_character.kill()
-        self.label_name_weapon.kill()
-        self.button_weapon_swap.kill()
-        self.button_characters_swap.kill()
+
+        self.character_image.kill()
+        self.character_name_label.kill()
+        self.characters_drop_menu.kill()
+
+        self.weapon_image.kill()
+        self.weapon_name_label.kill()
+        self.weapon_drop_menu.kill()
+
         self.button_level1.kill()
         self.button_level2.kill()
         self.button_level3.kill()
@@ -304,7 +322,8 @@ class DatabaseManager:
     def get_characteristics_character(cls) -> tuple[str, int, int, int, int]:
         con, cur = cls._connection_to_database()
         result = cur.execute('''SELECT name, health, damage, speed, armor FROM characters
-                             WHERE id=?''', (DatabaseManager.get_current_character_id(),)).fetchone()
+                             WHERE id=?''',
+                             (DatabaseManager.get_current_id_by_group('characters'),)).fetchone()
         # print(result) # [LOG]
         con.close()
         return result
@@ -328,18 +347,54 @@ class DatabaseManager:
         return result
 
     @classmethod
-    def get_current_character_id(cls) -> int:
+    def get_current_id_by_group(cls, name_group: str) -> int:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
+        if name_group == 'characters':
+            result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
+        elif name_group == 'weapons':
+            result = cur.execute('''SELECT current_weapon FROM user''').fetchone()[0]
         con.close()
         return result
 
     @classmethod
-    def get_current_weapon_id(cls) -> int:
+    def get_current_name_by_group(cls, name_group: str) -> str:
         con, cur = cls._connection_to_database()
-        result = cur.execute('''SELECT current_weapon FROM user''').fetchone()[0]
+        cur_id = DatabaseManager.get_current_id_by_group(name_group)
+        if name_group == 'characters':
+            result = cur.execute('''SELECT name FROM characters WHERE id=?''', (cur_id,)).fetchone()[0]
+        elif name_group == 'weapons':
+            result = cur.execute('''SELECT name FROM weapons WHERE id=?''', (cur_id,)).fetchone()[0]
         con.close()
         return result
+
+    # @classmethod
+    # def get_current_character_id(cls) -> int:
+    #     con, cur = cls._connection_to_database()
+    #     result = cur.execute('''SELECT current_character FROM user''').fetchone()[0]
+    #     con.close()
+    #     return result
+    #
+    # @classmethod
+    # def get_current_character_name(cls) -> str:
+    #     con, cur = cls._connection_to_database()
+    #     result = cur.execute('''SELECT name FROM characters WHERE id=?''',
+    #                          (DatabaseManager.get_current_character_id(),)).fetchone()[0]
+    #     con.close()
+    #     return result
+    #
+    # @classmethod
+    # def get_current_weapon_id(cls) -> int:
+    #     con, cur = cls._connection_to_database()
+    #     result = cur.execute('''SELECT current_weapon FROM user''').fetchone()[0]
+    #     con.close()
+    #     return result
+    #
+    # @classmethod
+    # def get_current_weapon_name(cls) -> int:
+    #     con, cur = cls._connection_to_database()
+    #     result = cur.execute('''SELECT name FROM user''').fetchone()[0]
+    #     con.close()
+    #     return result
 
     @classmethod
     def get_characteristics_weapon_by_id(cls, weapon_id: int) -> tuple[float, float, int]:
@@ -354,6 +409,16 @@ class DatabaseManager:
         con, cur = cls._connection_to_database()
         result = cur.execute('SELECT volume_music, volume_effects FROM user').fetchone()
         # print(result)
+        con.close()
+        return result
+
+    @classmethod
+    def get_purchased_items_by_group(cls, name_group: str):
+        con, cur = cls._connection_to_database()
+        if name_group == 'characters':
+            result = cur.execute('''SELECT id, name FROM characters WHERE purchased=1''').fetchall()
+        elif name_group == 'weapons':
+            result = cur.execute('''SELECT id, name FROM weapons WHERE purchased=1''').fetchall()
         con.close()
         return result
 

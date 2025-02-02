@@ -13,7 +13,7 @@ class Character(sprite.Sprite):
     def __init__(self, position: (int, int)):
         super().__init__()
 
-        self.character_id = DatabaseManager.get_current_character_id()
+        self.character_id = DatabaseManager.get_current_id_by_group('characters')
         self.flag_alive = True
 
         self._create_frames()
@@ -33,7 +33,6 @@ class Character(sprite.Sprite):
                group_enemy=None, group_trap=None):
         if self.flag_alive:
             if mode == 'update':
-                # self.weapon.update((self.rect.centerx, self.rect.centery))
                 self.movement(timedelta, group_walls, group_trap)
                 self.take_damage_by_trap(timedelta, group_trap)
             elif mode == 'event':
@@ -132,7 +131,7 @@ class Character(sprite.Sprite):
 class Weapon(sprite.Sprite):
     def __init__(self, player):
         super().__init__()
-        self.weapon_id = DatabaseManager.get_current_weapon_id()
+        self.weapon_id = DatabaseManager.get_current_id_by_group('weapons')
         self._setup_characteristics()
         self._create_frame()
         self.rect = self.image.get_rect()
