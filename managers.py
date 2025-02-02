@@ -82,14 +82,6 @@ class GuiManager:
                     self.character_ui_image.set_image(new_character_image)
                     self.character_name_label.set_text(new_name_characters)
                 # print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
-            #     elif self.gui_mode == 'shop':
-            #         if event.ui_element == self.gui_manager.button_buy:
-            #             self.database_manager.update_inventory(self.gui_manager.name)
-            #             self.gui_manager.update_shop()
-            #         elif event.ui_element == self.gui_manager.button_weapon_swap:
-            #             self.gui_manager.load_swap_weapon()
-            #         elif event.ui_element == self.gui_manager.button_characters_swap:
-            #             self.gui_manager.load_swap_characters()
 
     def load_start_menu(self) -> None:
         def redirection(command_load=None) -> None:
@@ -221,9 +213,6 @@ class GuiManager:
                                              manager=self.manager)
         self.effects_button_plus = UIButton(relative_rect=pygame.Rect(390, 105, 30, 30), text='+',
                                             manager=self.manager)
-        # print(self.music_progress_bar.current_progress)
-        # self.button_save = UIButton(relative_rect=pygame.Rect(820, 0, 80, 50), text='сохранить',
-        #                             manager=self.manager)
 
     def get_values_volume(self) -> (int, int):
         return self.music_progress_bar.current_progress, self.effects_progress_bar.current_progress
@@ -260,13 +249,18 @@ class GuiManager:
             new_character_image = get_front_frame_characters_by_id(
                 self.shop_characteristic_all_characters[self.characters_viewing_index][0])
             new_character_name = self.shop_characteristic_all_characters[self.characters_viewing_index][1]
-            new_character_price = str(self.shop_characteristic_all_characters[self.characters_viewing_index][2])
-            if DatabaseManager.is_purchased_by_group_and_id('characters', self.shop_characteristic_all_characters[
-                self.characters_viewing_index][0]):
+            new_character_price = str(
+                self.shop_characteristic_all_characters[self.characters_viewing_index][2]) + ' Монет(а/ы)'
+            if DatabaseManager.is_purchased_by_group_and_id('characters',
+                                                            self.shop_characteristic_all_characters[
+                                                                self.characters_viewing_index][0]):
                 new_character_price = 'Приобретено'
-                self.character_ui_image.set_image(new_character_image)
+                self.character_price_button.disable()
+            else:
+                self.character_price_button.enable()
+            self.character_ui_image.set_image(new_character_image)
             self.character_name_label.set_text(new_character_name)
-            self.character_price_label.set_text(new_character_price)
+            self.character_price_button.set_text(new_character_price)
 
         def weapons_navigation(direction: str):
             if direction == 'father':
@@ -285,10 +279,37 @@ class GuiManager:
             new_weapon_image = get_frame_weapon_by_id(
                 self.shop_characteristic_all_weapons[self.weapons_viewing_index][0])
             new_weapon_name = self.shop_characteristic_all_weapons[self.weapons_viewing_index][1]
-            new_weapon_price = str(self.shop_characteristic_all_weapons[self.weapons_viewing_index][2])
+            new_weapon_price = str(self.shop_characteristic_all_weapons[self.weapons_viewing_index][2]) + ' Монет(а/ы)'
+            if DatabaseManager.is_purchased_by_group_and_id('weapons',
+                                                            self.shop_characteristic_all_weapons[
+                                                                self.weapons_viewing_index][0]):
+                new_weapon_price = 'Приобретено'
+                self.weapon_price_button.disable()
+            else:
+                self.weapon_price_button.enable()
             self.weapon_ui_image.set_image(new_weapon_image)
             self.weapon_name_label.set_text(new_weapon_name)
-            self.weapon_price_label.set_text(new_weapon_price)
+            self.weapon_price_button.set_text(new_weapon_price)
+
+        def buy_item_by_group(group_name: str):
+            money_as_the_moment = DatabaseManager.get_money()
+            if group_name == 'characters':
+                price = self.shop_characteristic_all_characters[self.characters_viewing_index][2]
+                if money_as_the_moment >= price:
+                    current_id = self.shop_characteristic_all_characters[self.characters_viewing_index][0]
+                    self.character_price_button.disable()
+                    money_as_the_moment -= price
+                    DatabaseManager.buy_item_by_group_and_id('characters', current_id,
+                                                             money_as_the_moment)
+            elif group_name == 'weapons':
+                price = self.shop_characteristic_all_weapons[self.weapons_viewing_index][2]
+                if money >= price:
+                    current_id = self.shop_characteristic_all_weapons[self.weapons_viewing_index][0]
+                    self.weapon_price_button.disable()
+                    money_as_the_moment -= price
+                    DatabaseManager.buy_item_by_group_and_id('weapons', current_id,
+                                                             money_as_the_moment)
+            self.money_label.set_text(str(money_as_the_moment) + ' Монет(а/ы)')
 
         self.mode = 'shop'
         self.button_back = UIButton(relative_rect=pygame.Rect(25, 25, 60, 40), text='назад',
@@ -296,7 +317,7 @@ class GuiManager:
         # Загрузка монет
         money = DatabaseManager.get_money()
         money_image = load_image('coin.png', 'other')
-        self.money_label = UILabel(Rect((150, 40, 60, 30)), text=f'{money} монет')
+        self.money_label = UILabel(Rect((150, 40, 100, 30)), text=f'{money} монет')
         self.money_ui_image = UIImage(Rect((100, 40, 40, 40)), money_image)
 
         # загрузка магазина персонажей
@@ -311,8 +332,9 @@ class GuiManager:
         self.character_ui_image = UIImage(Rect((150, 200, 100, 100)), character_image)
         self.character_name_label = UILabel(Rect((155, 310, 80, 30)), text=character_name)
         # print(self.shop_characteristic_all_characters)
-        self.character_price_label = UILabel(Rect((155, 345, 80, 20)),
-                                             text='Приобретено')
+        self.character_price_button = UIButton(Rect((140, 345, 110, 30)),
+                                               text='Приобретено', command=lambda: buy_item_by_group('characters'))
+        self.character_price_button.disable()
 
         self.characters_button_back = UIButton(Rect((110, 280, 30, 25)), text='<-',
                                                command=lambda: characters_navigation('back'))
@@ -332,8 +354,9 @@ class GuiManager:
         self.weapon_ui_image = UIImage(Rect((560, 180, 100, 100)), weapon_image)
         self.weapon_name_label = UILabel(Rect((580, 310, 80, 30)), text=weapon_name)
         # print(self.shop_characteristic_all_characters)
-        self.weapon_price_label = UILabel(Rect((580, 345, 80, 20)),
-                                          text='Приобретено')
+        self.weapon_price_button = UIButton(Rect((565, 345, 110, 30)),
+                                            text='Приобретено', command=lambda: buy_item_by_group('weapons'))
+        self.weapon_price_button.disable()
 
         self.weapons_button_back = UIButton(Rect((520, 280, 30, 25)), text='<-',
                                             command=lambda: weapons_navigation('back'))
@@ -349,13 +372,13 @@ class GuiManager:
 
         self.character_ui_image.kill()
         self.character_name_label.kill()
-        self.character_price_label.kill()
+        self.character_price_button.kill()
         self.characters_button_back.kill()
         self.characters_button_farther.kill()
 
         self.weapon_ui_image.kill()
         self.weapon_name_label.kill()
-        self.weapon_price_label.kill()
+        self.weapon_price_button.kill()
         self.weapons_button_back.kill()
         self.weapons_button_farther.kill()
 
@@ -535,17 +558,15 @@ class DatabaseManager:
         con.close()
         return True if result == 1 else False
 
-    # @classmethod
-    # def shop(cls):
-    #     con, cur = cls._connection_to_database()
-    #     result = cur.execute(f"SELECT * FROM Weapons").fetchall()
-    #     con.close()
-    #     return result
-
     @classmethod
-    def update_inventory(cls, name):
+    def buy_item_by_group_and_id(cls, group_name: str, current_id: str, money: int):
         con, cur = cls._connection_to_database()
-        cur.execute(f"UPDATE settings SET purchased = {1} WHERE Name = {name}")
+        if group_name == 'characters':
+            cur.execute('''UPDATE characters SET purchased=? WHERE id=?''', (1, current_id))
+        elif group_name == 'weapons':
+            cur.execute('''UPDATE weapons SET purchased=? WHERE id=?''', (1, current_id))
+        cur.execute('''UPDATE user SET money=?''', (money,))
+        con.commit()
         con.close()
 
 
