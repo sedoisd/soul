@@ -80,7 +80,7 @@ class GuiManager:
                         DatabaseManager.get_current_id_by_group('characters'))
                     new_name_characters = DatabaseManager.get_current_name_by_group('characters')
                     self.character_ui_image.set_image(new_character_image)
-                    self.weapon_name_label.set_text(new_name_characters)
+                    self.character_name_label.set_text(new_name_characters)
                 # print(event.text, event.selected_option_id, event.ui_element == self.weapon_drop_menu)
             #     elif self.gui_mode == 'shop':
             #         if event.ui_element == self.gui_manager.button_buy:
@@ -139,9 +139,9 @@ class GuiManager:
         for char_id, name in purchased_characters:
             self.dict_purchased_characters_by_name[name] = char_id
 
-        self.character_ui_image = UIImage(Rect((515, 30, 100, 100)), characters_image)
-        self.character_name_label = UILabel(Rect((515, 145, 100, 30)), text=name_characters)
-        self.characters_drop_menu = UIDropDownMenu(relative_rect=Rect((502, 250, 150, 50)), manager=self.manager,
+        self.character_ui_image = UIImage(Rect((515, 40, 100, 100)), characters_image)
+        self.character_name_label = UILabel(Rect((525, 160, 100, 30)), text=name_characters)
+        self.characters_drop_menu = UIDropDownMenu(relative_rect=Rect((502, 200, 150, 50)), manager=self.manager,
                                                    options_list=characters_optional_list,
                                                    starting_option=characters_start_option)
 
@@ -155,9 +155,9 @@ class GuiManager:
         for char_id, name in purchased_weapons:
             self.dict_purchased_weapons_by_name[name] = char_id
 
-        self.weapon_ui_image = UIImage(Rect((140, 30, 100, 100)), weapon_image)
-        self.weapon_name_label = UILabel(Rect((160, 200, 100, 30)), text=weapon_name)
-        self.weapon_drop_menu = UIDropDownMenu(relative_rect=Rect((160, 240, 150, 50)), manager=self.manager,
+        self.weapon_ui_image = UIImage(Rect((190, 40, 100, 100)), weapon_image)
+        self.weapon_name_label = UILabel(Rect((180, 160, 100, 30)), text=weapon_name)
+        self.weapon_drop_menu = UIDropDownMenu(relative_rect=Rect((160, 200, 150, 50)), manager=self.manager,
                                                options_list=weapon_optional_list, starting_option=weapon_start_option)
 
         # Выбор ЛВЛа и старт
