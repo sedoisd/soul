@@ -100,7 +100,9 @@ class GuiManager:
                     self.kill_start_menu()
                     # self.start_game1()
             elif self.mode == 'selection':
-                pass
+                if event.ui_element == self.button_back:
+                    self.exit_selection_window()
+                    self.load_start_menu()
             elif self.mode == 'setting':
                 if event.ui_element == self.button_back:
                     self.exit_setting()
@@ -123,7 +125,9 @@ class GuiManager:
                 self.sound_open.set_volume(volume_effects / 100)
                 DatabaseManager.update_volume_settings(volume_music, volume_effects)
             elif self.mode == 'shop':
-                pass
+                if event.ui_element == self.button_back:
+                    self.exit_shop()
+                    self.load_start_menu()
             #     elif self.gui_mode == 'shop':
             #         if event.ui_element == self.gui_manager.button_buy:
             #             self.database_manager.update_inventory(self.gui_manager.name)
@@ -151,16 +155,16 @@ class GuiManager:
             command_load()
 
         # size_button = (200, 70)
-        self.button_start = UIButton(relative_rect=Rect((363, 430, 200, 70)),
+        self.button_start = UIButton(relative_rect=Rect((340, 220, 200, 70)),
                                      text='Играть', manager=self.manager,
                                      command=lambda: redirection(self._load_selection_window_for_start_game))
-        self.button_shop = UIButton(relative_rect=Rect((170, 370, 100, 50)),
+        self.button_shop = UIButton(relative_rect=Rect((340, 320, 200, 70)),
                                     text='Магазин', manager=self.manager,
                                     command=lambda: redirection(self._load_shop))
-        self.button_setting = UIButton(relative_rect=Rect((0, 650, 80, 50)),
+        self.button_setting = UIButton(relative_rect=Rect((340, 420, 200, 70)),
                                        text='Настройки', manager=self.manager,
                                        command=lambda: redirection(self._load_setting))
-        self.button_exit = UIButton(relative_rect=Rect((775, 290, 100, 50)),
+        self.button_exit = UIButton(relative_rect=Rect((340, 520, 200, 70)),
                                     text='Выход', manager=self.manager)
 
     def _load_selection_window_for_start_game(self) -> None:
@@ -301,7 +305,7 @@ class GuiManager:
         self.button_back.kill()
         self.label_image_weapon.kill()
         self.label_name_weapon.kill()
-        self.button_buy.kill()
+        # self.button_buy.kill()
         self.label_image_weapon.kill()
         self.scroll_shop.kill()
         self.label_image_myonets.kill()
