@@ -7,9 +7,6 @@ from classes import Character, Camera, Enemy, Cursor, Hud, Trap, Portal
 from other_functions import get_frame_current_background, load_image
 
 
-# import sys
-
-
 class Game:
     def __init__(self):
         pygame.init()
