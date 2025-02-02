@@ -4,7 +4,7 @@ import pytmx
 from constants import *
 from managers import GuiManager, SpriteGroupManager, DatabaseManager
 from classes import Character, Camera, Enemy, Cursor, Hud, Trap, Portal
-from other_functions import get_frame_current_background, get_weapon_settings, update_setting, buy
+from other_functions import get_frame_current_background
 
 
 # import sys
@@ -48,7 +48,7 @@ class Game:
 
     def load_settings_volume(self):
         volume_music, volume_effects = DatabaseManager.get_settings_values()
-        self.music_menu = pygame.mixer.music.load("sound/music/menu.mp3")
+        pygame.mixer.music.load("sound/music/menu.mp3")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(volume_music)
         self.sound_open = pygame.mixer.Sound("sound/effects/sound_button.mp3")
@@ -96,9 +96,6 @@ class Game:
         #         self.gui_manager.kill_start_menu()
         #         # print(111)  # [LOG]
         #         self._start_level()
-
-
-
 
     def _update(self):
         """Отправка обновлений"""
@@ -155,7 +152,7 @@ class Game:
 
         hud = Hud()
         self.sprite_group_manager.add_hud(hud)
-        filename = 'tmx/test_map.tmx'
+        # filename = 'tmx/test_map.tmx'
         filename = f'tmx/map_{id_lvl}.tmx'
         self.map = pytmx.load_pygame(filename)
         self.tile_size = self.map.tilewidth * self.scale_map
