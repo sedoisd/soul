@@ -76,19 +76,10 @@ class Game:
             print(event.pos)
             if self.is_going_game:
                 for enemy in self.sprite_group_manager.enemies.sprites():
-                    # print('iter') # [LOG]
                     if pygame.sprite.collide_mask(self.cursor, enemy):
                         if self.player.weapon.deal_damage(enemy):
                             self.killed_enemy += 1
                         # print(enemy.health) # [LOG]
-                        # print(111) # [LOG]
-
-        # if event.type == pygame_gui.UI_BUTTON_PRESSED:  # Обработка нажатий кнопок GUI
-        #     # print(222)  # [LOG]
-        #     if event.ui_element == self.gui_manager.button_start:
-        #         self.gui_manager.kill_start_menu()
-        #         # print(111)  # [LOG]
-        #         self._start_level()
 
     def _update(self):
         """Отправка обновлений"""

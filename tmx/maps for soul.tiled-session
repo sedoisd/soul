@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_2.tmx",
+    "activeFile": "map_3.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -19,16 +19,30 @@
             "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1113.6363636363635,
-                "y": 1687.878787878788
+                "x": 1801.5151515151515,
+                "y": 1157.5757575757577
+            }
+        },
+        "map_3.tmx": {
+            "expandedObjectLayers": [
+                5
+            ],
+            "scale": 0.33,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1368.1818181818182,
+                "y": 1409.0909090909092
             }
         },
         "test_map.tmx": {
-            "scale": 1,
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.75,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 1600.5,
-                "y": 1600
+                "x": 1963.3333333333333,
+                "y": 1402.6666666666665
             }
         },
         "tileset_1.tsx": {
@@ -42,17 +56,18 @@
     "map.layerDataFormat": "3",
     "map.width": 100,
     "openFiles": [
-        "test_map.tmx",
-        "tileset_1.tsx",
         "TX Props.tsx",
-        "map_2.tmx"
+        "tileset_1.tsx",
+        "test_map.tmx",
+        "map_3.tmx"
     ],
     "project": "maps for soul.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "test_map.tmx",
-        "tileset_1.tsx",
         "TX Props.tsx",
+        "tileset_1.tsx",
+        "test_map.tmx",
+        "map_3.tmx",
         "map_2.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"
