@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="26">
+ <tileset firstgid="1" source="tileset_1.tsx"/>
+ <layer id="2" name="background" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt08EJAwEMA8Gr4fovNm8/BQkroh3QX1j4fZ7nNT9Ngu66kATddSEJuutCEnTXhSTorgtJ0F0XkqC7LiRBd11Igu66kATddSEJuutCEnTXhSTorgtJ0F0XkqC7LiRBd11Igu66kATddSEJuutCEnTXhSTorgtJ0F0XkqC7LiRBd11Igu66kATddSEJuutCEnTXhSTorgtJ0F0XkqC7LiRBd11Igu66kATddSEJuiudNvQ96LSh70GnDX0POm3oe9BpQ9+DThv6HnTa0Peg04a+B5029D3otKHvQacNfQ86beh70GlD34NOG/oedNrQ96DThr4HnTb0Pei0oe9Bpw19Dzpt6HvQaUPfg04b+h502tD3oNOGvodbXPRN3OOib+IWF30X97jouzTfhkBv4R4XvYV7XPQW7nHRW7jHRW/hHhe9hXtc9BbucdFbuMdFb+EeF72Fe1z0Fu5x0Vu4x0Vv4R7XN27oHt9D/4Z7XPQW7nHRW7jHRW/hHhe9hXtcbtHFPSRJkiRJkiRJ0r/5AFXji1w=
+  </data>
+ </layer>
+ <layer id="1" name="floor" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt3NFOwkAQheHzniRmbukF73+pRollYC1Vdvds9/8S05glHYE5pbUTJAAAAGBO8fFz/t6eCtvr+mVjfYS67hbdPse3tM3r+XHLajtCXXehn+d41uO+za9BaX2Euu7ysSC/NlvHistqO0Ldvblsnb/135Jfk2Xn+uh183t0/b2l2fLxl7otfdZ069O9dfN6aZuPTc/ut6WR+vTR+rPvxaLH+3XORz6PaZWP/9YtXb+cCo8nH/XqHjkfo35+HCkf+VyvVT5eVffZfJT2Sz7Gq9vSVr9s9dW6T49Q1zkfW31Tq0971XXKRz7nbNWnreu6C233S68+rVHXXe6/fJ6e+zH386uO463qjipUvpY6Yl13v/XpEeu6C5EPJ+TDS4h8OCEfXkLkwwn58BIiH07Ih5cQ+XBCPvoI3d87Zb69H+bbvYSYb3cy+vzV3rruQuPMecx4f5B89BUaZ86cfNSboy3tj3z0nzNvOVfvjnx4CY0zZz5DPvI1Vu18lP5HQj6+hLj+cOI6Z16rrruQ35x5zbrumG/3EmK+3Qnz7WMI3fcj97H7mf0+tpsQ+XBCPryEyIcT8uElRD6ckA8vIfLhhHx4CZGP3kLe37Uym70zzhy76gp5f1fwbNy/q2s2IT4/nJAPLyHy4YR8eAmRDyfkw0uIfDghH15C5AMAAAAAAAAAAAAAAGBG744nIVY=
+  </data>
+ </layer>
+ <layer id="3" name="walls" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt3EtOwzAURmEPgDniMec557kA2AHsAHYALJClNcNUrZXeKo6P6/NJd1blRv2J5dArpyRJkqSlHA11vWcdj+qkkb5050M97lkXo7pspC/daUr/M12nib50veURXSeXXg97yyO6Ti69Hp7NdJ3o91Krb/TvYOn1sPU8rtL6fmuqboLXN4+Yh7S+35qqp+D1zYPFPFjMg8U8WMwj5nuou0B9Ba+/dB6tvw/+DvUSqJ/4fS6q9eejdF/zKNv3NsXWt/uZ7nNXveXxnGLr299M97mr3vKgyz2/uX1Ibj8Tfa5r9aXLPb+5fUhuP/PaSN9W5fajpdeHWn3pzIPFPFjMg8U8WMyDxTxYzIPFPFhy/18q/b3U6kuRm598y3z+PW3OmM853166L11ufvIj8/nPtDljPud8e+m+dK3/Xnto65h5sJgHi78PsrQyZ55jHtuVnjPPMQ8W82AxDxbzYDGP7UrPmeccWh615sx9H9zO90EW82AxDxbzYKHNt0fL+fay8+3Rcr5dNZgHi3mwmAeLebCYB4t5sJgHi3mw9D5nTjCeOZ+aM69xVnBvxjPnU3PmNc4K7g39rODemAcL/ey03pgHi3mwmAeLebCYB4t5sJgHC/2s4N7QzwqWJEmSJEmSJEmSJEmHYwUJAHhM
+  </data>
+ </layer>
+ <layer id="4" name="trap" width="100" height="100">
+  <data encoding="base64" compression="zlib">
+   eJzt2bEKABAUhlHv/8Bmg0lZKPnpnDK79S03SgEAAAAAgCz19gAM9MiiRxY9sugBAMCuOjk/3wsAAADAW7xfAQBAt7qT2mHP0iOLHln0yKIHAACv8U8HAAAAAAAAAAAAAAAAAAAAAJClAXN/JnE=
+  </data>
+ </layer>
+ <objectgroup id="5" name="game_objects">
+  <object id="1" name="Player" x="518" y="2316" width="7" height="7"/>
+  <object id="2" name="Enemy" x="509.667" y="1266.17" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="5" name="Enemy" x="727" y="1487.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="6" name="Enemy" x="348.333" y="1520.83" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="9" name="Enemy" x="1488.33" y="1291.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="10" name="Enemy" x="1444.33" y="1620.83" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="12" name="Enemy" x="316.333" y="295.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="13" name="Enemy" x="741.667" y="310.167" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="14" name="Enemy" x="372.333" y="495.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="15" name="Enemy" x="693.667" y="532.833" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="16" name="Enemy" x="1257.67" y="295.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="21" name="Enemy" x="1697.67" y="303.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="22" name="Enemy" x="1700.33" y="603.5" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="23" name="Enemy" x="1309.67" y="490.167" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="24" name="Enemy" x="1495" y="416.833" width="2" height="1">
+   <properties>
+    <property name="enemy_id" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="25" name="Portal" x="2350.67" y="505.333" width="12" height="9.33333"/>
+ </objectgroup>
+</map>
