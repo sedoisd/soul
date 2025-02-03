@@ -27,13 +27,14 @@ class Game:
         self.flag_create_game_cursor = False
         self.player = None
         self.time_delta = None
-        self.semi_transperency_fon = load_image('semi_transperency.png', 'hud')
+        self.semi_transparency_fon = load_image('semi_transparency.png', 'hud')
 
         # init counting variables
         self.max_enemy = 0
         self.killed_enemy = 0
 
         # function exe
+        pygame.mouse.set_visible(False)
         self.load_settings_volume()
         self.gui_manager.load_values_mixer(self.sound_open)
         self.sprite_group_manager.add_cursor(self.cursor)
@@ -70,8 +71,7 @@ class Game:
                 event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_element == self.gui_manager.button_exit):
             self.running = False
         if event.type == pygame.MOUSEMOTION:
-            if self.flag_create_game_cursor:
-                self.cursor.update(event.pos)
+            self.cursor.update(event.pos)
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(event.pos)
             if self.is_going_game:
@@ -85,6 +85,7 @@ class Game:
         """Отправка обновлений"""
         self.sprite_group_manager.update(is_going_game=self.is_going_game, timedelta=self.time_delta)
         pygame.mixer.music.set_volume(DatabaseManager.get_settings_values()[0] / 100)
+        self.cursor.update_frame(self.is_going_game)
         if self.is_going_game:
             self.camera.update(self.player)
             for sprite in self.sprite_group_manager.get_movable_sprites():
@@ -114,12 +115,12 @@ class Game:
             elif gui_mode == 'selection':
                 fon = get_frame_current_background(3)
                 self.screen.blit(fon, (0, 0))
-            self.screen.blit(self.semi_transperency_fon, (25, 25))
+            self.screen.blit(self.semi_transparency_fon, (25, 25))
 
         # --------------
-        if self.is_going_game:
-            self.sprite_group_manager.draw(self.screen, self.is_going_game)
+
         self.gui_manager.manager.draw_ui(self.screen)
+        self.sprite_group_manager.draw(self.screen, self.is_going_game)
 
     def _completion_level(self):
         # print(self.max_enemy, self.killed_enemy)
@@ -133,9 +134,7 @@ class Game:
 
     def _start_level(self, id_lvl: int):
         """Создание уровня"""
-        self.flag_create_game_cursor = True
         self.is_going_game = True
-        pygame.mouse.set_visible(False)
 
         hud = Hud()
         self.sprite_group_manager.add_hud(hud)

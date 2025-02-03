@@ -318,12 +318,30 @@ class Camera:
 class Cursor(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = load_image('cursor.png', 'hud')
-        self.rect = self.image.get_rect()
+        self._create_frames()
         self.mask = pygame.mask.from_surface(self.image)
 
+    def _create_frames(self):
+        image = load_image('cursors.png', 'hud')
+        frame_width = image.get_width() // 2
+        frame_height = image.get_height()
+        self.is_going_game = False
+        self.frames = [image.subsurface(frame_width * i, 0, frame_width, frame_height) for i in range(2)]
+        self.image = self.frames[0]
+        self.rect = self.image.get_rect()
+
+    def update_frame(self, is_going_game: bool):
+        self.is_going_game = is_going_game
+        if self.is_going_game:
+            self.image = self.frames[1]
+        else:
+            self.image = self.frames[0]
+
     def update(self, pos: (int, int)):
-        self.rect.x, self.rect.y = pos[0] - self.rect.width // 2, pos[1] - self.rect.height // 2
+        x, y = pos[0] - 3, pos[1] - 2
+        if self.is_going_game:
+            x, y = pos[0] - self.rect.width // 2, pos[1] - self.rect.height // 2
+        self.rect.x, self.rect.y = x, y
 
 
 class Hud(pygame.sprite.Sprite):
