@@ -104,7 +104,6 @@ class Character(sprite.Sprite):
         self.name, self.health, self.damage, self.speed, self.armor = DatabaseManager.get_characteristics_character()
         self.max_health = self.health
         self.max_armor = self.armor
-        # print(self.name, self.health, self.damage, self.speed, self.armor)  # [LOG]
 
     def _create_frames(self):
         """Создание фреймов анимации"""
@@ -138,10 +137,6 @@ class Weapon(sprite.Sprite):
         self.rect.x, self.rect.y = 30, 30
         self.owner = player
         self.timedelta = 0
-
-    # def update(self):
-    #     self.rect.x, self.rect.y = 20, 20
-    #     self.rect.x, self.rect.y = position[0] - self.rect.width // 2, position[1] - self.rect.height // 2
 
     def deal_damage(self, enemy):
         if (((enemy.rect.centerx - self.owner.rect.centerx) ** 2 +
@@ -202,7 +197,6 @@ class Enemy(sprite.Sprite):
             else:
                 self.index_frame = (self.index_frame + 1) % len(self.current_type_frame)
                 self.timedelta = 0
-            # print(self.index_frame, self.current_type_frame) # [LOG]
         self.image = self.current_type_frame[self.index_frame]
         self.status_bar.update((self.rect.centerx, self.rect.y), self.health / self.max_health)
 
@@ -360,10 +354,9 @@ class Hud(pygame.sprite.Sprite):
     def get_sprites_status_bar(self) -> tuple:
         return self.health_bar, self.armor_bar, self.ammunation_bar
 
-    def update(self, health: float, armor: float):  # , armor: int, ammunation: int):
+    def update(self, health: float, armor: float):  # ammunation: float
         self.health_bar.update(health)
         self.armor_bar.update(armor)
-        # self.ammunation_bar.update()
 
 
 class HudStatusBar(pygame.sprite.Sprite):
@@ -389,7 +382,6 @@ class HudStatusBar(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.x, self.y
 
     def update(self, value: float):
-        # print(value) # log
         if value < 0:
             value = 0
         self.image = self.full_image.subsurface(0, 0, self.frame_width * value, self.frame_height)
@@ -406,7 +398,6 @@ class EnemyStatusBar(pygame.sprite.Sprite):
 
     def update(self, position: (int, int), value: float):
         image = self.empty.copy()
-        # print(value) # log
         if value < 0:
             value = 0
         image.blit(self.scale.subsurface(0, 0, self.scale.width * value, self.scale.height), (2, 2))
@@ -446,7 +437,6 @@ class Portal(pygame.sprite.Sprite):
         super().__init__()
         self._create_frames()
         self.timedelta = 0
-        # self.flag_active = False
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = position[0] - self.rect.width // 2, position[1] - self.rect.height // 2
 
