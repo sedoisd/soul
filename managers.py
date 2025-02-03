@@ -539,7 +539,7 @@ class SpriteGroupManager:
             self.enemy_status_bar.draw(screen)
             self.hud.draw(screen)
             self.weapon.draw(screen)
-            self.cursor.draw(screen)
+        self.cursor.draw(screen)
 
     def add_hud(self, sprite_to_add):
         self.hud_main_sprite = sprite_to_add
