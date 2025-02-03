@@ -457,13 +457,6 @@ class Portal(pygame.sprite.Sprite):
             self.index_frame = (self.index_frame + 1) % 7
             self.timedelta = 0
         self.image = self.frames[self.index_frame]
-        # self.flag_active = self._is_active(enemies)
-
-    # def _is_active(self, enemies):
-    #     for enemy in enemies:
-    #         if enemy.flag_alive:
-    #             return False
-    #     return True
 
     def _create_frames(self):
         image = load_image('portal.png', 'for_game')
