@@ -5,6 +5,7 @@ from pygame_gui.elements import UILabel, UIButton, UIImage, UIDropDownMenu, UIPr
 from constants import SIZE, FILENAME_DATABASE
 from other_functions import get_frame_weapon_by_id, get_front_frame_characters_by_id, load_image
 import sqlite3
+from random import randint
 
 
 class GuiManager:
@@ -24,18 +25,14 @@ class GuiManager:
         self.manager.process_events(event)
         if event.type == UI_BUTTON_PRESSED:  # Нажатие на кнопки
             self.sound_open.play()
-            if self.mode == 'menu':
-                if event.ui_element == self.button_start:
-                    self.kill_start_menu()
-            elif self.mode == 'selection':
-                if event.ui_element == self.button_back:
-                    self.exit_selection_window()
-                    self.load_start_menu()
+            if self.mode == 'selection' and event.ui_element == self.button_back:
+                self.exit_selection_window()
+                self.load_start_menu()
             elif self.mode == 'setting':
                 if event.ui_element == self.button_back:
                     self.exit_setting()
                     self.load_start_menu()
-                    DatabaseManager.update_volume_settings(*self.get_values_volume())
+                DatabaseManager.update_volume_settings(*self.get_values_volume())
                 volume_music = self.music_progress_bar.current_progress
                 if event.ui_element == self.music_button_minus and volume_music >= 5:  # Обработка громкости музыки
                     volume_music -= 5
@@ -361,11 +358,27 @@ class GuiManager:
         self.weapons_button_back.kill()
         self.weapons_button_farther.kill()
 
-    def load_counting_window(self):
+    def load_counting_window(self, max_enemy, killed_enemy, is_alive):
         self.mode = 'counting'
+        verdict = 'Уровень пройден'
+        if not is_alive:
+            verdict = 'Вы проиграли, Вас одолели монстры, либо вы погибли на ловушках.'
+        killed = f'Убито {killed_enemy} монстор(а/ов) из {max_enemy}'
+        money = sum([randint(1, 4) for _ in range(killed_enemy)])
+        self.verdict_game_label = UILabel(Rect(270, 130, 370, 40), text=verdict)
+        self.information_killed_label = UILabel(Rect(330, 180, 250, 40), text=killed)
+        self.earned_money_label = UILabel(Rect(360, 230, 180, 40), text=f'Заработано: {money} монет(ы)')
+        self.resume_button = UIButton(Rect(380, 280, 150, 40), text='Продолжить',
+                                      command=lambda: self.exit_counting_window())
+        DatabaseManager.update_money(money)
 
     def exit_counting_window(self):
-        pass
+        self.verdict_game_label.kill()
+        self.resume_button.kill()
+        self.information_killed_label.kill()
+        self.earned_money_label.kill()
+
+        self.load_start_menu()
 
 
 class DatabaseManager:
@@ -481,6 +494,14 @@ class DatabaseManager:
             cur.execute('''UPDATE user SET current_character = ? ''', (current_id,))
         elif group_name == 'weapons':
             cur.execute('''UPDATE user SET current_weapon = ?''', (current_id,))
+        con.commit()
+        con.close()
+
+    @classmethod
+    def update_money(cls, earned_money: int):
+        con, cur = cls._connection_to_database()
+        current_money = int(cur.execute('''SELECT money FROM user''').fetchone()[0])
+        cur.execute('''UPDATE user SET money=?''', (current_money + earned_money,))
         con.commit()
         con.close()
 
