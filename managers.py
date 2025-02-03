@@ -361,6 +361,12 @@ class GuiManager:
         self.weapons_button_back.kill()
         self.weapons_button_farther.kill()
 
+    def load_counting_window(self):
+        self.mode = 'counting'
+
+    def exit_counting_window(self):
+        pass
+
 
 class DatabaseManager:
     @classmethod

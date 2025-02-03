@@ -4,7 +4,7 @@ import pytmx
 from constants import *
 from managers import GuiManager, SpriteGroupManager, DatabaseManager
 from classes import Character, Camera, Enemy, Cursor, Hud, Trap, Portal
-from other_functions import get_frame_current_background, load_image
+from other_functions import get_frames_background, load_image
 
 
 class Game:
@@ -27,6 +27,7 @@ class Game:
         self.flag_create_game_cursor = False
         self.player = None
         self.time_delta = None
+        self.backgrounds = get_frames_background()
         self.semi_transparency_fon = load_image('semi_transparency.png', 'hud')
 
         # init counting variables
@@ -80,6 +81,8 @@ class Game:
                         if self.player.weapon.deal_damage(enemy):
                             self.killed_enemy += 1
                         # print(enemy.health) # [LOG]
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_j:
+            self._completion_level()
 
     def _update(self):
         """Отправка обновлений"""
@@ -97,25 +100,15 @@ class Game:
 
     def _render(self):
         """Отображение программы-игры"""
-        if self.is_going_game:
-            color = (122, 122, 122)
-            self.screen.fill(color)
         # ------------------
         gui_mode = self.gui_manager.get_mode()
-        if gui_mode == 'menu':
-            fon = get_frame_current_background(0)
-            self.screen.blit(fon, (0, 0))
-        elif gui_mode is not None:
-            if gui_mode == 'shop':
-                fon = get_frame_current_background(1)
-                self.screen.blit(fon, (0, 0))
-            elif gui_mode == 'setting':
-                fon = get_frame_current_background(2)
-                self.screen.blit(fon, (0, 0))
-            elif gui_mode == 'selection':
-                fon = get_frame_current_background(3)
-                self.screen.blit(fon, (0, 0))
-            self.screen.blit(self.semi_transparency_fon, (25, 25))
+        if gui_mode in self.backgrounds:
+            self.screen.blit(self.backgrounds[gui_mode], (0, 0))
+            if gui_mode != 'menu':
+                self.screen.blit(self.semi_transparency_fon, (25, 25))
+        if self.is_going_game or gui_mode == 'counting':
+            color = (122, 122, 122)
+            self.screen.fill(color)
 
         # --------------
 
@@ -127,10 +120,10 @@ class Game:
         self.max_enemy = 0
         self.killed_enemy = 0
         self.is_going_game = False
-        pygame.mouse.set_visible(True)
+        # pygame.mouse.set_visible(True)
         self.sprite_group_manager.kill_gameplay_sprites()
 
-        self.gui_manager.load_start_menu()
+        self.gui_manager.load_counting_window()
 
     def _start_level(self, id_lvl: int):
         """Создание уровня"""

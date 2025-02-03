@@ -29,6 +29,9 @@ def get_frame_weapon_by_id(weapon_id: int) -> pygame.surface:  # for gui
     return image
 
 
-def get_frame_current_background(num) -> pygame.surface:
-    image = load_image(f'background_{num}.png', 'background')
-    return image
+def get_frames_background() -> dict:
+    keys = ['menu', 'shop', 'setting', 'selection']
+    backgrounds_dict = dict()
+    for i in range(len(keys)):
+        backgrounds_dict[keys[i]] = load_image(f'background_{i}.png', 'background')
+    return backgrounds_dict
