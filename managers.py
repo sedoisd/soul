@@ -363,7 +363,7 @@ class GuiManager:
         verdict = 'Уровень пройден'
         if not is_alive:
             verdict = 'Вы проиграли, Вас одолели монстры, либо вы погибли на ловушках.'
-        killed = f'Убито {killed_enemy} монстор(а/ов) из {max_enemy}'
+        killed = f'Убито {killed_enemy} монстр(а/ов) из {max_enemy}'
         money = sum([randint(1, 4) for _ in range(killed_enemy)])
         self.verdict_game_label = UILabel(Rect(270, 130, 370, 40), text=verdict)
         self.information_killed_label = UILabel(Rect(330, 180, 250, 40), text=killed)
