@@ -117,13 +117,12 @@ class Game:
 
     def _completion_level(self):
         # print(self.max_enemy, self.killed_enemy)
+        self.gui_manager.load_counting_window(self.max_enemy, self.killed_enemy, self.player.flag_alive)
         self.max_enemy = 0
         self.killed_enemy = 0
         self.is_going_game = False
-        # pygame.mouse.set_visible(True)
         self.sprite_group_manager.kill_gameplay_sprites()
 
-        self.gui_manager.load_counting_window()
 
     def _start_level(self, id_lvl: int):
         """Создание уровня"""
